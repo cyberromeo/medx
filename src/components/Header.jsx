@@ -49,8 +49,8 @@ export default function Header() {
                 {/* Mobile: Clean full-width header */}
                 <div className="md:hidden">
                     <div className={`flex items-center justify-between px-4 py-2.5 rounded-2xl transition-all duration-300 ${scrolled
-                            ? 'bg-black/80 backdrop-blur-xl border border-white/5'
-                            : 'bg-transparent'
+                        ? 'bg-black/80 backdrop-blur-xl border border-white/5'
+                        : 'bg-transparent'
                         }`}>
                         <Link href={user ? "/dashboard" : "/"} className="flex items-center gap-2.5">
                             <div className="bg-gradient-to-tr from-primary to-secondary p-2 rounded-xl shadow-lg shadow-primary/20">
