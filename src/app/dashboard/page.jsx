@@ -176,6 +176,7 @@ export default function Dashboard() {
     return (
         <main className="min-h-screen bg-background pb-20 safe-bottom selection:bg-secondary/30">
             <Header />
+            <div className="mesh-bg" />
             <div className="aurora-bg" />
 
             <div className="container mx-auto px-4 sm:px-6 pt-24 sm:pt-32">
@@ -189,8 +190,8 @@ export default function Dashboard() {
                         {/* Header Section */}
                         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 sm:gap-6">
                             <div className="flex-1">
-                                <h1 className="text-2xl sm:text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400 mb-1">
-                                    Welcome, Dr. {user?.name?.split(' ')[0]}
+                                <h1 className="hero-text text-2xl sm:text-4xl mb-1">
+                                    Welcome, <span className="text-gradient">Dr. {user?.name?.split(' ')[0]}</span>
                                 </h1>
                                 <p className="text-gray-500 text-sm sm:text-base">Continue your medical journey</p>
                             </div>
@@ -250,7 +251,7 @@ export default function Dashboard() {
                     className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-8 sm:mb-10"
                 >
                     {/* Total XP */}
-                    <div className="glass-panel p-4 rounded-2xl">
+                    <div className="card-premium p-4">
                         <div className="flex items-center gap-3 mb-2">
                             <div className="w-8 h-8 rounded-lg bg-yellow-500/20 flex items-center justify-center">
                                 <Star className="text-yellow-400" size={16} />
@@ -261,7 +262,7 @@ export default function Dashboard() {
                     </div>
 
                     {/* Videos Watched */}
-                    <div className="glass-panel p-4 rounded-2xl">
+                    <div className="card-premium p-4">
                         <div className="flex items-center gap-3 mb-2">
                             <div className="w-8 h-8 rounded-lg bg-green-500/20 flex items-center justify-center">
                                 <Target className="text-green-400" size={16} />
@@ -275,7 +276,7 @@ export default function Dashboard() {
                     </div>
 
                     {/* Streak */}
-                    <div className="glass-panel p-4 rounded-2xl">
+                    <div className="card-premium p-4">
                         <div className="flex items-center gap-3 mb-2">
                             <div className="w-8 h-8 rounded-lg bg-orange-500/20 flex items-center justify-center">
                                 <Flame className="text-orange-400" size={16} />
@@ -289,7 +290,7 @@ export default function Dashboard() {
                     </div>
 
                     {/* Overall Progress */}
-                    <div className="glass-panel p-4 rounded-2xl">
+                    <div className="card-premium p-4">
                         <div className="flex items-center gap-3 mb-2">
                             <div className="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center">
                                 <Zap className="text-primary" size={16} />

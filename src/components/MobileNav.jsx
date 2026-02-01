@@ -41,8 +41,8 @@ export default function MobileNav() {
             transition={{ type: "spring", stiffness: 400, damping: 35 }}
             className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 md:hidden"
         >
-            {/* Tiny pill nav - just icons */}
-            <nav className="flex items-center gap-1 px-2 py-1.5 rounded-full bg-black/80 backdrop-blur-xl border border-white/10 shadow-2xl">
+            {/* Premium pill nav with glow */}
+            <nav className="flex items-center gap-1.5 px-3 py-2 rounded-full nav-pill-glow shadow-2xl">
                 {navItems.map((link) => {
                     const Icon = link.icon;
                     const isActive = pathname.startsWith(link.href);
@@ -51,9 +51,9 @@ export default function MobileNav() {
                         <Link
                             key={link.name}
                             href={link.href}
-                            className={`relative flex items-center justify-center w-11 h-11 rounded-full transition-all duration-200 active:scale-90 ${isActive
-                                    ? 'bg-primary/20 text-primary'
-                                    : 'text-gray-500 active:bg-white/5'
+                            className={`relative flex items-center justify-center w-12 h-12 rounded-full transition-all duration-200 active:scale-90 ${isActive
+                                ? 'nav-item-active text-primary'
+                                : 'text-gray-500 active:bg-white/5'
                                 }`}
                         >
                             <Icon size={20} strokeWidth={isActive ? 2.2 : 1.8} />

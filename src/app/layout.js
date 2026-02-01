@@ -1,10 +1,11 @@
 import "./app.css";
-import { Inter, Outfit } from "next/font/google";
+import { Space_Grotesk, Plus_Jakarta_Sans, Outfit } from "next/font/google";
 import MobileNav from "@/components/MobileNav";
 import { Analytics } from '@vercel/analytics/next';
 
-const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
-const outfit = Outfit({ subsets: ["latin"], variable: "--font-outfit" });
+const spaceGrotesk = Space_Grotesk({ subsets: ["latin"], variable: "--font-display" });
+const plusJakarta = Plus_Jakarta_Sans({ subsets: ["latin"], variable: "--font-sans" });
+const outfit = Outfit({ subsets: ["latin"], variable: "--font-accent" });
 
 export const metadata = {
   title: "MedX - Medical Video Platform",
@@ -36,7 +37,7 @@ export default function RootLayout({ children }) {
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <meta name="color-scheme" content="dark" />
       </head>
-      <body className={`${inter.variable} ${outfit.variable} antialiased bg-black text-foreground`}>
+      <body className={`${plusJakarta.variable} ${spaceGrotesk.variable} ${outfit.variable} antialiased bg-black text-foreground`}>
         {children}
         <MobileNav />
         <Analytics />
