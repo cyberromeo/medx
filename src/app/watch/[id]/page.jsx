@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import Header from "@/components/Header";
 import CustomPlayer from "@/components/CustomPlayer";
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, MessageSquare } from "lucide-react";
 
 export default function WatchPage({ params }) {
     // Unwrap params in Next.js 15
@@ -112,6 +112,14 @@ export default function WatchPage({ params }) {
                     </div>
                 </div>
             </div>
+
+            {/* Floating Chat Button */}
+            <Link
+                href="/chatx"
+                className="fixed bottom-6 right-6 w-14 h-14 bg-gradient-to-br from-primary to-blue-600 rounded-full flex items-center justify-center shadow-lg shadow-primary/30 hover:scale-110 active:scale-95 transition-all z-50 md:hidden"
+            >
+                <MessageSquare size={24} className="text-white" />
+            </Link>
         </main>
     );
 }

@@ -121,7 +121,7 @@ export default function LeaderboardPage() {
     }
 
     return (
-        <main className="min-h-screen bg-background pb-28 safe-bottom">
+        <main className="min-h-screen bg-background pb-32 safe-bottom">
             <Header />
             <div className="aurora-bg" />
 
