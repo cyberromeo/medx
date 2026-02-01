@@ -1,6 +1,7 @@
 import "./app.css";
 import { Inter, Outfit } from "next/font/google";
 import MobileNav from "@/components/MobileNav";
+import { Analytics } from '@vercel/analytics/next';
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const outfit = Outfit({ subsets: ["latin"], variable: "--font-outfit" });
@@ -21,6 +22,7 @@ export default function RootLayout({ children }) {
       <body className={`${inter.variable} ${outfit.variable} antialiased bg-background text-foreground`}>
         {children}
         <MobileNav />
+        <Analytics />
       </body>
     </html>
   );
