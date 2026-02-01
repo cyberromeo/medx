@@ -1,75 +1,62 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, LayoutDashboard, Trophy, MessageSquare } from "lucide-react";
-import { useEffect, useState } from "react";
+import { LayoutDashboard, Trophy, MessageSquare } from "lucide-react";
 import { motion } from "framer-motion";
 
 export default function MobileNav() {
     const pathname = usePathname();
-    const [isVisible, setIsVisible] = useState(true);
-    const [lastScrollY, setLastScrollY] = useState(0);
-
-    useEffect(() => {
-        const handleScroll = () => {
-            const currentScrollY = window.scrollY;
-            if (currentScrollY < 10 || currentScrollY < lastScrollY) {
-                setIsVisible(true);
-            } else {
-                setIsVisible(false);
-            }
-            setLastScrollY(currentScrollY);
-        };
-
-        window.addEventListener("scroll", handleScroll, { passive: true });
-        return () => window.removeEventListener("scroll", handleScroll);
-    }, [lastScrollY]);
 
     // Hide on login page or landing
     if (pathname === '/login' || pathname === '/') return null;
 
     const navItems = [
-        { name: "Home", href: "/dashboard", icon: LayoutDashboard },
+        { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
         { name: "Chat", href: "/chatx", icon: MessageSquare },
-        { name: "Rank", href: "/leaderboard", icon: Trophy },
+        { name: "Leaderboard", href: "/leaderboard", icon: Trophy },
     ];
 
     return (
-        <motion.div
+        <motion.nav
             initial={{ y: 100 }}
-            animate={{ y: isVisible ? 0 : 100 }}
-            transition={{ type: "spring", stiffness: 400, damping: 35 }}
-            className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 md:hidden"
+            animate={{ y: 0 }}
+            transition={{ type: "spring", stiffness: 300, damping: 30 }}
+            className="fixed bottom-0 left-0 right-0 z-50 md:hidden"
         >
-            {/* Premium pill nav with glow */}
-            <nav className="flex items-center gap-1.5 px-3 py-2 rounded-full nav-pill-glow shadow-2xl">
-                {navItems.map((link) => {
-                    const Icon = link.icon;
-                    const isActive = pathname.startsWith(link.href);
+            {/* Clean glass dock */}
+            <div className="bg-black/90 backdrop-blur-2xl border-t border-white/10 safe-bottom">
+                <div className="flex items-stretch justify-around">
+                    {navItems.map((link) => {
+                        const Icon = link.icon;
+                        const isActive = pathname.startsWith(link.href);
 
-                    return (
-                        <Link
-                            key={link.name}
-                            href={link.href}
-                            className={`relative flex items-center justify-center w-12 h-12 rounded-full transition-all duration-200 active:scale-90 ${isActive
-                                ? 'nav-item-active text-primary'
-                                : 'text-gray-500 active:bg-white/5'
-                                }`}
-                        >
-                            <Icon size={20} strokeWidth={isActive ? 2.2 : 1.8} />
-
-                            {/* Active dot */}
-                            {isActive && (
-                                <motion.span
-                                    layoutId="navDot"
-                                    className="absolute -bottom-0.5 w-1 h-1 bg-primary rounded-full"
-                                    transition={{ type: "spring", stiffness: 500, damping: 30 }}
-                                />
-                            )}
-                        </Link>
-                    );
-                })}
-            </nav>
-        </motion.div>
+                        return (
+                            <Link
+                                key={link.name}
+                                href={link.href}
+                                className={`flex-1 flex flex-col items-center justify-center gap-1 py-3 transition-all duration-200 active:scale-95 ${isActive
+                                        ? 'text-primary'
+                                        : 'text-gray-500 active:text-gray-400'
+                                    }`}
+                            >
+                                <div className={`relative ${isActive ? 'scale-110' : ''} transition-transform`}>
+                                    <Icon size={22} strokeWidth={isActive ? 2.2 : 1.8} />
+                                    {isActive && (
+                                        <motion.div
+                                            layoutId="navGlow"
+                                            className="absolute -inset-2 bg-primary/20 rounded-full blur-md -z-10"
+                                            transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                                        />
+                                    )}
+                                </div>
+                                <span className={`text-[10px] font-medium ${isActive ? 'text-primary' : 'text-gray-500'}`}>
+                                    {link.name}
+                                </span>
+                            </Link>
+                        );
+                    })}
+                </div>
+            </div>
+        </motion.nav>
     );
 }

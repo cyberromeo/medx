@@ -39,31 +39,38 @@ export default function Header() {
         { name: "About", href: "/#about" },
     ];
 
-    // Compact mobile header - just logo pill
-    const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
-
     return (
         <motion.header
             initial={{ y: -100 }}
             animate={{ y: 0 }}
             className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? 'py-2' : 'py-3'}`}
         >
-            <div className="container mx-auto px-3 md:px-4">
-                {/* Mobile: Compact pill header */}
-                <div className="md:hidden flex justify-center">
-                    <Link
-                        href={user ? "/dashboard" : "/"}
-                        className={`flex items-center gap-2 px-4 py-2 rounded-full transition-all duration-300 ${scrolled
-                                ? 'bg-black/70 backdrop-blur-xl border border-white/10'
-                                : 'bg-black/40 backdrop-blur-md border border-transparent'
-                            }`}
-                    >
-                        <div className="bg-gradient-to-tr from-primary to-secondary p-1.5 rounded-lg">
-                            <Stethoscope size={14} className="text-white" />
-                        </div>
-                        <span className="font-bold text-sm text-white">MedX</span>
-                    </Link>
+            <div className="container mx-auto px-4 md:px-4">
+                {/* Mobile: Clean full-width header */}
+                <div className="md:hidden">
+                    <div className={`flex items-center justify-between px-4 py-2.5 rounded-2xl transition-all duration-300 ${scrolled
+                            ? 'bg-black/80 backdrop-blur-xl border border-white/5'
+                            : 'bg-transparent'
+                        }`}>
+                        <Link href={user ? "/dashboard" : "/"} className="flex items-center gap-2.5">
+                            <div className="bg-gradient-to-tr from-primary to-secondary p-2 rounded-xl shadow-lg shadow-primary/20">
+                                <Stethoscope size={18} className="text-white" />
+                            </div>
+                            <span className="font-display font-bold text-lg text-white">MedX</span>
+                        </Link>
+
+                        {user && (
+                            <button
+                                onClick={handleLogout}
+                                className="w-9 h-9 flex items-center justify-center rounded-xl bg-white/5 text-gray-400 hover:text-red-400 hover:bg-red-500/10 transition-all active:scale-95"
+                                title="Logout"
+                            >
+                                <LogOut size={18} />
+                            </button>
+                        )}
+                    </div>
                 </div>
+
 
                 {/* Desktop: Full header */}
                 <div className={`hidden md:flex mx-auto max-w-5xl glass rounded-full px-6 py-3 items-center justify-between transition-all duration-300 ${scrolled ? 'bg-black/60 backdrop-blur-xl' : 'bg-black/20 border-transparent'}`}>
