@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { account } from "@/lib/appwrite";
-import { Menu, X, Stethoscope, ChevronRight, Trophy, LogOut } from "lucide-react";
+import { Menu, X, Stethoscope, ChevronRight, Trophy, LogOut, MessageSquare } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function Header() {
@@ -37,7 +37,6 @@ export default function Header() {
     const navLinks = [
         { name: "Features", href: "/#features" },
         { name: "About", href: "/#about" },
-        { name: "ChatX", href: "/chatx" },
     ];
 
     return (
@@ -59,7 +58,7 @@ export default function Header() {
 
                     {/* Desktop Nav */}
                     <nav className="hidden md:flex items-center gap-8">
-                        {navLinks.map(link => (
+                        {!user && navLinks.map(link => (
                             <Link key={link.name} href={link.href} className="text-sm font-medium text-gray-400 hover:text-white transition-colors">
                                 {link.name}
                             </Link>
@@ -70,6 +69,10 @@ export default function Header() {
                     <div className="hidden md:flex items-center gap-4">
                         {user ? (
                             <>
+                                <Link href="/chatx" className="flex items-center gap-2 text-gray-400 hover:text-primary transition-colors">
+                                    <MessageSquare size={18} />
+                                    <span className="text-sm font-medium">ChatX</span>
+                                </Link>
                                 <Link href="/leaderboard" className="flex items-center gap-2 text-gray-400 hover:text-yellow-400 transition-colors">
                                     <Trophy size={18} />
                                     <span className="text-sm font-medium">Leaderboard</span>
@@ -113,7 +116,7 @@ export default function Header() {
                         exit={{ opacity: 0, scale: 0.95 }}
                         className="absolute top-24 left-4 right-4 p-4 glass-panel rounded-2xl md:hidden flex flex-col gap-4 text-center"
                     >
-                        {navLinks.map(link => (
+                        {!user && navLinks.map(link => (
                             <Link key={link.name} href={link.href} onClick={() => setIsOpen(false)} className="text-lg font-medium text-gray-300 hover:text-white py-2">
                                 {link.name}
                             </Link>
