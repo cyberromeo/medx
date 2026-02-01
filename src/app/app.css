@@ -1,20 +1,418 @@
 @import "tailwindcss";
 
-summary::-webkit-details-marker {
-  display: none
+:root {
+  /* Deep Space Glass Theme */
+  --background: #000205;
+  /* Pitch black with hint of blue */
+  --foreground: #ffffff;
+
+  /* Neon Accents */
+  --primary: #00f0ff;
+  /* Cyber Blue */
+  --primary-glow: rgba(0, 240, 255, 0.5);
+
+  --secondary: #7000ff;
+  /* Deep Neon Purple */
+  --secondary-glow: rgba(112, 0, 255, 0.5);
+
+  --surface: rgba(255, 255, 255, 0.03);
+  --surface-hover: rgba(255, 255, 255, 0.08);
+
+  --border: rgba(255, 255, 255, 0.1);
+  --border-light: rgba(255, 255, 255, 0.2);
+
+  --font-sans: 'Inter', sans-serif;
+  --font-display: 'Outfit', sans-serif;
 }
 
-.checker-background::before {
-  content: "";
-  position: absolute;
+body {
+  background: radial-gradient(circle at 50% 0%, #0a101f 0%, #000205 100%);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  overflow-x: hidden;
+}
+
+/* Glass Utilities */
+.glass {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+}
+
+.glass-card {
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.01) 100%);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--border);
+  box-shadow:
+    0 4px 24px -1px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.1);
+}
+
+.glass-icon {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.02) 100%);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow:
+    0 8px 32px 0 rgba(0, 0, 0, 0.37),
+    inset 0 2px 0 0 rgba(255, 255, 255, 0.1);
+}
+
+.text-glow {
+  text-shadow: 0 0 20px rgba(0, 240, 255, 0.5);
+}
+
+.aurora-bg {
+  position: fixed;
   top: 0;
-  right: 0;
-  bottom: 0;
   left: 0;
-  background-image: linear-gradient(#e6e6e690 1px, transparent 1px),
-    linear-gradient(90deg, #e6e6e690 1px, transparent 1px);
-  background-size: 3.7em 3.7em;
-  mask-image: radial-gradient(ellipse at 50% 40%, black 0%, transparent 55%);
+  width: 100vw;
+  height: 100vh;
   z-index: -1;
-  background-position-x: center;
+  background:
+    radial-gradient(circle at 10% 20%, rgba(0, 240, 255, 0.08), transparent 40%),
+    radial-gradient(circle at 90% 50%, rgba(112, 0, 255, 0.08), transparent 40%),
+    radial-gradient(circle at 50% 80%, rgba(0, 60, 255, 0.08), transparent 40%);
+  filter: blur(60px);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--background);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--surface-light);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--secondary);
+}
+
+/* Glass Panel - Main container style */
+.glass-panel {
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow:
+    0 8px 32px 0 rgba(0, 0, 0, 0.37),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.05);
+}
+
+.glass-panel:hover {
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+/* Text Gradient */
+.text-gradient {
+  background: linear-gradient(135deg, #00f0ff 0%, #7000ff 50%, #00f0ff 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: textShine 3s linear infinite;
+}
+
+@keyframes textShine {
+  to {
+    background-position: 200% center;
+  }
+}
+
+/* Animated Aurora Background */
+.aurora-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -1;
+  background:
+    radial-gradient(circle at 10% 20%, rgba(0, 240, 255, 0.08), transparent 40%),
+    radial-gradient(circle at 90% 50%, rgba(112, 0, 255, 0.08), transparent 40%),
+    radial-gradient(circle at 50% 80%, rgba(0, 60, 255, 0.08), transparent 40%);
+  filter: blur(60px);
+  animation: auroraMove 20s ease-in-out infinite alternate;
+}
+
+@keyframes auroraMove {
+  0% {
+    transform: translate(0, 0) scale(1);
+  }
+
+  25% {
+    transform: translate(-2%, 2%) scale(1.02);
+  }
+
+  50% {
+    transform: translate(2%, -1%) scale(0.98);
+  }
+
+  75% {
+    transform: translate(-1%, -2%) scale(1.01);
+  }
+
+  100% {
+    transform: translate(1%, 1%) scale(1);
+  }
+}
+
+/* Shimmer Loading Animation */
+.shimmer {
+  background: linear-gradient(90deg,
+      rgba(255, 255, 255, 0.03) 0%,
+      rgba(255, 255, 255, 0.08) 50%,
+      rgba(255, 255, 255, 0.03) 100%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Floating Animation */
+.float {
+  animation: float 6s ease-in-out infinite;
+}
+
+@keyframes float {
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+/* Pulse Glow */
+.pulse-glow {
+  animation: pulseGlow 2s ease-in-out infinite;
+}
+
+@keyframes pulseGlow {
+
+  0%,
+  100% {
+    box-shadow: 0 0 20px rgba(0, 240, 255, 0.2);
+  }
+
+  50% {
+    box-shadow: 0 0 40px rgba(0, 240, 255, 0.4);
+  }
+}
+
+/* Smooth Scale on Hover */
+.hover-lift {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+}
+
+/* Focus Ring */
+input:focus,
+button:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(0, 240, 255, 0.3);
+}
+
+/* Selection */
+::selection {
+  background: rgba(0, 240, 255, 0.3);
+  color: white;
+}
+
+/* ============ MOBILE OPTIMIZATIONS ============ */
+
+/* Safe area padding for notched devices */
+@supports (padding: max(0px)) {
+  .safe-bottom {
+    padding-bottom: max(1rem, env(safe-area-inset-bottom));
+  }
+
+  .safe-top {
+    padding-top: max(0px, env(safe-area-inset-top));
+  }
+}
+
+/* Touch-friendly minimum sizes */
+.touch-target {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+/* Mobile-optimized glass panel */
+@media (max-width: 640px) {
+  .glass-panel {
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+
+  /* Reduce padding on mobile */
+  .container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  /* Reduce aurora blur for performance */
+  .aurora-bg {
+    filter: blur(40px);
+  }
+
+  /* Disable heavy animations on mobile for performance */
+  .float {
+    animation: none;
+  }
+
+  /* Compact glass panels */
+  .glass-panel-compact {
+    padding: 0.75rem;
+  }
+
+  /* Better text sizes for mobile readability */
+  .mobile-text-sm {
+    font-size: 0.875rem;
+  }
+
+  .mobile-text-xs {
+    font-size: 0.75rem;
+  }
+}
+
+/* Bottom navigation safe area */
+.bottom-nav {
+  padding-bottom: env(safe-area-inset-bottom, 0.5rem);
+}
+
+/* Horizontal scroll container for mobile */
+.scroll-snap-x {
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+}
+
+.scroll-snap-item {
+  scroll-snap-align: start;
+}
+
+/* Hide scrollbar for horizontal scroll areas */
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Mobile card stack layout */
+.mobile-stack>*+* {
+  margin-top: 0.75rem;
+}
+
+/* Prevent text overflow on mobile */
+.mobile-truncate {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Mobile-friendly button group */
+.mobile-btn-group {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 640px) {
+  .mobile-btn-group>* {
+    flex: 1;
+    min-width: 45%;
+  }
+}
+
+/* Improved focus states for touch */
+@media (hover: none) and (pointer: coarse) {
+  .glass-panel:active {
+    background: rgba(255, 255, 255, 0.08);
+    transform: scale(0.98);
+    transition: transform 0.1s ease;
+  }
+
+  button:active {
+    transform: scale(0.97);
+    transition: transform 0.1s ease;
+  }
+}
+
+/* Pull-to-refresh visual indicator space */
+.pull-refresh-space {
+  min-height: env(safe-area-inset-top, 0);
+}
+
+/* Compact stat cards for mobile */
+@media (max-width: 640px) {
+  .stat-card-compact {
+    padding: 0.75rem;
+  }
+
+  .stat-card-compact .stat-icon {
+    width: 2rem;
+    height: 2rem;
+  }
+
+  .stat-card-compact .stat-value {
+    font-size: 1.25rem;
+  }
+
+  .stat-card-compact .stat-label {
+    font-size: 0.625rem;
+  }
+}
+
+/* Video player mobile optimizations */
+@media (max-width: 768px) {
+  .video-container {
+    border-radius: 0;
+    margin-left: -1rem;
+    margin-right: -1rem;
+    width: calc(100% + 2rem);
+  }
+}
+
+/* Mobile playlist horizontal scroll */
+@media (max-width: 768px) {
+  .playlist-scroll {
+    display: flex;
+    overflow-x: auto;
+    gap: 0.75rem;
+    padding-bottom: 0.5rem;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .playlist-scroll>* {
+    flex-shrink: 0;
+    width: 280px;
+    scroll-snap-align: start;
+  }
 }
