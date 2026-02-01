@@ -31,9 +31,9 @@ export default function MobileNav() {
             initial={{ y: 100 }}
             animate={{ y: 0 }}
             transition={{ type: "spring", stiffness: 300, damping: 30 }}
-            className="fixed bottom-6 left-6 right-6 z-50 md:hidden"
+            className="fixed bottom-4 left-4 right-4 z-50 md:hidden"
         >
-            <div className="bg-black/80 backdrop-blur-2xl border border-white/10 rounded-2xl shadow-2xl p-1">
+            <div className="bg-black/90 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl p-1">
                 <div className="flex items-center justify-around">
                     {navItems.map((link) => {
                         const Icon = link.icon;
@@ -43,7 +43,7 @@ export default function MobileNav() {
                             <Link
                                 key={link.name}
                                 href={link.href}
-                                className={`flex-1 flex flex-col items-center justify-center gap-1 py-3 px-2 rounded-xl transition-all duration-200 active:scale-95 ${isActive
+                                className={`flex-1 flex flex-col items-center justify-center gap-1 py-2 rounded-xl transition-all duration-200 active:scale-95 ${isActive
                                     ? 'bg-white/10 text-white shadow-inner'
                                     : 'text-gray-400 hover:text-white'
                                     }`}
