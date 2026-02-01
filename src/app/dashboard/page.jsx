@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Header from "@/components/Header";
 import { motion, AnimatePresence } from "framer-motion";
-import { Trophy, Flame, Target, Star, Zap, ArrowRight, X, ChevronLeft, Search } from "lucide-react";
+import { Trophy, Flame, Target, Star, Zap, ArrowRight, X, ChevronLeft } from "lucide-react";
 import SeriesCard from "@/components/SeriesCard";
 import { getProgress, calculateLevel, getXpToNextLevel } from "@/lib/progress";
 
@@ -179,32 +179,15 @@ export default function Dashboard() {
             <div className="mesh-bg" />
             <div className="aurora-bg" />
 
-            <div className="container mx-auto px-4 sm:px-6 pt-20 sm:pt-32">
-                {/* Mobile: Search Bar */}
-                <div className="md:hidden mb-6">
-                    <div className="relative">
-                        <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500" />
-                        <input
-                            type="text"
-                            placeholder="Search subjects..."
-                            className="w-full bg-[#1a1a2e]/80 border border-white/5 rounded-xl pl-11 pr-4 py-3 text-base text-white placeholder-gray-500 focus:outline-none focus:border-primary/30 transition-colors"
-                        />
-                    </div>
-                </div>
-
-                {/* Section Title: Subjects */}
-                <div className="flex items-center justify-between mb-4 md:hidden">
-                    <h2 className="text-lg font-semibold text-white">Subjects</h2>
-                    <span className="text-sm text-gray-500">See All</span>
-                </div>
-
-                {/* Desktop Header */}
+            <div className="container mx-auto px-4 sm:px-6 pt-24 sm:pt-32">
+                {/* Gamified Header */}
                 <motion.div
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="mb-8 hidden md:block"
+                    className="mb-8"
                 >
                     <div className="flex flex-col gap-6">
+                        {/* Header Section */}
                         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 sm:gap-6">
                             <div className="flex-1">
                                 <h1 className="hero-text text-2xl sm:text-4xl mb-1">
@@ -214,7 +197,7 @@ export default function Dashboard() {
                             </div>
                         </div>
 
-                        {/* Desktop Stats Row */}
+                        {/* Top Stats Row: Level & Rank */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             {/* Level Badge */}
                             <div className="glass-panel px-4 py-3 sm:px-6 sm:py-4 rounded-2xl flex items-center gap-4">
@@ -260,62 +243,12 @@ export default function Dashboard() {
                     </div>
                 </motion.div>
 
-                {/* Mobile: Progress Card */}
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="md:hidden mb-6"
-                >
-                    <div className="flex items-center justify-between mb-3">
-                        <h2 className="text-lg font-semibold text-white">Progress</h2>
-                        <Link href="/leaderboard" className="text-sm text-gray-500">All Stats</Link>
-                    </div>
-
-                    <div className="bg-[#1a1a2e]/80 border border-white/5 rounded-2xl p-4">
-                        <h3 className="text-xl font-bold text-white mb-2">Track Your Journey</h3>
-                        <p className="text-gray-500 text-sm mb-4">Keep learning daily to build your streak</p>
-
-                        {/* Horizontal Stats Row */}
-                        <div className="flex items-center gap-4 overflow-x-auto pb-2 -mx-1 px-1">
-                            <div className="flex items-center gap-2 bg-white/5 rounded-xl px-3 py-2 shrink-0">
-                                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-400 flex items-center justify-center">
-                                    <Star className="text-white" size={14} />
-                                </div>
-                                <div>
-                                    <p className="text-white font-bold text-sm">{progress.xp}</p>
-                                    <p className="text-gray-500 text-[10px]">XP</p>
-                                </div>
-                            </div>
-
-                            <div className="flex items-center gap-2 bg-white/5 rounded-xl px-3 py-2 shrink-0">
-                                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center">
-                                    <Flame className="text-white" size={14} />
-                                </div>
-                                <div>
-                                    <p className="text-white font-bold text-sm">{progress.streak}</p>
-                                    <p className="text-gray-500 text-[10px]">Streak</p>
-                                </div>
-                            </div>
-
-                            <div className="flex items-center gap-2 bg-white/5 rounded-xl px-3 py-2 shrink-0">
-                                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-green-500 to-emerald-400 flex items-center justify-center">
-                                    <Target className="text-white" size={14} />
-                                </div>
-                                <div>
-                                    <p className="text-white font-bold text-sm">{totalWatched}/{totalVideos}</p>
-                                    <p className="text-gray-500 text-[10px]">Done</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </motion.div>
-
-                {/* Desktop: Stats Grid */}
+                {/* Stats Grid */}
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.1 }}
-                    className="hidden md:grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-8 sm:mb-10"
+                    className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-8 sm:mb-10"
                 >
                     {/* Total XP */}
                     <div className="card-premium p-4">

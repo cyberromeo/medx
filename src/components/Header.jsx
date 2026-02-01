@@ -46,38 +46,28 @@ export default function Header() {
             className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? 'py-2' : 'py-3'}`}
         >
             <div className="container mx-auto px-4 md:px-4">
-                {/* Mobile: User greeting header */}
+                {/* Mobile: Clean full-width header */}
                 <div className="md:hidden">
-                    <div className="flex items-center justify-between px-4 py-3">
-                        <div className="flex items-center gap-3">
-                            {/* Avatar */}
-                            <div className="w-11 h-11 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center border-2 border-amber-400/30 shadow-lg">
-                                {user ? (
-                                    <span className="text-white font-bold text-base">
-                                        {user.name?.charAt(0)?.toUpperCase() || 'U'}
-                                    </span>
-                                ) : (
-                                    <Stethoscope size={18} className="text-white" />
-                                )}
+                    <div className={`flex items-center justify-between px-4 py-2.5 rounded-2xl transition-all duration-300 ${scrolled
+                            ? 'bg-black/80 backdrop-blur-xl border border-white/5'
+                            : 'bg-transparent'
+                        }`}>
+                        <Link href={user ? "/dashboard" : "/"} className="flex items-center gap-2.5">
+                            <div className="bg-gradient-to-tr from-primary to-secondary p-2 rounded-xl shadow-lg shadow-primary/20">
+                                <Stethoscope size={18} className="text-white" />
                             </div>
+                            <span className="font-display font-bold text-lg text-white">MedX</span>
+                        </Link>
 
-                            {/* Greeting */}
-                            <div>
-                                <p className="text-gray-400 text-xs">Good Day 👋</p>
-                                <p className="text-white font-semibold text-base">
-                                    {user?.name || 'Guest'}
-                                </p>
-                            </div>
-                        </div>
-
-                        {/* Settings */}
-                        <button
-                            onClick={handleLogout}
-                            className="w-10 h-10 flex items-center justify-center rounded-full bg-white/5 border border-white/10 text-gray-400 hover:text-white hover:bg-white/10 transition-all active:scale-95"
-                            title="Settings"
-                        >
-                            <LogOut size={18} />
-                        </button>
+                        {user && (
+                            <button
+                                onClick={handleLogout}
+                                className="w-9 h-9 flex items-center justify-center rounded-xl bg-white/5 text-gray-400 hover:text-red-400 hover:bg-red-500/10 transition-all active:scale-95"
+                                title="Logout"
+                            >
+                                <LogOut size={18} />
+                            </button>
+                        )}
                     </div>
                 </div>
 
