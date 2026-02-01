@@ -61,7 +61,7 @@ export default function CustomPlayer({ videoId, thumbnail, onEnded }) {
                         videoId: validId,
                         playerVars: {
                             autoplay: 1,
-                            controls: 0, // HIDE YouTube controls
+                            controls: 0,
                             disablekb: 1,
                             modestbranding: 1,
                             rel: 0,
@@ -70,6 +70,8 @@ export default function CustomPlayer({ videoId, thumbnail, onEnded }) {
                             iv_load_policy: 3,
                             cc_load_policy: 0,
                             enablejsapi: 1,
+                            playsinline: 1,
+                            origin: typeof window !== 'undefined' ? window.location.origin : '',
                         },
                         events: {
                             onReady: (event) => {
@@ -215,18 +217,31 @@ export default function CustomPlayer({ videoId, thumbnail, onEnded }) {
 
             {/* ===== YOUTUBE IFRAME CONTAINER ===== */}
             {status !== "idle" && (
-                <div className="absolute inset-0 z-10">
-                    <div id={`medx-player-${validId}`} className="w-full h-full" />
+                <div className="absolute inset-0 z-10 overflow-hidden">
+                    {/* Scale up iframe slightly to crop out bottom YouTube branding */}
+                    <div
+                        id={`medx-player-${validId}`}
+                        className="absolute top-0 left-0 w-full h-full"
+                        style={{
+                            transform: 'scale(1.01)',
+                            transformOrigin: 'center center',
+                        }}
+                    />
                 </div>
             )}
 
             {/* ===== INTERACTION SHIELD ===== */}
-            {/* Blocks all mouse events on YouTube iframe */}
+            {/* Blocks all mouse/touch events on YouTube iframe and hides branding */}
             {status !== "idle" && (
                 <div
                     className="absolute inset-0 z-30 cursor-pointer"
                     onClick={togglePlay}
-                />
+                >
+                    {/* Top gradient to hide YouTube title/channel info */}
+                    <div className="absolute top-0 left-0 right-0 h-20 bg-gradient-to-b from-black/60 to-transparent pointer-events-none" />
+                    {/* Bottom gradient to hide YouTube logo/watermark */}
+                    <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-black/60 to-transparent pointer-events-none" />
+                </div>
             )}
 
             {/* ===== INITIAL OVERLAY (Before Play) ===== */}

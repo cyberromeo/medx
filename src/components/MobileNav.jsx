@@ -7,8 +7,14 @@ import { motion } from "framer-motion";
 export default function MobileNav() {
     const pathname = usePathname();
 
-    // Hide on login page, landing, or chat (chat has its own header)
-    if (pathname === '/login' || pathname === '/' || pathname === '/chatx') return null;
+    // Hide on login, landing, chat, watch, and series pages
+    if (
+        pathname === '/login' ||
+        pathname === '/' ||
+        pathname === '/chatx' ||
+        pathname.startsWith('/watch/') ||
+        pathname.startsWith('/series/')
+    ) return null;
 
     const navItems = [
         { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
