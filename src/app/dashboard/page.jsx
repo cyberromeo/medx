@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Header from "@/components/Header";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronDown, Trophy, Flame, Target, Star, Zap } from "lucide-react";
+import { Trophy, Flame, Target, Star, Zap, ArrowRight, X, ChevronLeft } from "lucide-react";
 import SeriesCard from "@/components/SeriesCard";
 import { getProgress, calculateLevel, getXpToNextLevel } from "@/lib/progress";
 
@@ -15,7 +15,7 @@ export default function Dashboard() {
     const [user, setUser] = useState(null);
     const [videos, setVideos] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [expandedCategory, setExpandedCategory] = useState(null);
+    const [selectedCategory, setSelectedCategory] = useState(null); // null, 'MIST', or 'ARISE'
     const [progress, setProgress] = useState({ watched: [], xp: 0, streak: 0, lastWatch: null });
     const router = useRouter();
 
@@ -40,7 +40,6 @@ export default function Dashboard() {
             const current = await account.get();
             setUser(current);
             await fetchVideos();
-            // Fetch progress from Appwrite
             const userProgress = await getProgress(current.$id);
             setProgress(userProgress);
         } catch {
@@ -62,10 +61,6 @@ export default function Dashboard() {
         }
     };
 
-    const toggleCategory = (category) => {
-        setExpandedCategory(expandedCategory === category ? null : category);
-    };
-
     const countVideos = (category) => {
         return videos.filter(v => v.category === category).length;
     };
@@ -78,6 +73,15 @@ export default function Dashboard() {
         const total = countVideos(category);
         const watched = countWatched(category);
         return total > 0 ? Math.round((watched / total) * 100) : 0;
+    };
+
+    const getSubCategoryProgress = (category, subCategory) => {
+        const subVideos = videos.filter(v =>
+            v.category === category &&
+            v.subCategory?.toLowerCase() === subCategory.toLowerCase()
+        );
+        const watched = subVideos.filter(v => progress.watched.includes(v.$id)).length;
+        return subVideos.length > 0 ? Math.round((watched / subVideos.length) * 100) : 0;
     };
 
     const level = calculateLevel(progress.xp);
@@ -109,13 +113,64 @@ export default function Dashboard() {
         hidden: { opacity: 0 },
         show: {
             opacity: 1,
-            transition: { staggerChildren: 0.05 }
+            transition: { staggerChildren: 0.03 }
         }
     };
 
     const item = {
-        hidden: { opacity: 0, y: 20 },
+        hidden: { opacity: 0, y: 15 },
         show: { opacity: 1, y: 0 }
+    };
+
+    // Category Card Component
+    const CategoryCard = ({ name, color, gradient, shadowColor }) => {
+        const categoryProgress = getCategoryProgress(name);
+        const watched = countWatched(name);
+        const total = countVideos(name);
+
+        return (
+            <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="glass-panel p-5 md:p-6 rounded-2xl md:rounded-3xl"
+            >
+                <div className="flex items-center gap-4 mb-4">
+                    <div className={`w-12 h-12 md:w-14 md:h-14 rounded-xl md:rounded-2xl bg-gradient-to-br ${gradient} flex items-center justify-center text-xl md:text-2xl font-bold text-white shadow-lg ${shadowColor}`}>
+                        {name.charAt(0)}
+                    </div>
+                    <div className="flex-1">
+                        <h2 className="text-lg md:text-xl font-bold text-white">{name}</h2>
+                        <p className="text-xs text-gray-500">{watched}/{total} videos • 19 subjects</p>
+                    </div>
+                </div>
+
+                {/* Progress Bar */}
+                <div className="mb-4">
+                    <div className="w-full h-1.5 bg-white/10 rounded-full overflow-hidden">
+                        <motion.div
+                            initial={{ width: 0 }}
+                            animate={{ width: `${categoryProgress}%` }}
+                            transition={{ duration: 0.8, delay: 0.2 }}
+                            className={`h-full bg-gradient-to-r ${gradient} rounded-full`}
+                        />
+                    </div>
+                    <p className="text-[10px] text-gray-600 mt-1 text-right">{categoryProgress}% complete</p>
+                </div>
+
+                {/* Open Button */}
+                <button
+                    onClick={() => setSelectedCategory(name)}
+                    className={`w-full py-3 rounded-xl border ${color} bg-${color.split('-')[1]}-500/10 text-white font-medium text-sm flex items-center justify-center gap-2 hover:bg-${color.split('-')[1]}-500/20 transition-all active:scale-[0.98]`}
+                    style={{
+                        backgroundColor: name === 'MIST' ? 'rgba(59, 130, 246, 0.1)' : 'rgba(168, 85, 247, 0.1)',
+                        borderColor: name === 'MIST' ? 'rgba(59, 130, 246, 0.3)' : 'rgba(168, 85, 247, 0.3)',
+                    }}
+                >
+                    <span>Open {name}</span>
+                    <ArrowRight size={16} />
+                </button>
+            </motion.div>
+        );
     };
 
     return (
@@ -180,7 +235,7 @@ export default function Dashboard() {
                                     <p className="text-xs text-gray-500">Check your global ranking</p>
                                 </div>
                                 <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-white/10 transition-colors">
-                                    <ChevronDown className="-rotate-90 text-gray-400" size={16} />
+                                    <ArrowRight className="text-gray-400" size={16} />
                                 </div>
                             </Link>
                         </div>
@@ -248,176 +303,86 @@ export default function Dashboard() {
                     </div>
                 </motion.div>
 
-                {/* Category Cards */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto mb-12">
-                    {/* MIST Card */}
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.2 }}
-                    >
-                        <button
-                            onClick={() => toggleCategory('MIST')}
-                            className={`w-full glass-panel p-6 rounded-3xl text-left transition-all duration-500 group hover:border-blue-500/30 ${expandedCategory === 'MIST' ? 'border-blue-500/50 bg-blue-500/5' : ''}`}
-                        >
-                            <div className="flex items-center justify-between mb-4">
-                                <div className="flex items-center gap-4">
-                                    <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center text-2xl font-bold text-white shadow-lg shadow-blue-500/25 group-hover:scale-110 transition-transform">
-                                        M
-                                    </div>
-                                    <div>
-                                        <h2 className="text-xl font-bold text-white">MIST</h2>
-                                        <p className="text-xs text-gray-400">{countWatched('MIST')}/{countVideos('MIST')} videos • 19 subjects</p>
-                                    </div>
-                                </div>
-                                <motion.div
-                                    animate={{ rotate: expandedCategory === 'MIST' ? 180 : 0 }}
-                                    transition={{ duration: 0.3 }}
-                                >
-                                    <ChevronDown className="text-gray-400 group-hover:text-blue-400 transition-colors" size={24} />
-                                </motion.div>
-                            </div>
-                            {/* Progress Bar */}
-                            <div className="relative">
-                                <div className="w-full h-2 bg-white/10 rounded-full overflow-hidden">
-                                    <motion.div
-                                        initial={{ width: 0 }}
-                                        animate={{ width: `${getCategoryProgress('MIST')}%` }}
-                                        transition={{ duration: 0.8, delay: 0.3 }}
-                                        className="h-full bg-gradient-to-r from-blue-400 to-blue-600 rounded-full"
-                                    />
-                                </div>
-                                <p className="text-xs text-gray-500 mt-1 text-right">{getCategoryProgress('MIST')}% complete</p>
-                            </div>
-                        </button>
-                    </motion.div>
-
-                    {/* ARISE Card */}
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.3 }}
-                    >
-                        <button
-                            onClick={() => toggleCategory('ARISE')}
-                            className={`w-full glass-panel p-6 rounded-3xl text-left transition-all duration-500 group hover:border-purple-500/30 ${expandedCategory === 'ARISE' ? 'border-purple-500/50 bg-purple-500/5' : ''}`}
-                        >
-                            <div className="flex items-center justify-between mb-4">
-                                <div className="flex items-center gap-4">
-                                    <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-purple-500 to-purple-700 flex items-center justify-center text-2xl font-bold text-white shadow-lg shadow-purple-500/25 group-hover:scale-110 transition-transform">
-                                        A
-                                    </div>
-                                    <div>
-                                        <h2 className="text-xl font-bold text-white">ARISE</h2>
-                                        <p className="text-xs text-gray-400">{countWatched('ARISE')}/{countVideos('ARISE')} videos • 19 subjects</p>
-                                    </div>
-                                </div>
-                                <motion.div
-                                    animate={{ rotate: expandedCategory === 'ARISE' ? 180 : 0 }}
-                                    transition={{ duration: 0.3 }}
-                                >
-                                    <ChevronDown className="text-gray-400 group-hover:text-purple-400 transition-colors" size={24} />
-                                </motion.div>
-                            </div>
-                            {/* Progress Bar */}
-                            <div className="relative">
-                                <div className="w-full h-2 bg-white/10 rounded-full overflow-hidden">
-                                    <motion.div
-                                        initial={{ width: 0 }}
-                                        animate={{ width: `${getCategoryProgress('ARISE')}%` }}
-                                        transition={{ duration: 0.8, delay: 0.4 }}
-                                        className="h-full bg-gradient-to-r from-purple-400 to-purple-600 rounded-full"
-                                    />
-                                </div>
-                                <p className="text-xs text-gray-500 mt-1 text-right">{getCategoryProgress('ARISE')}% complete</p>
-                            </div>
-                        </button>
-                    </motion.div>
+                {/* Category Cards with Open Button */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 max-w-3xl mx-auto mb-12">
+                    <CategoryCard
+                        name="MIST"
+                        color="border-blue-500/30"
+                        gradient="from-blue-500 to-blue-700"
+                        shadowColor="shadow-blue-500/25"
+                    />
+                    <CategoryCard
+                        name="ARISE"
+                        color="border-purple-500/30"
+                        gradient="from-purple-500 to-purple-700"
+                        shadowColor="shadow-purple-500/25"
+                    />
                 </div>
-
-                {/* Expanded Content */}
-                <AnimatePresence mode="wait">
-                    {expandedCategory === 'MIST' && (
-                        <motion.section
-                            key="mist"
-                            initial={{ opacity: 0, height: 0 }}
-                            animate={{ opacity: 1, height: 'auto' }}
-                            exit={{ opacity: 0, height: 0 }}
-                            transition={{ duration: 0.4, ease: 'easeInOut' }}
-                            className="overflow-hidden"
-                        >
-                            <div className="py-8">
-                                <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
-                                    <span className="w-2 h-6 bg-blue-500 rounded-full" />
-                                    MIST Subjects
-                                </h3>
-                                <motion.div
-                                    variants={container}
-                                    initial="hidden"
-                                    animate="show"
-                                    className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-6"
-                                >
-                                    {MIST_SUBJECTS.map((subCategory) => {
-                                        const subVideos = videos.filter(v =>
-                                            v.category === "MIST" &&
-                                            v.subCategory?.toLowerCase() === subCategory.toLowerCase()
-                                        );
-                                        return (
-                                            <SeriesCard
-                                                key={subCategory}
-                                                title={subCategory}
-                                                videos={subVideos}
-                                                itemVariants={item}
-                                                watchedIds={progress.watched}
-                                            />
-                                        );
-                                    })}
-                                </motion.div>
-                            </div>
-                        </motion.section>
-                    )}
-
-                    {expandedCategory === 'ARISE' && (
-                        <motion.section
-                            key="arise"
-                            initial={{ opacity: 0, height: 0 }}
-                            animate={{ opacity: 1, height: 'auto' }}
-                            exit={{ opacity: 0, height: 0 }}
-                            transition={{ duration: 0.4, ease: 'easeInOut' }}
-                            className="overflow-hidden"
-                        >
-                            <div className="py-8">
-                                <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
-                                    <span className="w-2 h-6 bg-purple-500 rounded-full" />
-                                    ARISE Subjects
-                                </h3>
-                                <motion.div
-                                    variants={container}
-                                    initial="hidden"
-                                    animate="show"
-                                    className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-6"
-                                >
-                                    {MIST_SUBJECTS.map((subCategory) => {
-                                        const subVideos = videos.filter(v =>
-                                            v.category === "ARISE" &&
-                                            v.subCategory?.toLowerCase() === subCategory.toLowerCase()
-                                        );
-                                        return (
-                                            <SeriesCard
-                                                key={subCategory}
-                                                title={subCategory}
-                                                videos={subVideos}
-                                                itemVariants={item}
-                                                watchedIds={progress.watched}
-                                            />
-                                        );
-                                    })}
-                                </motion.div>
-                            </div>
-                        </motion.section>
-                    )}
-                </AnimatePresence>
             </div>
+
+            {/* Fullscreen Category View */}
+            <AnimatePresence>
+                {selectedCategory && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="fixed inset-0 z-50 bg-background/95 backdrop-blur-xl overflow-y-auto"
+                    >
+                        {/* Header */}
+                        <div className="sticky top-0 z-10 bg-background/80 backdrop-blur-xl border-b border-white/5">
+                            <div className="container mx-auto px-4 py-4 flex items-center gap-4">
+                                <button
+                                    onClick={() => setSelectedCategory(null)}
+                                    className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center hover:bg-white/10 transition-colors"
+                                >
+                                    <ChevronLeft size={20} className="text-white" />
+                                </button>
+                                <div className="flex-1">
+                                    <h1 className="text-lg font-bold text-white">{selectedCategory} Subjects</h1>
+                                    <p className="text-xs text-gray-500">19 subjects • {countVideos(selectedCategory)} videos</p>
+                                </div>
+                                <button
+                                    onClick={() => setSelectedCategory(null)}
+                                    className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center hover:bg-white/10 transition-colors md:hidden"
+                                >
+                                    <X size={20} className="text-white" />
+                                </button>
+                            </div>
+                        </div>
+
+                        {/* Subjects Grid */}
+                        <div className="container mx-auto px-4 py-6">
+                            <motion.div
+                                variants={container}
+                                initial="hidden"
+                                animate="show"
+                                className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 md:gap-4"
+                            >
+                                {MIST_SUBJECTS.map((subCategory) => {
+                                    const subVideos = videos.filter(v =>
+                                        v.category === selectedCategory &&
+                                        v.subCategory?.toLowerCase() === subCategory.toLowerCase()
+                                    );
+                                    const subProgress = getSubCategoryProgress(selectedCategory, subCategory);
+                                    const watchedCount = subVideos.filter(v => progress.watched.includes(v.$id)).length;
+
+                                    return (
+                                        <motion.div key={subCategory} variants={item}>
+                                            <SeriesCard
+                                                title={subCategory}
+                                                videos={subVideos}
+                                                itemVariants={item}
+                                                watchedIds={progress.watched}
+                                            />
+                                        </motion.div>
+                                    );
+                                })}
+                            </motion.div>
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </main>
     );
 }

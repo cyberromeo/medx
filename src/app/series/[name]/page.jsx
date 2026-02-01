@@ -176,35 +176,40 @@ export default function SeriesPlayerPage() {
                             )}
                         </AnimatePresence>
 
-                        <div>
-                            <h1 className="text-2xl md:text-3xl font-bold text-white mb-2 leading-tight">
+                        <div className="space-y-3">
+                            <h1 className="text-xl md:text-3xl font-bold text-white leading-snug">
                                 {currentVideo.title}
                             </h1>
-                            <div className="flex items-center gap-4 text-sm text-gray-400">
-                                <span className="px-2 py-1 bg-primary/10 text-primary rounded text-xs font-bold uppercase tracking-wider">
+                            <div className="flex flex-wrap items-center gap-2 md:gap-3">
+                                <span className="px-2.5 py-1 bg-primary/15 text-primary rounded-full text-[11px] md:text-xs font-semibold uppercase tracking-wide border border-primary/20">
                                     {currentVideo.subCategory}
                                 </span>
-                                <span className="flex items-center gap-1.5">
-                                    <Clock size={14} />
-                                    {currentVideo.duration ? `${Math.floor(currentVideo.duration / 60)} mins` : "Series Part"}
+                                <span className="flex items-center gap-1.5 text-gray-500 text-xs md:text-sm">
+                                    <Clock size={13} className="text-gray-600" />
+                                    {currentVideo.duration && !isNaN(currentVideo.duration)
+                                        ? `${Math.floor(currentVideo.duration / 60)} mins`
+                                        : currentVideo.title}
                                 </span>
                             </div>
-                            <p className="mt-4 text-gray-400 leading-relaxed text-sm md:text-base">
-                                {currentVideo.description || `Part from the ${seriesName} series.`}
-                            </p>
+                            {currentVideo.description && (
+                                <p className="text-gray-500 leading-relaxed text-sm hidden md:block">
+                                    {currentVideo.description}
+                                </p>
+                            )}
                         </div>
                     </div>
 
                     {/* Right/Bottom: Up Next Playlist */}
                     <div className="lg:col-span-1">
-                        <div className="glass-panel p-4 md:p-6 rounded-xl md:rounded-2xl lg:h-full lg:max-h-[calc(100vh-150px)] overflow-y-auto">
-                            <h3 className="text-base md:text-lg font-bold text-white mb-4 md:mb-6 flex items-center gap-2 sticky top-0 bg-background/80 backdrop-blur-sm py-2 -mt-2">
-                                <LayoutList className="text-primary" size={18} />
-                                Parts ({videos.length})
+                        <div className="glass-panel p-3 md:p-5 rounded-xl md:rounded-2xl lg:h-full lg:max-h-[calc(100vh-150px)] overflow-y-auto">
+                            <h3 className="text-sm md:text-base font-semibold text-white mb-3 md:mb-4 flex items-center gap-2 sticky top-0 bg-background/90 backdrop-blur-md py-2 -mt-1 z-10">
+                                <LayoutList className="text-primary" size={16} />
+                                <span>Parts</span>
+                                <span className="text-gray-500 font-normal">({videos.length})</span>
                             </h3>
 
-                            {/* Horizontal scroll on mobile (Carousel), vertical list on desktop */}
-                            <div className="flex lg:flex-col gap-3 lg:gap-4 overflow-x-auto lg:overflow-x-visible hide-scrollbar -mx-4 px-4 lg:mx-0 lg:px-0 snap-x snap-mandatory pb-4 lg:pb-0">
+                            {/* Compact vertical list on mobile, slightly larger on desktop */}
+                            <div className="flex flex-col gap-1.5 md:gap-2">
                                 {videos.map((video, index) => {
                                     const isActive = currentVideo.$id === video.$id;
                                     const isWatched = watchedIds.includes(video.$id);
@@ -212,50 +217,62 @@ export default function SeriesPlayerPage() {
                                         <motion.button
                                             key={video.$id}
                                             onClick={() => setCurrentVideo(video)}
-                                            initial={{ opacity: 0, x: 20 }}
-                                            animate={{ opacity: 1, x: 0 }}
-                                            transition={{ delay: index * 0.05 }}
-                                            className={`text-left p-3 rounded-xl flex gap-3 transition-all duration-300 group flex-shrink-0 w-[85vw] sm:w-[350px] lg:w-full snap-center ${isActive
-                                                ? "bg-primary/10 border border-primary/30"
-                                                : isWatched
-                                                    ? "bg-green-500/5 border border-green-500/20 hover:bg-green-500/10"
-                                                    : "hover:bg-white/5 border border-transparent hover:border-white/5"
+                                            initial={{ opacity: 0, y: 10 }}
+                                            animate={{ opacity: 1, y: 0 }}
+                                            transition={{ delay: index * 0.03 }}
+                                            className={`text-left p-2 md:p-2.5 rounded-lg flex items-center gap-2.5 md:gap-3 transition-all duration-200 group relative overflow-hidden ${isActive
+                                                    ? "bg-primary/10 border-l-2 border-primary"
+                                                    : isWatched
+                                                        ? "bg-green-500/5 border-l-2 border-green-500/50 hover:bg-green-500/10"
+                                                        : "hover:bg-white/5 border-l-2 border-transparent hover:border-white/10"
                                                 }`}
                                         >
-                                            {/* Tiny Thumbnail */}
-                                            <div className="relative w-24 h-16 rounded-lg overflow-hidden shrink-0 bg-black/50">
+                                            {/* Compact Thumbnail */}
+                                            <div className="relative w-16 h-10 md:w-20 md:h-12 rounded-md overflow-hidden shrink-0 bg-black/40">
                                                 <img
                                                     src={video.thumbnailUrl}
                                                     alt=""
-                                                    className={`w-full h-full object-cover transition-opacity ${isActive ? "opacity-100" : "opacity-60 group-hover:opacity-80"}`}
+                                                    className={`w-full h-full object-cover transition-all duration-200 ${isActive ? "opacity-100 scale-105" : "opacity-50 group-hover:opacity-75"
+                                                        }`}
                                                 />
                                                 {isActive && (
-                                                    <div className="absolute inset-0 flex items-center justify-center bg-black/50 backdrop-blur-[2px]">
-                                                        <div className="flex items-end gap-0.5 h-4">
-                                                            <span className="w-1 bg-primary animate-pulse rounded-full" style={{ height: '60%', animationDelay: '0ms' }} />
-                                                            <span className="w-1 bg-primary animate-pulse rounded-full" style={{ height: '100%', animationDelay: '150ms' }} />
-                                                            <span className="w-1 bg-primary animate-pulse rounded-full" style={{ height: '40%', animationDelay: '300ms' }} />
-                                                            <span className="w-1 bg-primary animate-pulse rounded-full" style={{ height: '80%', animationDelay: '450ms' }} />
+                                                    <div className="absolute inset-0 flex items-center justify-center bg-black/40">
+                                                        <div className="flex items-end gap-[2px] h-3">
+                                                            <span className="w-[3px] bg-primary rounded-full animate-pulse" style={{ height: '50%', animationDelay: '0ms' }} />
+                                                            <span className="w-[3px] bg-primary rounded-full animate-pulse" style={{ height: '100%', animationDelay: '150ms' }} />
+                                                            <span className="w-[3px] bg-primary rounded-full animate-pulse" style={{ height: '35%', animationDelay: '300ms' }} />
                                                         </div>
                                                     </div>
                                                 )}
                                                 {isWatched && !isActive && (
-                                                    <div className="absolute top-1 right-1 w-5 h-5 bg-green-500 rounded-full flex items-center justify-center">
-                                                        <CheckCircle size={12} className="text-white" />
+                                                    <div className="absolute top-0.5 right-0.5 w-4 h-4 bg-green-500 rounded-full flex items-center justify-center shadow-sm">
+                                                        <CheckCircle size={10} className="text-white" />
                                                     </div>
                                                 )}
                                             </div>
 
-                                            {/* Text Info */}
-                                            <div className="flex-1 min-w-0 py-1">
-                                                <h4 className={`text-sm font-semibold truncate ${isActive ? "text-primary text-glow" : isWatched ? "text-green-400" : "text-gray-300 group-hover:text-white"}`}>
+                                            {/* Text Info - Compact */}
+                                            <div className="flex-1 min-w-0">
+                                                <h4 className={`text-xs md:text-sm font-medium truncate leading-tight ${isActive
+                                                        ? "text-primary"
+                                                        : isWatched
+                                                            ? "text-green-400/90"
+                                                            : "text-gray-400 group-hover:text-gray-200"
+                                                    }`}>
                                                     {video.title}
                                                 </h4>
-                                                <p className="text-xs text-gray-500 mt-1 flex items-center gap-1">
-                                                    Part {index + 1}
-                                                    {isWatched && <span className="text-green-400">• Done</span>}
+                                                <p className="text-[10px] md:text-xs text-gray-600 mt-0.5 flex items-center gap-1.5">
+                                                    <span>Part {index + 1}</span>
+                                                    {isWatched && <span className="text-green-500/80">• Done</span>}
                                                 </p>
                                             </div>
+
+                                            {/* Play indicator for active */}
+                                            {isActive && (
+                                                <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center shrink-0">
+                                                    <Play size={10} className="text-primary ml-0.5" fill="currentColor" />
+                                                </div>
+                                            )}
                                         </motion.button>
                                     );
                                 })}
