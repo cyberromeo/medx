@@ -39,14 +39,34 @@ export default function Header() {
         { name: "About", href: "/#about" },
     ];
 
+    // Compact mobile header - just logo pill
+    const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+
     return (
         <motion.header
             initial={{ y: -100 }}
             animate={{ y: 0 }}
-            className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? 'py-4' : 'py-6'}`}
+            className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? 'py-2' : 'py-3'}`}
         >
-            <div className="container mx-auto px-4">
-                <div className={`mx-auto max-w-5xl glass rounded-full px-6 py-3 flex items-center justify-between transition-all duration-300 ${scrolled ? 'bg-black/40' : 'bg-transparent border-transparent'}`}>
+            <div className="container mx-auto px-3 md:px-4">
+                {/* Mobile: Compact pill header */}
+                <div className="md:hidden flex justify-center">
+                    <Link
+                        href={user ? "/dashboard" : "/"}
+                        className={`flex items-center gap-2 px-4 py-2 rounded-full transition-all duration-300 ${scrolled
+                                ? 'bg-black/70 backdrop-blur-xl border border-white/10'
+                                : 'bg-black/40 backdrop-blur-md border border-transparent'
+                            }`}
+                    >
+                        <div className="bg-gradient-to-tr from-primary to-secondary p-1.5 rounded-lg">
+                            <Stethoscope size={14} className="text-white" />
+                        </div>
+                        <span className="font-bold text-sm text-white">MedX</span>
+                    </Link>
+                </div>
+
+                {/* Desktop: Full header */}
+                <div className={`hidden md:flex mx-auto max-w-5xl glass rounded-full px-6 py-3 items-center justify-between transition-all duration-300 ${scrolled ? 'bg-black/60 backdrop-blur-xl' : 'bg-black/20 border-transparent'}`}>
 
                     {/* Logo */}
                     <Link href="/" className="flex items-center gap-2 group">
@@ -57,7 +77,7 @@ export default function Header() {
                     </Link>
 
                     {/* Desktop Nav */}
-                    <nav className="hidden md:flex items-center gap-8">
+                    <nav className="flex items-center gap-8">
                         {!user && navLinks.map(link => (
                             <Link key={link.name} href={link.href} className="text-sm font-medium text-gray-400 hover:text-white transition-colors">
                                 {link.name}
@@ -66,7 +86,7 @@ export default function Header() {
                     </nav>
 
                     {/* CTA */}
-                    <div className="hidden md:flex items-center gap-4">
+                    <div className="flex items-center gap-4">
                         {user ? (
                             <>
                                 <Link href="/chatx" className="flex items-center gap-2 text-gray-400 hover:text-primary transition-colors">
@@ -99,57 +119,10 @@ export default function Header() {
                             <ChevronRight size={14} />
                         </Link>
                     </div>
-
-                    {/* Mobile Menu Toggle */}
-                    <button className="md:hidden text-white" onClick={() => setIsOpen(!isOpen)}>
-                        {isOpen ? <X size={24} /> : <Menu size={24} />}
-                    </button>
                 </div>
             </div>
 
-            {/* Mobile Menu */}
-            <AnimatePresence>
-                {isOpen && (
-                    <motion.div
-                        initial={{ opacity: 0, scale: 0.95 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0, scale: 0.95 }}
-                        className="absolute top-24 left-4 right-4 p-4 glass-panel rounded-2xl md:hidden flex flex-col gap-4 text-center"
-                    >
-                        {!user && navLinks.map(link => (
-                            <Link key={link.name} href={link.href} onClick={() => setIsOpen(false)} className="text-lg font-medium text-gray-300 hover:text-white py-2">
-                                {link.name}
-                            </Link>
-                        ))}
-                        <div className="h-px bg-white/10 w-full" />
-                        {user ? (
-                            <>
-                                <Link href="/leaderboard" onClick={() => setIsOpen(false)} className="flex items-center justify-center gap-2 text-yellow-400 py-3">
-                                    <Trophy size={20} />
-                                    Leaderboard
-                                </Link>
-                                <Link href="/dashboard" onClick={() => setIsOpen(false)} className="bg-primary text-black py-3 rounded-xl font-bold">
-                                    Go to Dashboard
-                                </Link>
-                                <button
-                                    onClick={() => { setIsOpen(false); handleLogout(); }}
-                                    className="flex items-center justify-center gap-2 text-red-400 py-3 hover:text-red-300"
-                                >
-                                    <LogOut size={20} />
-                                    Logout
-                                </button>
-                            </>
-                        ) : (
-                            <>
-                                <Link href="/login" onClick={() => setIsOpen(false)} className="text-gray-300 py-2">Sign In</Link>
-                                <Link href="/login" onClick={() => setIsOpen(false)} className="bg-white text-black py-3 rounded-xl font-bold">
-                                    Get Started
-                                </Link>
-                            </>
-                        )}
-                    </motion.div>
-                )}
-            </AnimatePresence>
+            {/* Mobile Menu - removed, using bottom nav instead */}
         </motion.header>
     );
 }
