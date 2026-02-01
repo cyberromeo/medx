@@ -3,9 +3,9 @@
 import { useEffect, useState, useRef } from "react";
 import { client, databases, account } from "@/lib/appwrite";
 import { ID, Query } from "appwrite";
-import Header from "@/components/Header";
+import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { Send, MessageCircle, Loader2, Sparkles, ArrowDown } from "lucide-react";
+import { Send, MessageCircle, Loader2, Sparkles, ArrowDown, ChevronLeft } from "lucide-react";
 
 const MAX_MESSAGES = 50;
 
@@ -18,6 +18,7 @@ export default function ChatXPage() {
     const [showScrollBtn, setShowScrollBtn] = useState(false);
     const messagesEndRef = useRef(null);
     const scrollContainerRef = useRef(null);
+    const router = useRouter();
 
     const DB_ID = process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID;
     const CHAT_COL_ID = process.env.NEXT_PUBLIC_APPWRITE_CHAT_COLLECTION_ID;
@@ -147,7 +148,6 @@ export default function ChatXPage() {
     if (loading) {
         return (
             <div className="min-h-screen bg-background">
-                <Header />
                 <div className="aurora-bg" />
                 <div className="flex items-center justify-center h-screen">
                     <div className="flex flex-col items-center gap-3">
@@ -164,33 +164,36 @@ export default function ChatXPage() {
 
     return (
         <main className="min-h-screen bg-background flex flex-col">
-            <Header />
             <div className="aurora-bg" />
 
-            {/* Main Chat Container */}
-            <div className="flex-1 flex flex-col h-[100dvh] pt-16 md:pt-20">
+            {/* Main Chat Container - Full height without header/nav */}
+            <div className="flex-1 flex flex-col h-[100dvh]">
 
-                {/* Compact Chat Header */}
+                {/* Chat Header with Back Button */}
                 <motion.div
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="shrink-0 px-4 py-3 border-b border-white/5 bg-background/80 backdrop-blur-xl"
+                    className="shrink-0 px-4 py-3 border-b border-white/5 bg-black/80 backdrop-blur-xl safe-top"
                 >
-                    <div className="max-w-3xl mx-auto flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                            <div className="w-9 h-9 bg-gradient-to-br from-primary via-blue-500 to-secondary rounded-xl flex items-center justify-center shadow-lg shadow-primary/20">
-                                <MessageCircle className="text-white" size={18} />
-                            </div>
-                            <div>
-                                <h1 className="text-base font-semibold text-white flex items-center gap-2">
-                                    ChatX
-                                    <span className="relative flex h-2 w-2">
-                                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                                        <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
-                                    </span>
-                                </h1>
-                                <p className="text-gray-500 text-[11px]">{messages.length} messages</p>
-                            </div>
+                    <div className="max-w-3xl mx-auto flex items-center gap-3">
+                        <button
+                            onClick={() => router.back()}
+                            className="w-10 h-10 flex items-center justify-center rounded-xl bg-white/5 text-white hover:bg-white/10 transition-all active:scale-95"
+                        >
+                            <ChevronLeft size={22} />
+                        </button>
+                        <div className="w-10 h-10 bg-gradient-to-br from-primary via-blue-500 to-secondary rounded-xl flex items-center justify-center shadow-lg shadow-primary/20">
+                            <MessageCircle className="text-white" size={18} />
+                        </div>
+                        <div className="flex-1">
+                            <h1 className="text-base font-semibold text-white flex items-center gap-2">
+                                ChatX
+                                <span className="relative flex h-2 w-2">
+                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                                    <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                                </span>
+                            </h1>
+                            <p className="text-gray-500 text-[11px]">{messages.length} messages</p>
                         </div>
                         {user && (
                             <div className="text-right">
@@ -274,7 +277,7 @@ export default function ChatXPage() {
                             animate={{ opacity: 1, scale: 1 }}
                             exit={{ opacity: 0, scale: 0.8 }}
                             onClick={() => scrollToBottom()}
-                            className="fixed bottom-24 md:bottom-28 right-4 md:right-8 w-10 h-10 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center border border-white/10 shadow-lg hover:bg-white/20 transition-colors z-20"
+                            className="fixed bottom-20 right-4 md:right-8 w-10 h-10 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center border border-white/10 shadow-lg hover:bg-white/20 transition-colors z-20"
                         >
                             <ArrowDown size={18} className="text-white" />
                         </motion.button>
@@ -282,7 +285,7 @@ export default function ChatXPage() {
                 </AnimatePresence>
 
                 {/* Input Area */}
-                <div className="shrink-0 px-4 pb-28 md:pb-4 pt-2 bg-gradient-to-t from-background via-background to-transparent">
+                <div className="shrink-0 px-4 pb-6 md:pb-4 pt-2 bg-gradient-to-t from-background via-background to-transparent safe-bottom">
                     <div className="max-w-3xl mx-auto">
                         {user ? (
                             <form onSubmit={sendMessage} className="flex items-center gap-2 bg-black/60 backdrop-blur-xl border border-white/[0.1] rounded-2xl p-1.5 focus-within:border-primary/30 transition-colors shadow-lg">
@@ -291,13 +294,13 @@ export default function ChatXPage() {
                                     value={newMessage}
                                     onChange={(e) => setNewMessage(e.target.value)}
                                     placeholder="Type a message..."
-                                    className="flex-1 bg-transparent border-none outline-none text-white placeholder-gray-500 px-3 py-2 text-sm"
+                                    className="flex-1 bg-transparent border-none outline-none text-white placeholder-gray-500 px-3 py-2.5 text-base"
                                     autoComplete="off"
                                 />
                                 <button
                                     type="submit"
                                     disabled={!newMessage.trim() || sending}
-                                    className="w-10 h-10 bg-primary hover:bg-primary/90 text-black rounded-xl flex items-center justify-center transition-all disabled:opacity-40 disabled:scale-95 active:scale-90 shrink-0"
+                                    className="w-11 h-11 bg-white hover:bg-gray-100 text-black rounded-xl flex items-center justify-center transition-all disabled:opacity-30 disabled:scale-95 active:scale-90 shrink-0"
                                 >
                                     {sending ? <Loader2 size={18} className="animate-spin" /> : <Send size={18} className="ml-0.5" />}
                                 </button>

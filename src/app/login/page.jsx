@@ -108,7 +108,7 @@ export default function LoginPage() {
                                             <input
                                                 type="text"
                                                 placeholder="Dr. John Doe"
-                                                className="w-full bg-surface/50 border border-white/10 rounded-xl px-11 py-3 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-primary/50 focus:bg-surface/80 transition-all shadow-inner"
+                                                className="w-full bg-surface/50 border border-white/10 rounded-xl px-11 py-3 text-base text-white placeholder-gray-600 focus:outline-none focus:border-primary/50 focus:bg-surface/80 transition-all shadow-inner"
                                                 value={name}
                                                 onChange={(e) => setName(e.target.value)}
                                                 required={!isLogin}
@@ -126,7 +126,7 @@ export default function LoginPage() {
                                 <input
                                     type="email"
                                     placeholder="name@example.com"
-                                    className="w-full bg-surface/50 border border-white/10 rounded-xl px-11 py-3 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-primary/50 focus:bg-surface/80 transition-all shadow-inner"
+                                    className="w-full bg-surface/50 border border-white/10 rounded-xl px-11 py-3 text-base text-white placeholder-gray-600 focus:outline-none focus:border-primary/50 focus:bg-surface/80 transition-all shadow-inner"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
                                     required
@@ -141,7 +141,7 @@ export default function LoginPage() {
                                 <input
                                     type="password"
                                     placeholder="••••••••"
-                                    className="w-full bg-surface/50 border border-white/10 rounded-xl px-11 py-3 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-primary/50 focus:bg-surface/80 transition-all shadow-inner"
+                                    className="w-full bg-surface/50 border border-white/10 rounded-xl px-11 py-3 text-base text-white placeholder-gray-600 focus:outline-none focus:border-primary/50 focus:bg-surface/80 transition-all shadow-inner"
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
                                     required

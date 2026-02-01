@@ -7,8 +7,8 @@ import { motion } from "framer-motion";
 export default function MobileNav() {
     const pathname = usePathname();
 
-    // Hide on login page or landing
-    if (pathname === '/login' || pathname === '/') return null;
+    // Hide on login page, landing, or chat (chat has its own header)
+    if (pathname === '/login' || pathname === '/' || pathname === '/chatx') return null;
 
     const navItems = [
         { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
@@ -35,8 +35,8 @@ export default function MobileNav() {
                                 key={link.name}
                                 href={link.href}
                                 className={`flex-1 flex flex-col items-center justify-center gap-1 py-3 transition-all duration-200 active:scale-95 ${isActive
-                                        ? 'text-primary'
-                                        : 'text-gray-500 active:text-gray-400'
+                                    ? 'text-primary'
+                                    : 'text-gray-500 active:text-gray-400'
                                     }`}
                             >
                                 <div className={`relative ${isActive ? 'scale-110' : ''} transition-transform`}>
