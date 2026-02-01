@@ -174,7 +174,7 @@ export default function Dashboard() {
     };
 
     return (
-        <main className="min-h-screen bg-background pb-24 safe-bottom selection:bg-secondary/30">
+        <main className="min-h-screen bg-background pb-28 safe-bottom selection:bg-secondary/30">
             <Header />
             <div className="mesh-bg" />
             <div className="aurora-bg" />

@@ -282,7 +282,7 @@ export default function ChatXPage() {
                 </AnimatePresence>
 
                 {/* Input Area */}
-                <div className="shrink-0 px-4 pb-20 md:pb-4 pt-2 bg-gradient-to-t from-background via-background to-transparent">
+                <div className="shrink-0 px-4 pb-28 md:pb-4 pt-2 bg-gradient-to-t from-background via-background to-transparent">
                     <div className="max-w-3xl mx-auto">
                         {user ? (
                             <form onSubmit={sendMessage} className="flex items-center gap-2 bg-black/60 backdrop-blur-xl border border-white/[0.1] rounded-2xl p-1.5 focus-within:border-primary/30 transition-colors shadow-lg">

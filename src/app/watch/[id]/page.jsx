@@ -78,7 +78,7 @@ export default function WatchPage({ params }) {
     );
 
     return (
-        <main className="min-h-screen bg-background pb-20">
+        <main className="min-h-screen bg-background pb-28">
             <Header />
             <div className="aurora-bg" />
 
