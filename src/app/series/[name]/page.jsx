@@ -147,7 +147,7 @@ export default function SeriesPlayerPage() {
                         <motion.div
                             initial={{ opacity: 0, scale: 0.95 }}
                             animate={{ opacity: 1, scale: 1 }}
-                            className="aspect-video w-full rounded-xl md:rounded-2xl overflow-hidden shadow-[0_0_50px_rgba(0,240,255,0.1)] bg-black relative z-20 -mx-4 md:mx-0 w-[calc(100%+2rem)] md:w-full"
+                            className="aspect-video w-full rounded-xl md:rounded-2xl overflow-hidden shadow-[0_0_50px_rgba(0,240,255,0.1)] bg-black relative z-20"
                         >
                             <CustomPlayer
                                 videoId={currentVideo.videoId}
@@ -221,10 +221,10 @@ export default function SeriesPlayerPage() {
                                             animate={{ opacity: 1, y: 0 }}
                                             transition={{ delay: index * 0.03 }}
                                             className={`text-left p-2 md:p-2.5 rounded-lg flex items-center gap-2.5 md:gap-3 transition-all duration-200 group relative overflow-hidden ${isActive
-                                                    ? "bg-primary/10 border-l-2 border-primary"
-                                                    : isWatched
-                                                        ? "bg-green-500/5 border-l-2 border-green-500/50 hover:bg-green-500/10"
-                                                        : "hover:bg-white/5 border-l-2 border-transparent hover:border-white/10"
+                                                ? "bg-primary/10 border-l-2 border-primary"
+                                                : isWatched
+                                                    ? "bg-green-500/5 border-l-2 border-green-500/50 hover:bg-green-500/10"
+                                                    : "hover:bg-white/5 border-l-2 border-transparent hover:border-white/10"
                                                 }`}
                                         >
                                             {/* Compact Thumbnail */}
@@ -254,10 +254,10 @@ export default function SeriesPlayerPage() {
                                             {/* Text Info - Compact */}
                                             <div className="flex-1 min-w-0">
                                                 <h4 className={`text-xs md:text-sm font-medium truncate leading-tight ${isActive
-                                                        ? "text-primary"
-                                                        : isWatched
-                                                            ? "text-green-400/90"
-                                                            : "text-gray-400 group-hover:text-gray-200"
+                                                    ? "text-primary"
+                                                    : isWatched
+                                                        ? "text-green-400/90"
+                                                        : "text-gray-400 group-hover:text-gray-200"
                                                     }`}>
                                                     {video.title}
                                                 </h4>

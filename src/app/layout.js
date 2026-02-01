@@ -8,6 +8,11 @@ const outfit = Outfit({ subsets: ["latin"], variable: "--font-outfit" });
 export const metadata = {
   title: "MedX - Medical Video Platform",
   description: "Premium FMGE preparation platform",
+  themeColor: '#0a0a0a',
+  colorScheme: 'dark',
+  other: {
+    'apple-mobile-web-app-status-bar-style': 'black-translucent',
+  },
 };
 
 export default function RootLayout({ children }) {

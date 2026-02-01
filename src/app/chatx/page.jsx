@@ -282,16 +282,16 @@ export default function ChatXPage() {
                 </AnimatePresence>
 
                 {/* Input Area */}
-                <div className="shrink-0 px-4 pb-4 pt-2 bg-gradient-to-t from-background via-background to-transparent safe-bottom">
+                <div className="shrink-0 px-4 pb-20 md:pb-4 pt-2 bg-gradient-to-t from-background via-background to-transparent">
                     <div className="max-w-3xl mx-auto">
                         {user ? (
-                            <form onSubmit={sendMessage} className="flex items-center gap-2 bg-white/[0.04] border border-white/[0.08] rounded-2xl p-1.5 focus-within:border-primary/30 transition-colors">
+                            <form onSubmit={sendMessage} className="flex items-center gap-2 bg-black/60 backdrop-blur-xl border border-white/[0.1] rounded-2xl p-1.5 focus-within:border-primary/30 transition-colors shadow-lg">
                                 <input
                                     type="text"
                                     value={newMessage}
                                     onChange={(e) => setNewMessage(e.target.value)}
                                     placeholder="Type a message..."
-                                    className="flex-1 bg-transparent border-none outline-none text-white placeholder-gray-600 px-3 py-2 text-sm"
+                                    className="flex-1 bg-transparent border-none outline-none text-white placeholder-gray-500 px-3 py-2 text-sm"
                                     autoComplete="off"
                                 />
                                 <button
@@ -303,7 +303,7 @@ export default function ChatXPage() {
                                 </button>
                             </form>
                         ) : (
-                            <div className="bg-white/[0.03] border border-white/[0.06] rounded-2xl p-4 text-center">
+                            <div className="bg-black/40 backdrop-blur-xl border border-white/[0.08] rounded-2xl p-4 text-center">
                                 <p className="text-gray-500 text-sm">Sign in to join the conversation</p>
                             </div>
                         )}
@@ -313,3 +313,4 @@ export default function ChatXPage() {
         </main>
     );
 }
+```
