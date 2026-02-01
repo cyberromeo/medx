@@ -232,15 +232,19 @@ export default function CustomPlayer({ videoId, thumbnail, onEnded }) {
 
             {/* ===== INTERACTION SHIELD ===== */}
             {/* Blocks all mouse/touch events on YouTube iframe and hides branding */}
+            {/* ===== INTERACTION SHIELD ===== */}
+            {/* Blocks all mouse/touch events on YouTube iframe and hides branding */}
             {status !== "idle" && (
                 <div
-                    className="absolute inset-0 z-30 cursor-pointer"
+                    className="absolute inset-0 z-30 cursor-pointer touch-none"
                     onClick={togglePlay}
+                    style={{ WebkitTapHighlightColor: 'transparent' }}
                 >
-                    {/* Top gradient to hide YouTube title/channel info */}
-                    <div className="absolute top-0 left-0 right-0 h-20 bg-gradient-to-b from-black/60 to-transparent pointer-events-none" />
-                    {/* Bottom gradient to hide YouTube logo/watermark */}
-                    <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-black/60 to-transparent pointer-events-none" />
+                    {/* Stronger Top overlay for title */}
+                    <div className="absolute top-0 left-0 right-0 h-24 bg-gradient-to-b from-black via-black/40 to-transparent pointer-events-none" />
+
+                    {/* Stronger Bottom overlay for watermark */}
+                    <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-black via-black/40 to-transparent pointer-events-none" />
                 </div>
             )}
 

@@ -1,5 +1,6 @@
 import "./app.css";
 import { Space_Grotesk, Plus_Jakarta_Sans, Outfit } from "next/font/google";
+import MobileNav from "@/components/MobileNav";
 import { Analytics } from '@vercel/analytics/next';
 
 const spaceGrotesk = Space_Grotesk({ subsets: ["latin"], variable: "--font-display" });
@@ -38,6 +39,7 @@ export default function RootLayout({ children }) {
       </head>
       <body className={`${plusJakarta.variable} ${spaceGrotesk.variable} ${outfit.variable} antialiased bg-black text-foreground`}>
         {children}
+        <MobileNav />
         <Analytics />
       </body>
     </html >
