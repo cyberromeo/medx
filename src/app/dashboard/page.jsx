@@ -353,7 +353,7 @@ export default function Dashboard() {
                         </div>
 
                         {/* Subjects Grid */}
-                        <div className="container mx-auto px-4 py-6">
+                        <div className="container mx-auto px-4 pt-6 pb-32">
                             <motion.div
                                 variants={container}
                                 initial="hidden"
