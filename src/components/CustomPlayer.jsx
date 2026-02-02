@@ -201,13 +201,10 @@ export default function CustomPlayer({ videoId, thumbnail, onEnded }) {
     const toggleFullscreen = () => {
         if (!containerRef.current) return;
 
-        // iOS Safari requires webkit-specific fullscreen on the iframe
-        const iframe = containerRef.current.querySelector('iframe');
-        if (iframe && iframe.webkitEnterFullscreen) {
-            try {
-                iframe.webkitEnterFullscreen();
-                return;
-            } catch (e) { }
+        // On iOS, open YouTube directly since iOS doesn't support iframe fullscreen
+        if (isIOSDevice && validId) {
+            window.open(`https://www.youtube.com/watch?v=${validId}`, '_blank');
+            return;
         }
 
         // Check if already in fullscreen
@@ -273,19 +270,15 @@ export default function CustomPlayer({ videoId, thumbnail, onEnded }) {
 
             {/* ===== INTERACTION SHIELD ===== */}
             {/* Blocks all mouse/touch events on YouTube iframe and hides branding */}
-            {/* ===== INTERACTION SHIELD ===== */}
-            {/* Blocks all mouse/touch events on YouTube iframe and hides branding */}
             {status !== "idle" && (
                 <div
                     className="absolute inset-0 z-30 cursor-pointer touch-none"
                     onClick={togglePlay}
                     style={{ WebkitTapHighlightColor: 'transparent' }}
                 >
-                    {/* Stronger Top overlay for title */}
-                    <div className="absolute top-0 left-0 right-0 h-24 bg-gradient-to-b from-black via-black/40 to-transparent pointer-events-none" />
-
-                    {/* Stronger Bottom overlay for watermark */}
-                    <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-black via-black/40 to-transparent pointer-events-none" />
+                    {/* Gradient overlays - fade with controls */}
+                    <div className={`absolute top-0 left-0 right-0 h-24 bg-gradient-to-b from-black via-black/40 to-transparent pointer-events-none transition-opacity duration-300 ${isHovering || status === "paused" ? "opacity-100" : "opacity-0"}`} />
+                    <div className={`absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-black via-black/40 to-transparent pointer-events-none transition-opacity duration-300 ${isHovering || status === "paused" ? "opacity-100" : "opacity-0"}`} />
                 </div>
             )}
 
