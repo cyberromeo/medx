@@ -65,12 +65,12 @@ export async function GET() {
             })
         );
 
-        const response = NextResponse.json(usersWithNames);
-        response.headers.set('X-Debug-Doc-Count', response.documents?.length || 0);
-        response.headers.set('X-Debug-User-Count', userIds.length);
-        response.headers.set('X-Debug-Key-Status', process.env.APPWRITE_API_KEY ? 'Present' : 'Missing');
+        const jsonResponse = NextResponse.json(usersWithNames);
+        jsonResponse.headers.set('X-Debug-Doc-Count', response.documents?.length || 0);
+        jsonResponse.headers.set('X-Debug-User-Count', userIds.length);
+        jsonResponse.headers.set('X-Debug-Key-Status', process.env.APPWRITE_API_KEY ? 'Present' : 'Missing');
 
-        return response;
+        return jsonResponse;
     } catch (error) {
         console.error("Leaderboard API Error:", error);
         return NextResponse.json({ error: "Failed to fetch leaderboard" }, { status: 500 });
