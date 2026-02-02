@@ -42,6 +42,7 @@ export default function CustomPlayer({ videoId, thumbnail, onEnded }) {
     const [isIPhoneDevice, setIsIPhoneDevice] = useState(false); // iPhone only (not iPad)
     const [showUnmutePrompt, setShowUnmutePrompt] = useState(false);
     const [showActionOverlay, setShowActionOverlay] = useState(false); // Temporary overlay during seek/resume on iOS
+    const [showInitialOverlay, setShowInitialOverlay] = useState(false); // Hides YT flash on iPhone initial load
 
     // 1. Load YouTube IFrame API
     useEffect(() => {
@@ -103,10 +104,14 @@ export default function CustomPlayer({ videoId, thumbnail, onEnded }) {
                                 setDuration(event.target.getDuration());
                                 event.target.playVideo();
                                 setStatus("playing");
-                                // On iPhone only, video starts muted - show unmute prompt
+                                // On iPhone: show overlay to hide YT flash, then show unmute prompt
                                 if (iphoneDevice) {
-                                    setIsMuted(true);
-                                    setShowUnmutePrompt(true);
+                                    setShowInitialOverlay(true);
+                                    setTimeout(() => {
+                                        setShowInitialOverlay(false);
+                                        setIsMuted(true);
+                                        setShowUnmutePrompt(true);
+                                    }, 1500); // Wait for native player to fully take over
                                 }
                             },
                             onStateChange: (event) => {
@@ -343,6 +348,13 @@ export default function CustomPlayer({ videoId, thumbnail, onEnded }) {
             {/* ===== LOADING SPINNER ===== */}
             {status === "loading" && (
                 <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/90">
+                    <Loader2 className="w-12 h-12 text-cyan-400 animate-spin" />
+                </div>
+            )}
+
+            {/* ===== iPhone Initial Overlay - hides YT flash during native player transition ===== */}
+            {showInitialOverlay && (
+                <div className="absolute inset-0 z-50 flex items-center justify-center bg-black">
                     <Loader2 className="w-12 h-12 text-cyan-400 animate-spin" />
                 </div>
             )}
