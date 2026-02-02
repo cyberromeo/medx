@@ -48,6 +48,9 @@ export default function ChatXPage() {
             (response) => {
                 if (response.events.includes("databases.*.collections.*.documents.create")) {
                     setMessages((prev) => {
+                        // Deduplicate: check if message ID already exists
+                        if (prev.some(m => m.$id === response.payload.$id)) return prev;
+
                         const updated = [...prev, response.payload];
                         // Keep only last MAX_MESSAGES in UI
                         return updated.slice(-MAX_MESSAGES);
@@ -94,12 +97,15 @@ export default function ChatXPage() {
         setSending(true);
         try {
             // Create new message
-            await databases.createDocument(DB_ID, CHAT_COL_ID, ID.unique(), {
+            const response = await databases.createDocument(DB_ID, CHAT_COL_ID, ID.unique(), {
                 content: newMessage,
                 userId: user.$id,
                 userName: user.name,
                 userAvatar: ""
             });
+
+            // Optimistic update
+            setMessages((prev) => [...prev, response]);
             setNewMessage("");
 
             // Auto-delete old messages if exceeding limit
@@ -214,51 +220,6 @@ export default function ChatXPage() {
                             onScroll={handleScroll}
                             className="flex-1 overflow-y-auto px-4 py-3 space-y-1"
                         >
-                        <AnimatePresence initial={false}>
-                            {messages.map((msg, index) => {
-                                const isMe = user && msg.userId === user.$id;
-                                const isSequence = index > 0 && messages[index - 1].userId === msg.userId;
-                                const showTime = !isSequence || index === messages.length - 1;
-
-                                return (
-                                    <motion.div
-                                        key={msg.$id}
-                                        initial={{ opacity: 0, y: 10 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        transition={{ duration: 0.2 }}
-                                        className={`flex gap-2 ${isMe ? "flex-row-reverse" : "flex-row"} ${isSequence ? "mt-0.5" : "mt-4"}`}
-                                    >
-                                        {/* Avatar */}
-                                        {!isSequence ? (
-                                            <div className={`w-7 h-7 rounded-full flex items-center justify-center shrink-0 text-[10px] font-bold bg-gradient-to-br ${getAvatarColor(msg.userName)} text-white shadow-md`}>
-                                                {msg.userName.charAt(0).toUpperCase()}
-                                            </div>
-                                        ) : (
-                                            <div className="w-7" />
-                                        )}
-
-                                        {/* Message Content */}
-                                        <div className={`max-w-[75%] ${isMe ? "items-end" : "items-start"} flex flex-col`}>
-                                            {!isSequence && !isMe && (
-                                                <p className="text-[10px] text-gray-500 mb-0.5 ml-1">{msg.userName}</p>
-                                            )}
-                                            <div className={`px-3 py-2 text-[13px] md:text-sm break-words leading-relaxed ${isMe
-                                                ? "bg-gradient-to-br from-primary/30 to-blue-500/20 text-white rounded-2xl rounded-tr-md border border-primary/20"
-                                                : "bg-white/[0.04] text-gray-200 rounded-2xl rounded-tl-md border border-white/[0.06] hover:bg-white/[0.06] transition-colors"
-                                                }`}>
-                                                {msg.content}
-                                            </div>
-                                            {showTime && (
-                                                <p className={`text-[9px] text-gray-600 mt-1 ${isMe ? "mr-1" : "ml-1"}`}>
-                                                    {new Date(msg.$createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                                                </p>
-                                            )}
-                                        </div>
-                                    </motion.div>
-                                );
-                            })}
-                        </AnimatePresence>
-
                             <AnimatePresence initial={false}>
                                 {messages.map((msg, index) => {
                                     const isMe = user && msg.userId === user.$id;
@@ -304,6 +265,8 @@ export default function ChatXPage() {
                                 })}
                             </AnimatePresence>
 
+
+
                             <div ref={messagesEndRef} className="h-4" />
 
                             {messages.length === 0 && (
@@ -341,7 +304,7 @@ export default function ChatXPage() {
                                         value={newMessage}
                                         onChange={(e) => setNewMessage(e.target.value)}
                                         placeholder="Type a message..."
-                                        className="flex-1 bg-transparent border-none outline-none text-white placeholder-gray-500 px-3 py-2.5 text-sm"
+                                        className="flex-1 bg-transparent border-none outline-none text-white placeholder-gray-500 px-3 py-2.5 text-base md:text-sm"
                                         autoComplete="off"
                                     />
                                     <button
