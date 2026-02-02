@@ -75,53 +75,58 @@ export default function CustomPlayer({ videoId, thumbnail, onEnded }) {
         setIsIPhoneDevice(isIPhone());
     }, []);
 
-    // 2. Initialize Player when user clicks play
-    useEffect(() => {
-        if (status === "loading" && validId) {
-            const iphoneDevice = isIPhone(); // Only iPhones need muted autoplay
-            const initPlayer = () => {
-                if (window.YT && window.YT.Player) {
-                    playerRef.current = new window.YT.Player(`medx-player-${validId}`, {
-                        videoId: validId,
-                        playerVars: {
-                            autoplay: 1,
-                            mute: 0,
-                            controls: 0,
-                            disablekb: 1,
-                            modestbranding: 1,
-                            rel: 0,
-                            showinfo: 0,
-                            fs: 0,
-                            iv_load_policy: 3,
-                            cc_load_policy: 0,
-                            enablejsapi: 1,
-                            playsinline: iphoneDevice ? 0 : 1, // iPhone: native fullscreen, others: inline
-                            origin: typeof window !== 'undefined' ? window.location.origin : '',
+    // 2. Initialize Player directly on user gesture (important for iOS)
+    const initPlayer = () => {
+        if (!validId) return;
+
+        const iphoneDevice = isIPhone(); // Only iPhones need native fullscreen
+
+        const createPlayer = () => {
+            if (window.YT && window.YT.Player) {
+                // Prevent double-initialization
+                if (playerRef.current) return;
+
+                playerRef.current = new window.YT.Player(`medx-player-${validId}`, {
+                    videoId: validId,
+                    playerVars: {
+                        autoplay: 1,
+                        mute: 0,
+                        controls: 0,
+                        disablekb: 1,
+                        modestbranding: 1,
+                        rel: 0,
+                        showinfo: 0,
+                        fs: 0,
+                        iv_load_policy: 3,
+                        cc_load_policy: 0,
+                        enablejsapi: 1,
+                        playsinline: iphoneDevice ? 0 : 1, // iPhone: native fullscreen, others: inline
+                        origin: typeof window !== 'undefined' ? window.location.origin : '',
+                    },
+                    events: {
+                        onReady: (event) => {
+                            setDuration(event.target.getDuration());
+                            event.target.playVideo();
+                            setStatus("playing");
                         },
-                        events: {
-                            onReady: (event) => {
-                                setDuration(event.target.getDuration());
-                                event.target.playVideo();
-                                setStatus("playing");
-                            },
-                            onStateChange: (event) => {
-                                if (event.data === window.YT.PlayerState.PLAYING) setStatus("playing");
-                                if (event.data === window.YT.PlayerState.PAUSED) setStatus("paused");
-                                if (event.data === window.YT.PlayerState.ENDED) {
-                                    setStatus("ended");
-                                    if (onEnded) onEnded();
-                                }
+                        onStateChange: (event) => {
+                            if (event.data === window.YT.PlayerState.PLAYING) setStatus("playing");
+                            if (event.data === window.YT.PlayerState.PAUSED) setStatus("paused");
+                            if (event.data === window.YT.PlayerState.ENDED) {
+                                setStatus("ended");
+                                if (onEnded) onEnded();
                             }
                         }
-                    });
-                } else {
-                    // API not ready yet, wait and retry
-                    setTimeout(initPlayer, 100);
-                }
-            };
-            initPlayer();
-        }
-    }, [status, validId]);
+                    }
+                });
+            } else {
+                // API not ready yet, wait and retry
+                setTimeout(createPlayer, 100);
+            }
+        };
+
+        createPlayer();
+    };
 
     // 3. Progress Loop
     useEffect(() => {
@@ -148,8 +153,12 @@ export default function CustomPlayer({ videoId, thumbnail, onEnded }) {
 
     // Handlers
     const handleStartPlay = () => {
+        // Tie player creation directly to the user gesture.
+        // This helps iOS reliably treat it as a user-initiated playback,
+        // especially when using playsinline=0 for native fullscreen.
         setShowSplash(true); // Show splash to cover YouTube branding
         setStatus("loading");
+        initPlayer();
     };
 
     // Hide splash screen after video is playing for a bit
