@@ -163,7 +163,7 @@ export default function CustomPlayer({ videoId, thumbnail, onEnded }) {
 
     // Handlers
     const handleStartPlay = () => {
-        setShowSplash(true); // Show splash to cover YouTube branding
+        if (!isIPhoneDevice) setShowSplash(true); // Show splash to cover YouTube branding (skip on iPhone)
         setStatus("loading");
         shouldPlayRef.current = true;
         if (playerRef.current && typeof playerRef.current.playVideo === 'function') {
