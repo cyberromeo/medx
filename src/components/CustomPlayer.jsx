@@ -29,6 +29,7 @@ export default function CustomPlayer({ videoId, thumbnail, onEnded }) {
     const validId = getYouTubeId(videoId);
     const containerRef = useRef(null);
     const playerRef = useRef(null);
+    const shouldPlayRef = useRef(false);
 
     const [status, setStatus] = useState("idle"); // idle, loading, playing, paused, ended
     const [progress, setProgress] = useState(0);
@@ -75,29 +76,27 @@ export default function CustomPlayer({ videoId, thumbnail, onEnded }) {
         setIsIPhoneDevice(isIPhone());
     }, []);
 
-    // 2. Initialize Player when user clicks play (after DOM updates)
+    // 2. Initialize Player ON MOUNT (Pre-load)
     useEffect(() => {
-        if (status === "loading" && validId) {
+        if (validId) {
             const iphoneDevice = isIPhone(); // Only iPhones need native fullscreen
             const initPlayer = () => {
                 // Double check if the element exists in the DOM yet
                 const elementId = `medx-player-${validId}`;
                 const playerElement = document.getElementById(elementId);
 
+                // With pre-load, element should be there, but we retry just in case
                 if (!playerElement) {
-                    // Element not in DOM yet, wait and retry
-                    console.log("Player element not found, retrying...");
                     setTimeout(initPlayer, 50);
                     return;
                 }
 
                 if (window.YT && window.YT.Player) {
-                    // Add a small safety delay to ensure layout is computed
                     requestAnimationFrame(() => {
                         playerRef.current = new window.YT.Player(elementId, {
                             videoId: validId,
                             playerVars: {
-                                autoplay: 1,
+                                autoplay: 0, // Manual play
                                 mute: 0,
                                 controls: 0,
                                 disablekb: 1,
@@ -108,14 +107,16 @@ export default function CustomPlayer({ videoId, thumbnail, onEnded }) {
                                 iv_load_policy: 3,
                                 cc_load_policy: 0,
                                 enablejsapi: 1,
-                                playsinline: iphoneDevice ? 0 : 1, // iPhone: native fullscreen, others: inline
+                                playsinline: iphoneDevice ? 0 : 1,
                                 origin: typeof window !== 'undefined' ? window.location.origin : '',
                             },
                             events: {
                                 onReady: (event) => {
                                     setDuration(event.target.getDuration());
-                                    event.target.playVideo();
-                                    setStatus("playing");
+                                    // If user already clicked play
+                                    if (shouldPlayRef.current) {
+                                        event.target.playVideo();
+                                    }
                                 },
                                 onStateChange: (event) => {
                                     if (event.data === window.YT.PlayerState.PLAYING) setStatus("playing");
@@ -129,15 +130,13 @@ export default function CustomPlayer({ videoId, thumbnail, onEnded }) {
                         });
                     });
                 } else {
-                    // API not ready yet, wait and retry
                     setTimeout(initPlayer, 100);
                 }
             };
 
-            // Initial slight delay to allow React to paint
             setTimeout(initPlayer, 0);
         }
-    }, [status, validId]);
+    }, [validId]);
 
     // 3. Progress Loop
     useEffect(() => {
@@ -166,6 +165,10 @@ export default function CustomPlayer({ videoId, thumbnail, onEnded }) {
     const handleStartPlay = () => {
         setShowSplash(true); // Show splash to cover YouTube branding
         setStatus("loading");
+        shouldPlayRef.current = true;
+        if (playerRef.current && typeof playerRef.current.playVideo === 'function') {
+            playerRef.current.playVideo();
+        }
     };
 
     // Hide splash screen after video is playing for a bit
@@ -281,19 +284,20 @@ export default function CustomPlayer({ videoId, thumbnail, onEnded }) {
             )}
 
             {/* ===== YOUTUBE IFRAME CONTAINER ===== */}
-            {status !== "idle" && (
-                <div className="absolute inset-0 z-10 overflow-hidden">
-                    {/* Scale up iframe slightly to crop out bottom YouTube branding */}
-                    <div
-                        id={`medx-player-${validId}`}
-                        className="absolute top-0 left-0 w-full h-full"
-                        style={{
-                            transform: 'scale(1.01)',
-                            transformOrigin: 'center center',
-                        }}
-                    />
-                </div>
-            )}
+            <div
+                className="absolute inset-0 z-10 overflow-hidden"
+                style={{ opacity: status === 'idle' ? 0 : 1, pointerEvents: status === 'idle' ? 'none' : 'auto' }}
+            >
+                {/* Scale up iframe slightly to crop out bottom YouTube branding */}
+                <div
+                    id={`medx-player-${validId}`}
+                    className="absolute top-0 left-0 w-full h-full"
+                    style={{
+                        transform: 'scale(1.01)',
+                        transformOrigin: 'center center',
+                    }}
+                />
+            </div>
 
             {/* ===== INTERACTION SHIELD ===== */}
             {/* Blocks all mouse/touch events on YouTube iframe and hides branding */}
