@@ -31,7 +31,7 @@ export default function MobileNav() {
             initial={{ y: 80, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ type: "spring", stiffness: 260, damping: 26 }}
-            className="fixed bottom-4 left-4 right-4 z-50 md:hidden bottom-nav"
+            className="fixed bottom-4 left-4 right-4 z-50 md:hidden bottom-nav pb-[env(safe-area-inset-bottom)]"
         >
             <div className="nav-pill-glow rounded-2xl shadow-2xl p-1">
                 <div className="flex items-center justify-around">
