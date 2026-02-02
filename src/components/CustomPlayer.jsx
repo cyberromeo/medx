@@ -173,8 +173,8 @@ export default function CustomPlayer({ videoId, thumbnail, onEnded }) {
         if (status === "playing") {
             playerRef.current.pauseVideo();
         } else {
-            // On iOS, show temporary overlay when resuming to hide YouTube elements
-            if (isIOSDevice) {
+            // On iPhone, show temporary overlay when resuming to hide YouTube elements
+            if (isIPhoneDevice) {
                 setShowActionOverlay(true);
                 setTimeout(() => setShowActionOverlay(false), 800);
             }
@@ -195,8 +195,8 @@ export default function CustomPlayer({ videoId, thumbnail, onEnded }) {
 
     const handleSeek = (e) => {
         if (!playerRef.current) return;
-        // On iOS, show temporary overlay during seek to hide YouTube elements
-        if (isIOSDevice) {
+        // On iPhone, show temporary overlay during seek to hide YouTube elements
+        if (isIPhoneDevice) {
             setShowActionOverlay(true);
             setTimeout(() => setShowActionOverlay(false), 800);
         }
