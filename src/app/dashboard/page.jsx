@@ -125,7 +125,7 @@ export default function Dashboard() {
     };
 
     // Category Card Component
-    const CategoryCard = ({ name, color, gradient, shadowColor, glassClass }) => {
+    const CategoryCard = ({ name, color, gradient, shadowColor, glassClass, isComingSoon = false }) => {
         const categoryProgress = getCategoryProgress(name);
         const watched = countWatched(name);
         const total = countVideos(name);
@@ -134,47 +134,65 @@ export default function Dashboard() {
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className={`${glassClass} p-5 md:p-6 rounded-2xl md:rounded-3xl group relative overflow-hidden`}
+                className={`${glassClass} p-5 md:p-6 rounded-2xl md:rounded-3xl group relative overflow-hidden ${isComingSoon ? 'opacity-80' : ''}`}
             >
                 {/* Glow Effect */}
-                <div className={`absolute top-0 right-0 p-20 ${name === 'MIST' ? 'bg-blue-500' : 'bg-purple-500'} opacity-[0.03] blur-3xl group-hover:opacity-[0.08] transition-opacity duration-500`} />
+                <div className={`absolute top-0 right-0 p-20 ${name === 'MIST' ? 'bg-blue-500' : name === 'ARISE' ? 'bg-purple-500' : 'bg-orange-500'} opacity-[0.03] blur-3xl group-hover:opacity-[0.08] transition-opacity duration-500`} />
 
                 <div className="flex items-center gap-4 mb-6 relative z-10">
                     <div className={`w-14 h-14 md:w-16 md:h-16 rounded-2xl bg-gradient-to-br ${gradient} flex items-center justify-center text-3xl font-display font-bold text-white shadow-lg ${shadowColor} group-hover:scale-110 transition-transform duration-300`}>
                         {name.charAt(0)}
                     </div>
                     <div className="flex-1">
-                        <h2 className={`text-2xl font-bold text-white font-display tracking-tight text-shadow-sm group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r ${gradient} transition-all`}>{name}</h2>
-                        <p className="text-sm text-gray-400 font-medium">{watched}/{total} videos • 19 subjects</p>
+                        <div className="flex items-center gap-2">
+                            <h2 className={`text-2xl font-bold text-white font-display tracking-tight text-shadow-sm group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r ${gradient} transition-all`}>{name}</h2>
+                            {isComingSoon && (
+                                <span className="px-2 py-0.5 rounded-full bg-orange-500/20 text-orange-400 text-[10px] font-bold uppercase tracking-wider border border-orange-500/20">
+                                    Soon
+                                </span>
+                            )}
+                        </div>
+                        <p className="text-sm text-gray-400 font-medium">
+                            {isComingSoon ? 'Archive coming soon' : `${watched}/${total} videos • 19 subjects`}
+                        </p>
                     </div>
                 </div>
 
-                {/* Progress Bar */}
-                <div className="mb-6 relative z-10">
-                    <div className="flex justify-between items-end mb-2">
-                        <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">Course Progress</span>
-                        <span className="text-xs font-bold text-white">{categoryProgress}%</span>
+                {/* Progress Bar - Only if not coming soon */}
+                {!isComingSoon && (
+                    <div className="mb-6 relative z-10">
+                        <div className="flex justify-between items-end mb-2">
+                            <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">Course Progress</span>
+                            <span className="text-xs font-bold text-white">{categoryProgress}%</span>
+                        </div>
+                        <div className="w-full h-2 bg-black/20 rounded-full overflow-hidden border border-white/5">
+                            <motion.div
+                                initial={{ width: 0 }}
+                                animate={{ width: `${categoryProgress}%` }}
+                                transition={{ duration: 0.8, delay: 0.2 }}
+                                className={`h-full bg-gradient-to-r ${gradient} rounded-full shadow-[0_0_10px_rgba(0,0,0,0.5)]`}
+                            />
+                        </div>
                     </div>
-                    <div className="w-full h-2 bg-black/20 rounded-full overflow-hidden border border-white/5">
-                        <motion.div
-                            initial={{ width: 0 }}
-                            animate={{ width: `${categoryProgress}%` }}
-                            transition={{ duration: 0.8, delay: 0.2 }}
-                            className={`h-full bg-gradient-to-r ${gradient} rounded-full shadow-[0_0_10px_rgba(0,0,0,0.5)]`}
-                        />
+                )}
+
+                {isComingSoon && (
+                    <div className="mb-6 h-10 flex items-center">
+                        <p className="text-xs text-gray-500 italic">Previous year questions vault unlocking soon...</p>
                     </div>
-                </div>
+                )}
 
                 {/* Open Button */}
                 <button
-                    onClick={() => setSelectedCategory(name)}
-                    className={`w-full py-3.5 rounded-xl text-white font-semibold text-sm flex items-center justify-center gap-2 transition-all active:scale-[0.98] relative overflow-hidden group/btn hover:shadow-lg ${shadowColor}`}
+                    onClick={() => !isComingSoon && setSelectedCategory(name)}
+                    disabled={isComingSoon}
+                    className={`w-full py-3.5 rounded-xl text-white font-semibold text-sm flex items-center justify-center gap-2 transition-all active:scale-[0.98] relative overflow-hidden group/btn hover:shadow-lg ${shadowColor} ${isComingSoon ? 'cursor-not-allowed opacity-60 grayscale' : ''}`}
                 >
                     <div className={`absolute inset-0 bg-gradient-to-r ${gradient} opacity-10 group-hover/btn:opacity-20 transition-opacity`} />
                     <div className={`absolute inset-0 border border-white/10 rounded-xl group-hover/btn:border-white/20 transition-colors`} />
 
-                    <span className="relative z-10">Open {name}</span>
-                    <ArrowRight size={16} className="relative z-10 group-hover/btn:translate-x-1 transition-transform" />
+                    <span className="relative z-10">{isComingSoon ? 'Notify Me' : `Open ${name}`}</span>
+                    {!isComingSoon && <ArrowRight size={16} className="relative z-10 group-hover/btn:translate-x-1 transition-transform" />}
                 </button>
             </motion.div>
         );
@@ -314,7 +332,7 @@ export default function Dashboard() {
                 </motion.div>
 
                 {/* Category Cards with Open Button */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 max-w-3xl mx-auto mb-12">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 max-w-5xl mx-auto mb-12">
                     <CategoryCard
                         name="MIST"
                         color="border-blue-500/30"
@@ -328,6 +346,14 @@ export default function Dashboard() {
                         gradient="from-purple-500 to-purple-700"
                         shadowColor="shadow-purple-500/25"
                         glassClass="glass-purple"
+                    />
+                    <CategoryCard
+                        name="PYQs"
+                        color="border-orange-500/30"
+                        gradient="from-orange-500 to-red-600"
+                        shadowColor="shadow-orange-500/25"
+                        glassClass="glass-panel"
+                        isComingSoon={true}
                     />
                 </div>
             </div>
