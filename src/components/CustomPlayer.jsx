@@ -273,9 +273,9 @@ export default function CustomPlayer({ videoId, thumbnail, onEnded }) {
                     onClick={togglePlay}
                     style={{ WebkitTapHighlightColor: 'transparent' }}
                 >
-                    {/* Gradient overlays - fade with controls */}
-                    <div className={`absolute top-0 left-0 right-0 h-24 bg-gradient-to-b from-black via-black/40 to-transparent pointer-events-none transition-opacity duration-300 ${isHovering || status === "paused" ? "opacity-100" : "opacity-0"}`} />
-                    <div className={`absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-black via-black/40 to-transparent pointer-events-none transition-opacity duration-300 ${isHovering || status === "paused" ? "opacity-100" : "opacity-0"}`} />
+                    {/* Gradient overlays - always visible on iOS to hide YouTube elements during seek/pause */}
+                    <div className={`absolute top-0 left-0 right-0 h-28 bg-gradient-to-b from-black via-black/60 to-transparent pointer-events-none transition-opacity duration-300 ${isIOSDevice ? "opacity-100" : (isHovering || status === "paused" ? "opacity-100" : "opacity-0")}`} />
+                    <div className={`absolute bottom-0 left-0 right-0 h-28 bg-gradient-to-t from-black via-black/60 to-transparent pointer-events-none transition-opacity duration-300 ${isIOSDevice ? "opacity-100" : (isHovering || status === "paused" ? "opacity-100" : "opacity-0")}`} />
                 </div>
             )}
 
