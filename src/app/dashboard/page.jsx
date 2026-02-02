@@ -125,7 +125,7 @@ export default function Dashboard() {
     };
 
     // Category Card Component
-    const CategoryCard = ({ name, color, gradient, shadowColor }) => {
+    const CategoryCard = ({ name, color, gradient, shadowColor, glassClass }) => {
         const categoryProgress = getCategoryProgress(name);
         const watched = countWatched(name);
         const total = countVideos(name);
@@ -134,42 +134,47 @@ export default function Dashboard() {
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="glass-panel p-5 md:p-6 rounded-2xl md:rounded-3xl"
+                className={`${glassClass} p-5 md:p-6 rounded-2xl md:rounded-3xl group relative overflow-hidden`}
             >
-                <div className="flex items-center gap-4 mb-4">
-                    <div className={`w-12 h-12 md:w-14 md:h-14 rounded-xl md:rounded-2xl bg-gradient-to-br ${gradient} flex items-center justify-center text-xl md:text-2xl font-bold text-white shadow-lg ${shadowColor}`}>
+                {/* Glow Effect */}
+                <div className={`absolute top-0 right-0 p-20 ${name === 'MIST' ? 'bg-blue-500' : 'bg-purple-500'} opacity-[0.03] blur-3xl group-hover:opacity-[0.08] transition-opacity duration-500`} />
+
+                <div className="flex items-center gap-4 mb-6 relative z-10">
+                    <div className={`w-14 h-14 md:w-16 md:h-16 rounded-2xl bg-gradient-to-br ${gradient} flex items-center justify-center text-3xl font-display font-bold text-white shadow-lg ${shadowColor} group-hover:scale-110 transition-transform duration-300`}>
                         {name.charAt(0)}
                     </div>
                     <div className="flex-1">
-                        <h2 className="text-lg md:text-xl font-bold text-white">{name}</h2>
-                        <p className="text-xs text-gray-500">{watched}/{total} videos • 19 subjects</p>
+                        <h2 className={`text-2xl font-bold text-white font-display tracking-tight text-shadow-sm group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r ${gradient} transition-all`}>{name}</h2>
+                        <p className="text-sm text-gray-400 font-medium">{watched}/{total} videos • 19 subjects</p>
                     </div>
                 </div>
 
                 {/* Progress Bar */}
-                <div className="mb-4">
-                    <div className="w-full h-1.5 bg-white/10 rounded-full overflow-hidden">
+                <div className="mb-6 relative z-10">
+                    <div className="flex justify-between items-end mb-2">
+                        <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">Course Progress</span>
+                        <span className="text-xs font-bold text-white">{categoryProgress}%</span>
+                    </div>
+                    <div className="w-full h-2 bg-black/20 rounded-full overflow-hidden border border-white/5">
                         <motion.div
                             initial={{ width: 0 }}
                             animate={{ width: `${categoryProgress}%` }}
                             transition={{ duration: 0.8, delay: 0.2 }}
-                            className={`h-full bg-gradient-to-r ${gradient} rounded-full`}
+                            className={`h-full bg-gradient-to-r ${gradient} rounded-full shadow-[0_0_10px_rgba(0,0,0,0.5)]`}
                         />
                     </div>
-                    <p className="text-[10px] text-gray-600 mt-1 text-right">{categoryProgress}% complete</p>
                 </div>
 
                 {/* Open Button */}
                 <button
                     onClick={() => setSelectedCategory(name)}
-                    className={`w-full py-3 rounded-xl border ${color} bg-${color.split('-')[1]}-500/10 text-white font-medium text-sm flex items-center justify-center gap-2 hover:bg-${color.split('-')[1]}-500/20 transition-all active:scale-[0.98]`}
-                    style={{
-                        backgroundColor: name === 'MIST' ? 'rgba(59, 130, 246, 0.1)' : 'rgba(168, 85, 247, 0.1)',
-                        borderColor: name === 'MIST' ? 'rgba(59, 130, 246, 0.3)' : 'rgba(168, 85, 247, 0.3)',
-                    }}
+                    className={`w-full py-3.5 rounded-xl text-white font-semibold text-sm flex items-center justify-center gap-2 transition-all active:scale-[0.98] relative overflow-hidden group/btn hover:shadow-lg ${shadowColor}`}
                 >
-                    <span>Open {name}</span>
-                    <ArrowRight size={16} />
+                    <div className={`absolute inset-0 bg-gradient-to-r ${gradient} opacity-10 group-hover/btn:opacity-20 transition-opacity`} />
+                    <div className={`absolute inset-0 border border-white/10 rounded-xl group-hover/btn:border-white/20 transition-colors`} />
+
+                    <span className="relative z-10">Open {name}</span>
+                    <ArrowRight size={16} className="relative z-10 group-hover/btn:translate-x-1 transition-transform" />
                 </button>
             </motion.div>
         );
@@ -315,12 +320,14 @@ export default function Dashboard() {
                         color="border-blue-500/30"
                         gradient="from-blue-500 to-blue-700"
                         shadowColor="shadow-blue-500/25"
+                        glassClass="glass-blue"
                     />
                     <CategoryCard
                         name="ARISE"
                         color="border-purple-500/30"
                         gradient="from-purple-500 to-purple-700"
                         shadowColor="shadow-purple-500/25"
+                        glassClass="glass-purple"
                     />
                 </div>
             </div>
