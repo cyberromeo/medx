@@ -80,46 +80,62 @@ export default function CustomPlayer({ videoId, thumbnail, onEnded }) {
         if (status === "loading" && validId) {
             const iphoneDevice = isIPhone(); // Only iPhones need native fullscreen
             const initPlayer = () => {
+                // Double check if the element exists in the DOM yet
+                const elementId = `medx-player-${validId}`;
+                const playerElement = document.getElementById(elementId);
+
+                if (!playerElement) {
+                    // Element not in DOM yet, wait and retry
+                    console.log("Player element not found, retrying...");
+                    setTimeout(initPlayer, 50);
+                    return;
+                }
+
                 if (window.YT && window.YT.Player) {
-                    playerRef.current = new window.YT.Player(`medx-player-${validId}`, {
-                        videoId: validId,
-                        playerVars: {
-                            autoplay: 1,
-                            mute: 0,
-                            controls: 0,
-                            disablekb: 1,
-                            modestbranding: 1,
-                            rel: 0,
-                            showinfo: 0,
-                            fs: 0,
-                            iv_load_policy: 3,
-                            cc_load_policy: 0,
-                            enablejsapi: 1,
-                            playsinline: iphoneDevice ? 0 : 1, // iPhone: native fullscreen, others: inline
-                            origin: typeof window !== 'undefined' ? window.location.origin : '',
-                        },
-                        events: {
-                            onReady: (event) => {
-                                setDuration(event.target.getDuration());
-                                event.target.playVideo();
-                                setStatus("playing");
+                    // Add a small safety delay to ensure layout is computed
+                    requestAnimationFrame(() => {
+                        playerRef.current = new window.YT.Player(elementId, {
+                            videoId: validId,
+                            playerVars: {
+                                autoplay: 1,
+                                mute: 0,
+                                controls: 0,
+                                disablekb: 1,
+                                modestbranding: 1,
+                                rel: 0,
+                                showinfo: 0,
+                                fs: 0,
+                                iv_load_policy: 3,
+                                cc_load_policy: 0,
+                                enablejsapi: 1,
+                                playsinline: iphoneDevice ? 0 : 1, // iPhone: native fullscreen, others: inline
+                                origin: typeof window !== 'undefined' ? window.location.origin : '',
                             },
-                            onStateChange: (event) => {
-                                if (event.data === window.YT.PlayerState.PLAYING) setStatus("playing");
-                                if (event.data === window.YT.PlayerState.PAUSED) setStatus("paused");
-                                if (event.data === window.YT.PlayerState.ENDED) {
-                                    setStatus("ended");
-                                    if (onEnded) onEnded();
+                            events: {
+                                onReady: (event) => {
+                                    setDuration(event.target.getDuration());
+                                    event.target.playVideo();
+                                    setStatus("playing");
+                                },
+                                onStateChange: (event) => {
+                                    if (event.data === window.YT.PlayerState.PLAYING) setStatus("playing");
+                                    if (event.data === window.YT.PlayerState.PAUSED) setStatus("paused");
+                                    if (event.data === window.YT.PlayerState.ENDED) {
+                                        setStatus("ended");
+                                        if (onEnded) onEnded();
+                                    }
                                 }
                             }
-                        }
+                        });
                     });
                 } else {
                     // API not ready yet, wait and retry
                     setTimeout(initPlayer, 100);
                 }
             };
-            initPlayer();
+
+            // Initial slight delay to allow React to paint
+            setTimeout(initPlayer, 0);
         }
     }, [status, validId]);
 
