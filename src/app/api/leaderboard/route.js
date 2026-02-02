@@ -15,6 +15,8 @@ export async function GET() {
             Query.limit(5000) // Increase limit to capture more history
         ]);
 
+        console.log(`[Leaderboard API] Fetched ${response.documents.length} progress documents`);
+
         // Aggregate XP per user
         const userXpMap = {};
         const userLastActiveMap = {};
@@ -30,8 +32,10 @@ export async function GET() {
             }
         }
 
-        // Convert to array and sort
         const userIds = Object.keys(userXpMap);
+        console.log(`[Leaderboard API] Found ${userIds.length} unique users:`, userIds);
+
+        // Convert to array and sort
         let sortedUsers = userIds
             .map(userId => ({
                 userId,
@@ -61,7 +65,12 @@ export async function GET() {
             })
         );
 
-        return NextResponse.json(usersWithNames);
+        const response = NextResponse.json(usersWithNames);
+        response.headers.set('X-Debug-Doc-Count', response.documents?.length || 0);
+        response.headers.set('X-Debug-User-Count', userIds.length);
+        response.headers.set('X-Debug-Key-Status', process.env.APPWRITE_API_KEY ? 'Present' : 'Missing');
+
+        return response;
     } catch (error) {
         console.error("Leaderboard API Error:", error);
         return NextResponse.json({ error: "Failed to fetch leaderboard" }, { status: 500 });
