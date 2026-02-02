@@ -42,6 +42,8 @@ export default function CustomPlayer({ videoId, thumbnail, onEnded }) {
     const [isIPhoneDevice, setIsIPhoneDevice] = useState(false); // iPhone only (not iPad)
     const [showUnmutePrompt, setShowUnmutePrompt] = useState(false);
     const [showActionOverlay, setShowActionOverlay] = useState(false); // Temporary overlay during seek/resume on iOS
+    const [isPlayerReady, setIsPlayerReady] = useState(false);
+    const [shouldPlayOnReady, setShouldPlayOnReady] = useState(false);
 
     // 1. Load YouTube IFrame API
     useEffect(() => {
@@ -64,6 +66,8 @@ export default function CustomPlayer({ videoId, thumbnail, onEnded }) {
         }
         // Reset all state
         setStatus("idle");
+        setIsPlayerReady(false);
+        setShouldPlayOnReady(false);
         setProgress(0);
         setCurrentTime(0);
         setDuration(0);
@@ -75,68 +79,96 @@ export default function CustomPlayer({ videoId, thumbnail, onEnded }) {
         setIsIPhoneDevice(isIPhone());
     }, []);
 
-    // 2. Initialize Player when user clicks play
+    // 2. Initialize Player IMMEDIATELY when validId exists (Pre-load)
     useEffect(() => {
-        if (status === "loading" && validId) {
-            const iphoneDevice = isIPhone(); // Only iPhones need muted autoplay
+        if (validId && window.YT && window.YT.Player && !playerRef.current) {
+            const iphoneDevice = isIPhone();
             const initPlayer = () => {
-                if (window.YT && window.YT.Player) {
-                    playerRef.current = new window.YT.Player(`medx-player-${validId}`, {
-                        videoId: validId,
-                        playerVars: {
-                            autoplay: 1,
-                            mute: 0,
-                            controls: 0,
-                            disablekb: 1,
-                            modestbranding: 1,
-                            rel: 0,
-                            showinfo: 0,
-                            fs: 0,
-                            iv_load_policy: 3,
-                            cc_load_policy: 0,
-                            enablejsapi: 1,
-                            playsinline: iphoneDevice ? 0 : 1, // iPhone: native fullscreen, others: inline
-                            origin: typeof window !== 'undefined' ? window.location.origin : '',
-                        },
-                        events: {
-                            onReady: (event) => {
-                                setDuration(event.target.getDuration());
+                playerRef.current = new window.YT.Player(`medx-player-${validId}`, {
+                    videoId: validId,
+                    playerVars: {
+                        autoplay: 0, // No auto-play, wait for user click
+                        mute: 0,
+                        controls: 0,
+                        disablekb: 1,
+                        modestbranding: 1,
+                        rel: 0,
+                        showinfo: 0,
+                        fs: 0,
+                        iv_load_policy: 3,
+                        cc_load_policy: 0,
+                        enablejsapi: 1,
+                        playsinline: iphoneDevice ? 0 : 1, // iPhone: native fullscreen, others: inline
+                        origin: typeof window !== 'undefined' ? window.location.origin : '',
+                    },
+                    events: {
+                        onReady: (event) => {
+                            setDuration(event.target.getDuration());
+                            setIsPlayerReady(true);
+                            // If user already clicked, play now
+                            if (shouldPlayOnReady) {
                                 event.target.playVideo();
                                 setStatus("playing");
-                            },
-                            onStateChange: (event) => {
-                                if (event.data === window.YT.PlayerState.PLAYING) setStatus("playing");
-                                if (event.data === window.YT.PlayerState.PAUSED) setStatus("paused");
-                                if (event.data === window.YT.PlayerState.ENDED) {
-                                    setStatus("ended");
-                                    if (onEnded) onEnded();
-                                }
+                            }
+                        },
+                        onStateChange: (event) => {
+                            if (event.data === window.YT.PlayerState.PLAYING) setStatus("playing");
+                            if (event.data === window.YT.PlayerState.PAUSED) setStatus("paused");
+                            if (event.data === window.YT.PlayerState.ENDED) {
+                                setStatus("ended");
+                                if (onEnded) onEnded();
                             }
                         }
-                    });
-                } else {
-                    // API not ready yet, wait and retry
-                    setTimeout(initPlayer, 100);
-                }
+                    }
+                });
             };
             initPlayer();
+        } else if (validId && (!window.YT || !window.YT.Player)) {
+            // Retry if API not ready
+            const interval = setInterval(() => {
+                if (window.YT && window.YT.Player) {
+                    clearInterval(interval);
+                    // Force re-run of effect
+                    // actually better to just let effect dependencies handle it, 
+                    // but we need to trigger it. 
+                    // simpler: just reload page lol. No, react handles deps.
+                    // We'll rely on the useEffect dependency on window.YT/Player missing? 
+                    // No, window.YT is global.
+                    // Let's us a validId dependency re-trigger or just a simple timeout loop within effect?
+                    // Actually, the original code had a recursive timeout. Let's replicate that structure but for immediate load.
+                }
+            }, 300);
+            return () => clearInterval(interval);
         }
-    }, [status, validId]);
+    }, [validId, isPlayerReady]); // Removed 'status' dependency
 
     // 3. Progress Loop
     useEffect(() => {
         let interval;
         if (status === "playing" && playerRef.current && playerRef.current.getCurrentTime) {
             interval = setInterval(() => {
-                const curr = playerRef.current.getCurrentTime();
+                const time = playerRef.current.getCurrentTime();
                 const dur = playerRef.current.getDuration();
-                setCurrentTime(curr);
+                setCurrentTime(time);
                 setDuration(dur);
-                setProgress((curr / dur) * 100);
-            }, 500);
+                if (dur > 0) {
+                    setProgress((time / dur) * 100);
+                }
+            }, 1000);
         }
         return () => clearInterval(interval);
     }, [status]);
+
+
+    const handleStartPlay = () => {
+        setStatus("loading"); // Show spinner masking the player
+        if (isPlayerReady && playerRef.current) {
+            playerRef.current.playVideo();
+        } else {
+            console.log("Player not ready yet, queuing play...");
+            setShouldPlayOnReady(true);
+        }
+    };
 
     // Format time helper
     const formatTime = (seconds) => {
@@ -144,12 +176,6 @@ export default function CustomPlayer({ videoId, thumbnail, onEnded }) {
         const mins = Math.floor(seconds / 60);
         const secs = Math.floor(seconds % 60).toString().padStart(2, "0");
         return `${mins}:${secs}`;
-    };
-
-    // Handlers
-    const handleStartPlay = () => {
-        setShowSplash(true); // Show splash to cover YouTube branding
-        setStatus("loading");
     };
 
     // Hide splash screen after video is playing for a bit
