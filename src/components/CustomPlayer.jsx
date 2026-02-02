@@ -102,16 +102,11 @@ export default function CustomPlayer({ videoId, thumbnail, onEnded }) {
                             onReady: (event) => {
                                 setDuration(event.target.getDuration());
                                 event.target.playVideo();
-
+                                setStatus("playing");
+                                // On iPhone only, video starts muted - show unmute prompt
                                 if (iphoneDevice) {
-                                    // Delay hiding loading spinner on iPhone to cover YT flash
-                                    setTimeout(() => {
-                                        setStatus("playing");
-                                        setIsMuted(true);
-                                        setShowUnmutePrompt(true);
-                                    }, 1500);
-                                } else {
-                                    setStatus("playing");
+                                    setIsMuted(true);
+                                    setShowUnmutePrompt(true);
                                 }
                             },
                             onStateChange: (event) => {
@@ -348,13 +343,6 @@ export default function CustomPlayer({ videoId, thumbnail, onEnded }) {
             {/* ===== LOADING SPINNER ===== */}
             {status === "loading" && (
                 <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/90">
-                    <Loader2 className="w-12 h-12 text-cyan-400 animate-spin" />
-                </div>
-            )}
-
-            {/* ===== iPhone Initial Overlay - hides YT flash during native player transition ===== */}
-            {showInitialOverlay && (
-                <div className="absolute inset-0 z-50 flex items-center justify-center bg-black">
                     <Loader2 className="w-12 h-12 text-cyan-400 animate-spin" />
                 </div>
             )}
