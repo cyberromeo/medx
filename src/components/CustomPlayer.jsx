@@ -12,11 +12,17 @@ const getYouTubeId = (url) => {
     return (match && match[2].length === 11) ? match[2] : null;
 };
 
-// Detect iOS device
+// Detect iOS device (for muted autoplay)
 const isIOS = () => {
     if (typeof window === 'undefined') return false;
     return /iPad|iPhone|iPod/.test(navigator.userAgent) ||
         (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+};
+
+// Detect iPhone only (for hiding fullscreen - iPads support fullscreen)
+const isIPhone = () => {
+    if (typeof window === 'undefined') return false;
+    return /iPhone|iPod/.test(navigator.userAgent);
 };
 
 export default function CustomPlayer({ videoId, thumbnail, onEnded }) {
@@ -33,6 +39,7 @@ export default function CustomPlayer({ videoId, thumbnail, onEnded }) {
     const [isHovering, setIsHovering] = useState(false);
     const [showSplash, setShowSplash] = useState(false);
     const [isIOSDevice, setIsIOSDevice] = useState(false);
+    const [isIPhoneDevice, setIsIPhoneDevice] = useState(false); // iPhone only (not iPad)
     const [showUnmutePrompt, setShowUnmutePrompt] = useState(false);
     const [showActionOverlay, setShowActionOverlay] = useState(false); // Temporary overlay during seek/resume on iOS
 
@@ -65,6 +72,7 @@ export default function CustomPlayer({ videoId, thumbnail, onEnded }) {
     // Detect iOS on mount
     useEffect(() => {
         setIsIOSDevice(isIOS());
+        setIsIPhoneDevice(isIPhone());
     }, []);
 
     // 2. Initialize Player when user clicks play
@@ -212,8 +220,8 @@ export default function CustomPlayer({ videoId, thumbnail, onEnded }) {
     const toggleFullscreen = () => {
         if (!containerRef.current) return;
 
-        // iOS doesn't support fullscreen for iframes, button is hidden in UI
-        if (isIOSDevice) return;
+        // Only iPhones don't support fullscreen for iframes, iPads work fine
+        if (isIPhoneDevice) return;
 
         // Check if already in fullscreen
         if (document.fullscreenElement || document.webkitFullscreenElement) {
@@ -422,8 +430,8 @@ export default function CustomPlayer({ videoId, thumbnail, onEnded }) {
                                 />
                             </div>
 
-                            {/* Fullscreen - hidden on iOS since not supported */}
-                            {!isIOSDevice && (
+                            {/* Fullscreen - hidden on iPhone only, iPads support it */}
+                            {!isIPhoneDevice && (
                                 <button onClick={toggleFullscreen} className="text-gray-300 hover:text-white transition-colors">
                                     <Maximize size={18} />
                                 </button>
