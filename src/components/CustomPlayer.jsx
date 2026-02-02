@@ -95,7 +95,7 @@ export default function CustomPlayer({ videoId, thumbnail, onEnded }) {
                             iv_load_policy: 3,
                             cc_load_policy: 0,
                             enablejsapi: 1,
-                            playsinline: 1,
+                            playsinline: iphoneDevice ? 0 : 1, // iPhone: native fullscreen, others: inline
                             origin: typeof window !== 'undefined' ? window.location.origin : '',
                         },
                         events: {
