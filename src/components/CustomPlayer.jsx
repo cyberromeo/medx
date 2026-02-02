@@ -34,6 +34,7 @@ export default function CustomPlayer({ videoId, thumbnail, onEnded }) {
     const [showSplash, setShowSplash] = useState(false);
     const [isIOSDevice, setIsIOSDevice] = useState(false);
     const [showUnmutePrompt, setShowUnmutePrompt] = useState(false);
+    const [showActionOverlay, setShowActionOverlay] = useState(false); // Temporary overlay during seek/resume on iOS
 
     // 1. Load YouTube IFrame API
     useEffect(() => {
@@ -164,6 +165,11 @@ export default function CustomPlayer({ videoId, thumbnail, onEnded }) {
         if (status === "playing") {
             playerRef.current.pauseVideo();
         } else {
+            // On iOS, show temporary overlay when resuming to hide YouTube elements
+            if (isIOSDevice) {
+                setShowActionOverlay(true);
+                setTimeout(() => setShowActionOverlay(false), 800);
+            }
             playerRef.current.playVideo();
         }
     };
@@ -181,6 +187,11 @@ export default function CustomPlayer({ videoId, thumbnail, onEnded }) {
 
     const handleSeek = (e) => {
         if (!playerRef.current) return;
+        // On iOS, show temporary overlay during seek to hide YouTube elements
+        if (isIOSDevice) {
+            setShowActionOverlay(true);
+            setTimeout(() => setShowActionOverlay(false), 800);
+        }
         const seekTo = (e.target.value / 100) * duration;
         playerRef.current.seekTo(seekTo, true);
         setProgress(e.target.value);
@@ -273,9 +284,18 @@ export default function CustomPlayer({ videoId, thumbnail, onEnded }) {
                     onClick={togglePlay}
                     style={{ WebkitTapHighlightColor: 'transparent' }}
                 >
-                    {/* Gradient overlays - always visible on iOS to hide YouTube elements during seek/pause */}
-                    <div className={`absolute top-0 left-0 right-0 h-28 bg-gradient-to-b from-black via-black/60 to-transparent pointer-events-none transition-opacity duration-300 ${isIOSDevice ? "opacity-100" : (isHovering || status === "paused" ? "opacity-100" : "opacity-0")}`} />
-                    <div className={`absolute bottom-0 left-0 right-0 h-28 bg-gradient-to-t from-black via-black/60 to-transparent pointer-events-none transition-opacity duration-300 ${isIOSDevice ? "opacity-100" : (isHovering || status === "paused" ? "opacity-100" : "opacity-0")}`} />
+                    {/* Gradient overlays - fade with controls */}
+                    <div className={`absolute top-0 left-0 right-0 h-24 bg-gradient-to-b from-black via-black/40 to-transparent pointer-events-none transition-opacity duration-300 ${isHovering || status === "paused" ? "opacity-100" : "opacity-0"}`} />
+                    <div className={`absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-black via-black/40 to-transparent pointer-events-none transition-opacity duration-300 ${isHovering || status === "paused" ? "opacity-100" : "opacity-0"}`} />
+                </div>
+            )}
+
+            {/* ===== iOS ACTION OVERLAY - shows during seek/resume to hide YouTube elements ===== */}
+            {showActionOverlay && (
+                <div className="absolute inset-0 z-40 bg-black/90 flex items-center justify-center pointer-events-none transition-opacity duration-200">
+                    <div className="w-12 h-12 rounded-full bg-cyan-400/20 flex items-center justify-center">
+                        <div className="w-8 h-8 rounded-full bg-cyan-400/40 animate-ping" />
+                    </div>
                 </div>
             )}
 
