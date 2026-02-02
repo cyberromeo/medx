@@ -61,7 +61,6 @@ export default function CustomPlayer({ videoId, thumbnail, onEnded }) {
                         videoId: validId,
                         playerVars: {
                             autoplay: 1,
-                            mute: 1, // Required for mobile autoplay
                             controls: 0,
                             disablekb: 1,
                             modestbranding: 1,
@@ -77,16 +76,8 @@ export default function CustomPlayer({ videoId, thumbnail, onEnded }) {
                         events: {
                             onReady: (event) => {
                                 setDuration(event.target.getDuration());
-                                setIsMuted(true); // Start muted for mobile
                                 event.target.playVideo();
                                 setStatus("playing");
-                                // Auto-unmute after 1 second on mobile
-                                setTimeout(() => {
-                                    try {
-                                        event.target.unMute();
-                                        setIsMuted(false);
-                                    } catch (e) { }
-                                }, 1000);
                             },
                             onStateChange: (event) => {
                                 if (event.data === window.YT.PlayerState.PLAYING) setStatus("playing");
