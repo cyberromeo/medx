@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { Play, Pause, Volume2, VolumeX, Maximize, Loader2 } from "lucide-react";
+import { Play, Pause, Volume2, VolumeX, Maximize, Loader2, VolumeOff } from "lucide-react";
 
 // Helper to strictly extract YouTube ID
 const getYouTubeId = (url) => {
@@ -10,6 +10,13 @@ const getYouTubeId = (url) => {
     const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
     const match = url.match(regExp);
     return (match && match[2].length === 11) ? match[2] : null;
+};
+
+// Detect iOS device
+const isIOS = () => {
+    if (typeof window === 'undefined') return false;
+    return /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+        (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
 };
 
 export default function CustomPlayer({ videoId, thumbnail, onEnded }) {
@@ -25,6 +32,8 @@ export default function CustomPlayer({ videoId, thumbnail, onEnded }) {
     const [volume, setVolume] = useState(100);
     const [isHovering, setIsHovering] = useState(false);
     const [showSplash, setShowSplash] = useState(false);
+    const [isIOSDevice, setIsIOSDevice] = useState(false);
+    const [showUnmutePrompt, setShowUnmutePrompt] = useState(false);
 
     // 1. Load YouTube IFrame API
     useEffect(() => {
@@ -52,15 +61,22 @@ export default function CustomPlayer({ videoId, thumbnail, onEnded }) {
         setDuration(0);
     }, [videoId]);
 
+    // Detect iOS on mount
+    useEffect(() => {
+        setIsIOSDevice(isIOS());
+    }, []);
+
     // 2. Initialize Player when user clicks play
     useEffect(() => {
         if (status === "loading" && validId) {
+            const iosDevice = isIOS();
             const initPlayer = () => {
                 if (window.YT && window.YT.Player) {
                     playerRef.current = new window.YT.Player(`medx-player-${validId}`, {
                         videoId: validId,
                         playerVars: {
                             autoplay: 1,
+                            mute: iosDevice ? 1 : 0, // Muted autoplay required for iOS
                             controls: 0,
                             disablekb: 1,
                             modestbranding: 1,
@@ -78,6 +94,11 @@ export default function CustomPlayer({ videoId, thumbnail, onEnded }) {
                                 setDuration(event.target.getDuration());
                                 event.target.playVideo();
                                 setStatus("playing");
+                                // On iOS, video starts muted - show unmute prompt
+                                if (iosDevice) {
+                                    setIsMuted(true);
+                                    setShowUnmutePrompt(true);
+                                }
                             },
                             onStateChange: (event) => {
                                 if (event.data === window.YT.PlayerState.PLAYING) setStatus("playing");
@@ -305,6 +326,26 @@ export default function CustomPlayer({ videoId, thumbnail, onEnded }) {
             {status === "loading" && (
                 <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/90">
                     <Loader2 className="w-12 h-12 text-cyan-400 animate-spin" />
+                </div>
+            )}
+
+            {/* ===== iOS UNMUTE PROMPT ===== */}
+            {showUnmutePrompt && (status === "playing" || status === "paused") && (
+                <div
+                    className="absolute top-4 right-4 z-50 animate-pulse"
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        if (playerRef.current) {
+                            playerRef.current.unMute();
+                            setIsMuted(false);
+                            setShowUnmutePrompt(false);
+                        }
+                    }}
+                >
+                    <div className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-full cursor-pointer hover:scale-105 active:scale-95 transition-transform shadow-lg">
+                        <VolumeOff size={18} className="text-white" />
+                        <span className="text-white text-sm font-medium">Tap to Unmute</span>
+                    </div>
                 </div>
             )}
 
