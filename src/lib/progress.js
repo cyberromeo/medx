@@ -49,27 +49,41 @@ export const getProgress = async (userId = null) => {
 const calculateStreak = (documents) => {
     if (documents.length === 0) return 0;
 
+    // Get unique dates in descending order (newest first)
     const uniqueDays = [...new Set(
         documents.map(doc => new Date(doc.watchedAt).toDateString())
     )].sort((a, b) => new Date(b) - new Date(a));
 
-    let streak = 0;
+    if (uniqueDays.length === 0) return 0;
+
+    // Check if the most recent watch was Today or Yesterday
     const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    const todayStr = today.toDateString();
 
-    for (let i = 0; i < uniqueDays.length; i++) {
-        const checkDate = new Date(today);
-        checkDate.setDate(checkDate.getDate() - i);
+    const yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
+    const yesterdayStr = yesterday.toDateString();
 
-        if (uniqueDays.includes(checkDate.toDateString())) {
+    const lastWatchedDay = uniqueDays[0];
+
+    // If the last watched video was not today or yesterday, streak is broken
+    if (lastWatchedDay !== todayStr && lastWatchedDay !== yesterdayStr) {
+        return 0;
+    }
+
+    let streak = 1;
+
+    // Count consecutive days
+    for (let i = 0; i < uniqueDays.length - 1; i++) {
+        const current = new Date(uniqueDays[i]);
+        const previous = new Date(uniqueDays[i + 1]);
+
+        // Calculate difference in days (ignoring time)
+        const diffTime = Math.abs(current - previous);
+        const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
+
+        if (diffDays === 1) {
             streak++;
-        } else if (i === 0) {
-            // Today not yet watched, check if yesterday was watched
-            const yesterday = new Date(today);
-            yesterday.setDate(yesterday.getDate() - 1);
-            if (!uniqueDays.includes(yesterday.toDateString())) {
-                break;
-            }
         } else {
             break;
         }

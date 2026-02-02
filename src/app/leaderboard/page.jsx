@@ -28,40 +28,11 @@ export default function LeaderboardPage() {
             const user = await account.get();
             setCurrentUserId(user.$id);
 
-            // Fetch all progress records
-            const response = await databases.listDocuments(DB_ID, PROGRESS_COL_ID, [
-                Query.limit(1000)
-            ]);
+            // Fetch leaderboard from server API (bypasses RLS)
+            const response = await fetch('/api/leaderboard');
+            if (!response.ok) throw new Error('Failed to fetch leaderboard');
 
-            // Aggregate XP per user
-            const userXpMap = {};
-            const userLastActiveMap = {};
-
-            for (const doc of response.documents) {
-                const userId = doc.userId;
-                userXpMap[userId] = (userXpMap[userId] || 0) + (doc.xpEarned || 100);
-
-                // Track last active
-                const docDate = new Date(doc.watchedAt || doc.$createdAt).getTime();
-                if (!userLastActiveMap[userId] || docDate > userLastActiveMap[userId]) {
-                    userLastActiveMap[userId] = docDate;
-                }
-            }
-
-            // Fetch user names (we'll need to query users collection or use account info)
-            // For now, we'll show partial user IDs and fetch names separately
-            const userIds = Object.keys(userXpMap);
-
-            // Sort by XP descending
-            const sortedUsers = userIds
-                .map(userId => ({
-                    userId,
-                    xp: userXpMap[userId],
-                    level: calculateLevel(userXpMap[userId]),
-                    displayName: `Dr. ${userId.slice(0, 6)}...`, // Anonymized
-                    lastActive: userLastActiveMap[userId] || Date.now()
-                }))
-                .sort((a, b) => b.xp - a.xp);
+            const sortedUsers = await response.json();
 
             // Find current user's rank
             const userRankIndex = sortedUsers.findIndex(u => u.userId === user.$id);
@@ -69,7 +40,7 @@ export default function LeaderboardPage() {
                 setCurrentUserRank(userRankIndex + 1);
             }
 
-            setLeaderboard(sortedUsers.slice(0, 50)); // Top 50
+            setLeaderboard(sortedUsers);
         } catch (error) {
             console.error('Error fetching leaderboard:', error);
         } finally {
