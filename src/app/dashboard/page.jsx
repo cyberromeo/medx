@@ -54,6 +54,7 @@ export default function Dashboard() {
         try {
             const response = await databases.listDocuments(DB_ID, COL_ID, [
                 Query.orderDesc("$createdAt"),
+                Query.limit(1000), // Fetch all videos (up to 1000)
             ]);
             setVideos(response.documents);
         } catch (err) {
