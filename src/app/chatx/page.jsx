@@ -164,52 +164,56 @@ export default function ChatXPage() {
 
     return (
         <main className="min-h-screen bg-background flex flex-col">
+            <div className="mesh-bg" />
             <div className="aurora-bg" />
 
-            {/* Main Chat Container - Full height without header/nav */}
-            <div className="flex-1 flex flex-col h-[100dvh]">
-
-                {/* Chat Header with Back Button */}
-                <motion.div
-                    initial={{ opacity: 0, y: -10 }}
+            {/* Mobile-first popup / bottom-sheet chat */}
+            <div className="fixed inset-0 flex items-end md:items-center justify-center px-3 pb-4 pt-16 md:pt-0">
+                <motion.section
+                    initial={{ opacity: 0, y: 40 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="shrink-0 px-4 py-3 border-b border-white/5 bg-black/80 backdrop-blur-xl safe-top"
+                    transition={{ type: "spring", stiffness: 260, damping: 24 }}
+                    className="relative w-full max-w-md md:max-w-lg h-[78vh] md:h-[70vh] glass-panel rounded-t-3xl md:rounded-3xl overflow-hidden border border-white/10 shadow-2xl bg-black/80 backdrop-blur-2xl"
                 >
-                    <div className="max-w-3xl mx-auto flex items-center gap-3">
-                        <button
-                            onClick={() => router.back()}
-                            className="w-10 h-10 flex items-center justify-center rounded-xl bg-white/5 text-white hover:bg-white/10 transition-all active:scale-95"
-                        >
-                            <ChevronLeft size={22} />
-                        </button>
-                        <div className="w-10 h-10 bg-gradient-to-br from-primary via-blue-500 to-secondary rounded-xl flex items-center justify-center shadow-lg shadow-primary/20">
-                            <MessageCircle className="text-white" size={18} />
-                        </div>
-                        <div className="flex-1">
-                            <h1 className="text-base font-semibold text-white flex items-center gap-2">
-                                ChatX
-                                <span className="relative flex h-2 w-2">
-                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                                    <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
-                                </span>
-                            </h1>
-                            <p className="text-gray-500 text-[11px]">{messages.length} messages</p>
-                        </div>
-                        {user && (
-                            <div className="text-right">
-                                <p className="text-xs text-gray-400">{user.name}</p>
+                    <div className="flex flex-col h-full">
+                        {/* Chat Header */}
+                        <div className="shrink-0 px-4 py-3 border-b border-white/5 bg-black/60 backdrop-blur-xl">
+                            <div className="flex items-center gap-3">
+                                <button
+                                    onClick={() => router.back()}
+                                    className="w-9 h-9 flex items-center justify-center rounded-xl bg-white/5 text-white hover:bg-white/10 transition-all active:scale-95"
+                                >
+                                    <ChevronLeft size={20} />
+                                </button>
+                                <div className="w-9 h-9 bg-gradient-to-br from-primary via-blue-500 to-secondary rounded-xl flex items-center justify-center shadow-lg shadow-primary/20">
+                                    <MessageCircle className="text-white" size={18} />
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                    <h1 className="text-sm font-semibold text-white flex items-center gap-2">
+                                        ChatX
+                                        <span className="relative flex h-2 w-2">
+                                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                                            <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                                        </span>
+                                    </h1>
+                                    <p className="text-gray-500 text-[11px] truncate">{messages.length} messages</p>
+                                </div>
+                                {user && (
+                                    <div className="text-right">
+                                        <p className="text-[10px] text-gray-400 truncate max-w-[80px]">
+                                            {user.name}
+                                        </p>
+                                    </div>
+                                )}
                             </div>
-                        )}
-                    </div>
-                </motion.div>
+                        </div>
 
-                {/* Messages Area */}
-                <div
-                    ref={scrollContainerRef}
-                    onScroll={handleScroll}
-                    className="flex-1 overflow-y-auto px-4 py-4 space-y-1"
-                >
-                    <div className="max-w-3xl mx-auto">
+                        {/* Messages Area */}
+                        <div
+                            ref={scrollContainerRef}
+                            onScroll={handleScroll}
+                            className="flex-1 overflow-y-auto px-4 py-3 space-y-1"
+                        >
                         <AnimatePresence initial={false}>
                             {messages.map((msg, index) => {
                                 const isMe = user && msg.userId === user.$id;
@@ -255,63 +259,107 @@ export default function ChatXPage() {
                             })}
                         </AnimatePresence>
 
-                        <div ref={messagesEndRef} className="h-4" />
+                            <AnimatePresence initial={false}>
+                                {messages.map((msg, index) => {
+                                    const isMe = user && msg.userId === user.$id;
+                                    const isSequence = index > 0 && messages[index - 1].userId === msg.userId;
+                                    const showTime = !isSequence || index === messages.length - 1;
 
-                        {messages.length === 0 && (
-                            <div className="flex flex-col items-center justify-center py-20 text-gray-600">
-                                <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center mb-4">
-                                    <Sparkles size={28} className="text-gray-500" />
+                                    return (
+                                        <motion.div
+                                            key={msg.$id}
+                                            initial={{ opacity: 0, y: 10 }}
+                                            animate={{ opacity: 1, y: 0 }}
+                                            transition={{ duration: 0.2 }}
+                                            className={`flex gap-2 ${isMe ? "flex-row-reverse" : "flex-row"} ${isSequence ? "mt-0.5" : "mt-4"}`}
+                                        >
+                                            {/* Avatar */}
+                                            {!isSequence ? (
+                                                <div className={`w-7 h-7 rounded-full flex items-center justify-center shrink-0 text-[10px] font-bold bg-gradient-to-br ${getAvatarColor(msg.userName)} text-white shadow-md`}>
+                                                    {msg.userName.charAt(0).toUpperCase()}
+                                                </div>
+                                            ) : (
+                                                <div className="w-7" />
+                                            )}
+
+                                            {/* Message Content */}
+                                            <div className={`max-w-[75%] ${isMe ? "items-end" : "items-start"} flex flex-col`}>
+                                                {!isSequence && !isMe && (
+                                                    <p className="text-[10px] text-gray-500 mb-0.5 ml-1">{msg.userName}</p>
+                                                )}
+                                                <div className={`px-3 py-2 text-[13px] md:text-sm break-words leading-relaxed ${isMe
+                                                    ? "bg-gradient-to-br from-primary/30 to-blue-500/20 text-white rounded-2xl rounded-tr-md border border-primary/20"
+                                                    : "bg-white/[0.04] text-gray-200 rounded-2xl rounded-tl-md border border-white/[0.06] hover:bg-white/[0.06] transition-colors"
+                                                    }`}>
+                                                    {msg.content}
+                                                </div>
+                                                {showTime && (
+                                                    <p className={`text-[9px] text-gray-600 mt-1 ${isMe ? "mr-1" : "ml-1"}`}>
+                                                        {new Date(msg.$createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                                    </p>
+                                                )}
+                                            </div>
+                                        </motion.div>
+                                    );
+                                })}
+                            </AnimatePresence>
+
+                            <div ref={messagesEndRef} className="h-4" />
+
+                            {messages.length === 0 && (
+                                <div className="flex flex-col items-center justify-center py-16 text-gray-600">
+                                    <div className="w-14 h-14 rounded-full bg-white/5 flex items-center justify-center mb-3">
+                                        <Sparkles size={24} className="text-gray-500" />
+                                    </div>
+                                    <p className="text-sm">No messages yet</p>
+                                    <p className="text-xs text-gray-700 mt-1">Be the first to say hello!</p>
                                 </div>
-                                <p className="text-sm">No messages yet</p>
-                                <p className="text-xs text-gray-700 mt-1">Be the first to say hello!</p>
-                            </div>
-                        )}
-                    </div>
-                </div>
+                            )}
+                        </div>
 
-                {/* Scroll to bottom button */}
-                <AnimatePresence>
-                    {showScrollBtn && (
-                        <motion.button
-                            initial={{ opacity: 0, scale: 0.8 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            exit={{ opacity: 0, scale: 0.8 }}
-                            onClick={() => scrollToBottom()}
-                            className="fixed bottom-20 right-4 md:right-8 w-10 h-10 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center border border-white/10 shadow-lg hover:bg-white/20 transition-colors z-20"
-                        >
-                            <ArrowDown size={18} className="text-white" />
-                        </motion.button>
-                    )}
-                </AnimatePresence>
-
-                {/* Input Area */}
-                <div className="shrink-0 px-4 pb-6 md:pb-4 pt-2 bg-gradient-to-t from-background via-background to-transparent safe-bottom">
-                    <div className="max-w-3xl mx-auto">
-                        {user ? (
-                            <form onSubmit={sendMessage} className="flex items-center gap-2 bg-black/60 backdrop-blur-xl border border-white/[0.1] rounded-2xl p-1.5 focus-within:border-primary/30 transition-colors shadow-lg">
-                                <input
-                                    type="text"
-                                    value={newMessage}
-                                    onChange={(e) => setNewMessage(e.target.value)}
-                                    placeholder="Type a message..."
-                                    className="flex-1 bg-transparent border-none outline-none text-white placeholder-gray-500 px-3 py-2.5 text-base"
-                                    autoComplete="off"
-                                />
-                                <button
-                                    type="submit"
-                                    disabled={!newMessage.trim() || sending}
-                                    className="w-11 h-11 bg-white hover:bg-gray-100 text-black rounded-xl flex items-center justify-center transition-all disabled:opacity-30 disabled:scale-95 active:scale-90 shrink-0"
+                        {/* Scroll to bottom button (inside popup) */}
+                        <AnimatePresence>
+                            {showScrollBtn && (
+                                <motion.button
+                                    initial={{ opacity: 0, scale: 0.8 }}
+                                    animate={{ opacity: 1, scale: 1 }}
+                                    exit={{ opacity: 0, scale: 0.8 }}
+                                    onClick={() => scrollToBottom()}
+                                    className="absolute bottom-20 right-4 w-9 h-9 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center border border-white/10 shadow-lg hover:bg-white/20 transition-colors z-20"
                                 >
-                                    {sending ? <Loader2 size={18} className="animate-spin" /> : <Send size={18} className="ml-0.5" />}
-                                </button>
-                            </form>
-                        ) : (
-                            <div className="bg-black/40 backdrop-blur-xl border border-white/[0.08] rounded-2xl p-4 text-center">
-                                <p className="text-gray-500 text-sm">Sign in to join the conversation</p>
-                            </div>
-                        )}
+                                    <ArrowDown size={16} className="text-white" />
+                                </motion.button>
+                            )}
+                        </AnimatePresence>
+
+                        {/* Input Area */}
+                        <div className="shrink-0 px-3 pb-4 pt-2 bg-gradient-to-t from-black via-black/80 to-transparent safe-bottom">
+                            {user ? (
+                                <form onSubmit={sendMessage} className="flex items-center gap-2 bg-black/70 backdrop-blur-xl border border-white/[0.1] rounded-2xl p-1.5 focus-within:border-primary/30 transition-colors shadow-lg">
+                                    <input
+                                        type="text"
+                                        value={newMessage}
+                                        onChange={(e) => setNewMessage(e.target.value)}
+                                        placeholder="Type a message..."
+                                        className="flex-1 bg-transparent border-none outline-none text-white placeholder-gray-500 px-3 py-2.5 text-sm"
+                                        autoComplete="off"
+                                    />
+                                    <button
+                                        type="submit"
+                                        disabled={!newMessage.trim() || sending}
+                                        className="w-10 h-10 bg-white hover:bg-gray-100 text-black rounded-xl flex items-center justify-center transition-all disabled:opacity-30 disabled:scale-95 active:scale-90 shrink-0"
+                                    >
+                                        {sending ? <Loader2 size={18} className="animate-spin" /> : <Send size={18} className="ml-0.5" />}
+                                    </button>
+                                </form>
+                            ) : (
+                                <div className="bg-black/40 backdrop-blur-xl border border-white/[0.08] rounded-2xl p-4 text-center">
+                                    <p className="text-gray-500 text-sm">Sign in to join the conversation</p>
+                                </div>
+                            )}
+                        </div>
                     </div>
-                </div>
+                </motion.section>
             </div>
         </main>
     );

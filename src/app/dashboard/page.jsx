@@ -203,11 +203,13 @@ export default function Dashboard() {
                             {/* Level Badge */}
                             <div className="glass-panel px-4 py-3 sm:px-6 sm:py-4 rounded-2xl flex items-center gap-4">
                                 <div className="relative shrink-0">
-                                    <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center shadow-lg shadow-orange-500/25 stats-icon">
-                                        <Trophy className="text-white" size={24} />
-                                    </div>
-                                    <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-primary rounded-full flex items-center justify-center text-xs font-bold text-black border-2 border-background">
-                                        {level}
+                                    <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-gradient-to-br from-yellow-400 to-orange-500 flex flex-col items-center justify-center shadow-lg shadow-orange-500/25">
+                                        <span className="text-[9px] font-semibold text-black/80 uppercase tracking-widest">
+                                            Level
+                                        </span>
+                                        <span className="text-lg sm:text-xl font-extrabold text-black leading-none">
+                                            {level}
+                                        </span>
                                     </div>
                                 </div>
                                 <div className="flex-1 min-w-0">
