@@ -78,13 +78,14 @@ export default function CustomPlayer({ videoId, thumbnail, onEnded }) {
     // 2. Initialize Player when user clicks play
     useEffect(() => {
         if (status === "loading" && validId) {
+            const iphoneDevice = isIPhone(); // Only iPhones need muted autoplay
             const initPlayer = () => {
                 if (window.YT && window.YT.Player) {
                     playerRef.current = new window.YT.Player(`medx-player-${validId}`, {
                         videoId: validId,
                         playerVars: {
                             autoplay: 1,
-                            mute: 0,
+                            mute: iphoneDevice ? 1 : 0, // Muted autoplay only for iPhones
                             controls: 0,
                             disablekb: 1,
                             modestbranding: 1,
@@ -102,6 +103,11 @@ export default function CustomPlayer({ videoId, thumbnail, onEnded }) {
                                 setDuration(event.target.getDuration());
                                 event.target.playVideo();
                                 setStatus("playing");
+                                // On iPhone only, video starts muted - show unmute prompt
+                                if (iphoneDevice) {
+                                    setIsMuted(true);
+                                    setShowUnmutePrompt(true);
+                                }
                             },
                             onStateChange: (event) => {
                                 if (event.data === window.YT.PlayerState.PLAYING) setStatus("playing");
@@ -338,6 +344,26 @@ export default function CustomPlayer({ videoId, thumbnail, onEnded }) {
             {status === "loading" && (
                 <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/90">
                     <Loader2 className="w-12 h-12 text-cyan-400 animate-spin" />
+                </div>
+            )}
+
+            {/* ===== iOS UNMUTE PROMPT ===== */}
+            {showUnmutePrompt && (status === "playing" || status === "paused") && (
+                <div
+                    className="absolute top-4 right-4 z-50 animate-pulse"
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        if (playerRef.current) {
+                            playerRef.current.unMute();
+                            setIsMuted(false);
+                            setShowUnmutePrompt(false);
+                        }
+                    }}
+                >
+                    <div className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-full cursor-pointer hover:scale-105 active:scale-95 transition-transform shadow-lg">
+                        <VolumeOff size={18} className="text-white" />
+                        <span className="text-white text-sm font-medium">Tap to Unmute</span>
+                    </div>
                 </div>
             )}
 
