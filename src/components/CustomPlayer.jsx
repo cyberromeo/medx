@@ -85,7 +85,7 @@ export default function CustomPlayer({ videoId, thumbnail, onEnded }) {
                         videoId: validId,
                         playerVars: {
                             autoplay: 1,
-                            mute: iphoneDevice ? 1 : 0, // Muted autoplay only for iPhones
+                            mute: 0,
                             controls: 0,
                             disablekb: 1,
                             modestbranding: 1,
@@ -103,11 +103,6 @@ export default function CustomPlayer({ videoId, thumbnail, onEnded }) {
                                 setDuration(event.target.getDuration());
                                 event.target.playVideo();
                                 setStatus("playing");
-                                // On iPhone only, video starts muted - show unmute prompt
-                                if (iphoneDevice) {
-                                    setIsMuted(true);
-                                    setShowUnmutePrompt(true);
-                                }
                             },
                             onStateChange: (event) => {
                                 if (event.data === window.YT.PlayerState.PLAYING) setStatus("playing");
@@ -347,25 +342,7 @@ export default function CustomPlayer({ videoId, thumbnail, onEnded }) {
                 </div>
             )}
 
-            {/* ===== iOS UNMUTE PROMPT ===== */}
-            {showUnmutePrompt && (status === "playing" || status === "paused") && (
-                <div
-                    className="absolute top-4 right-4 z-50 animate-pulse"
-                    onClick={(e) => {
-                        e.stopPropagation();
-                        if (playerRef.current) {
-                            playerRef.current.unMute();
-                            setIsMuted(false);
-                            setShowUnmutePrompt(false);
-                        }
-                    }}
-                >
-                    <div className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-full cursor-pointer hover:scale-105 active:scale-95 transition-transform shadow-lg">
-                        <VolumeOff size={18} className="text-white" />
-                        <span className="text-white text-sm font-medium">Tap to Unmute</span>
-                    </div>
-                </div>
-            )}
+            {/* ===== iOS UNMUTE PROMPT REMOVED ===== */}
 
             {/* ===== CUSTOM CONTROLS ===== */}
             {(status === "playing" || status === "paused") && (
