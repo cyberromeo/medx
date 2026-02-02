@@ -21,7 +21,7 @@ const databases = new Databases(client);
 
 const DB_ID = process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID;
 const COL_ID = process.env.NEXT_PUBLIC_APPWRITE_COLLECTION_ID;
-const PLAYLIST_ID = "PLU7bbysyz36C6eyHxZX7xrj3OoXWlMmKw";
+const PLAYLIST_ID = "PLU7bbysyz36Als4NewRYenyNAkl89mV8Q";
 
 async function importPlaylist() {
     console.log(`fetching playlist: ${PLAYLIST_ID}...`);
@@ -38,7 +38,7 @@ async function importPlaylist() {
                     videoId: video.id,
                     thumbnailUrl: video.thumbnail?.url || `https://img.youtube.com/vi/${video.id}/hqdefault.jpg`,
                     category: "MIST",
-                    subCategory: "Radiodiagnosis (Radiology)",
+                    subCategory: "Pediatrics",
                     duration: video.durationFormatted || "00:00"
                 });
                 console.log(`  -> Success!`);

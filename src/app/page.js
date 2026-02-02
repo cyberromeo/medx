@@ -27,7 +27,7 @@ export default function Home() {
               className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 mb-8"
             >
               <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
-              <span className="text-xs sm:text-sm text-gray-400 font-medium">Live Classes Available</span>
+              <span className="text-xs sm:text-sm text-gray-400 font-medium">Recorded Live Classes Available</span>
             </motion.div>
 
             <h1 className="hero-text text-4xl sm:text-5xl md:text-7xl mb-6 sm:mb-8">
@@ -45,9 +45,9 @@ export default function Home() {
                 Start Learning
                 <ArrowRight size={18} />
               </Link>
-              <a href="#features" className="px-6 sm:px-8 py-3.5 sm:py-4 rounded-full font-semibold text-base text-white border border-white/10 hover:bg-white/5 hover:border-primary/30 transition-all w-full sm:w-auto text-center backdrop-blur-sm">
+              <Link href="/syllabus" className="px-6 sm:px-8 py-3.5 sm:py-4 rounded-full font-semibold text-base text-white border border-white/10 hover:bg-white/5 hover:border-primary/30 transition-all w-full sm:w-auto text-center backdrop-blur-sm">
                 View Syllabus
-              </a>
+              </Link>
             </div>
           </motion.div>
         </div>
