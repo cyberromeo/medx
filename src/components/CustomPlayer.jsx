@@ -78,14 +78,14 @@ export default function CustomPlayer({ videoId, thumbnail, onEnded }) {
     // 2. Initialize Player when user clicks play
     useEffect(() => {
         if (status === "loading" && validId) {
-            const iosDevice = isIOS();
+            const iphoneDevice = isIPhone(); // Only iPhones need muted autoplay
             const initPlayer = () => {
                 if (window.YT && window.YT.Player) {
                     playerRef.current = new window.YT.Player(`medx-player-${validId}`, {
                         videoId: validId,
                         playerVars: {
                             autoplay: 1,
-                            mute: iosDevice ? 1 : 0, // Muted autoplay required for iOS
+                            mute: iphoneDevice ? 1 : 0, // Muted autoplay only for iPhones
                             controls: 0,
                             disablekb: 1,
                             modestbranding: 1,
@@ -103,8 +103,8 @@ export default function CustomPlayer({ videoId, thumbnail, onEnded }) {
                                 setDuration(event.target.getDuration());
                                 event.target.playVideo();
                                 setStatus("playing");
-                                // On iOS, video starts muted - show unmute prompt
-                                if (iosDevice) {
+                                // On iPhone only, video starts muted - show unmute prompt
+                                if (iphoneDevice) {
                                     setIsMuted(true);
                                     setShowUnmutePrompt(true);
                                 }
