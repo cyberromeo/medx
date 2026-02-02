@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Header from "@/components/Header";
 import { motion } from "framer-motion";
-import { Play, Shield, Zap, Globe, ArrowRight } from "lucide-react";
+import { Play, Shield, Zap, Globe, ArrowRight, AlertTriangle } from "lucide-react";
 
 export default function Home() {
   return (
@@ -142,7 +142,41 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Footer */}
+
+      {/* Disclaimer Section */}
+      <section className="py-12 px-4 sm:px-6 relative z-10 border-t border-white/5 bg-black/20">
+        <div className="container mx-auto max-w-4xl">
+          <div className="flex items-start gap-4 p-6 rounded-2xl bg-yellow-500/5 border border-yellow-500/10 text-left">
+            <AlertTriangle className="text-yellow-500 shrink-0 mt-1" size={24} />
+            <div className="space-y-4 text-sm text-gray-400">
+              <h3 className="text-lg font-bold text-yellow-500 mb-2">Important Disclaimer</h3>
+              <p>Please read the following terms and conditions carefully before using Medx:</p>
+
+              <div>
+                <strong className="text-gray-300 block mb-1">1. Zero Cost Policy</strong>
+                <p>Medx is, and will always be, completely free to use. We do not charge subscription fees, access fees, or "premium" charges. If any individual or third-party entity has charged you a fee to access this site or its services, please be aware that you have been defrauded. We are not responsible for any transactions made outside of our official platform.</p>
+              </div>
+
+              <div>
+                <strong className="text-gray-300 block mb-1">2. Content Source & Liability</strong>
+                <p className="mb-2">The video content provided on this site consists of curated links aggregated from Telegram and other publicly available web sources.</p>
+                <ul className="list-disc pl-5 space-y-1">
+                  <li><strong>Intent:</strong> The developer’s sole intention is to facilitate the sharing of publicly accessible information for educational and free-use purposes.</li>
+                  <li><strong>No Ownership:</strong> Medx does not host, upload, or own the media content found herein.</li>
+                  <li><strong>Liability:</strong> Neither the site nor the developer shall be held liable for the accuracy, copyright compliance, legality, or decency of the material contained in these third-party links. Users access the content at their own risk.</li>
+                </ul>
+              </div>
+
+              <div>
+                <strong className="text-gray-300 block mb-1">3. DMCA & Takedown Requests</strong>
+                <p>As we only provide links to content hosted elsewhere, we cannot remove videos from the source. However, if you are a copyright owner and wish to have a specific link removed from Medx, please contact us directly, and we will process the request promptly.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer */}",
       <footer className="py-12 border-t border-white/5 text-center text-gray-600 text-sm">
         <p>© 2026 MedX - FMGE Preparation Platform</p>
       </footer>
