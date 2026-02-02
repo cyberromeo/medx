@@ -201,11 +201,8 @@ export default function CustomPlayer({ videoId, thumbnail, onEnded }) {
     const toggleFullscreen = () => {
         if (!containerRef.current) return;
 
-        // On iOS, open YouTube directly since iOS doesn't support iframe fullscreen
-        if (isIOSDevice && validId) {
-            window.open(`https://www.youtube.com/watch?v=${validId}`, '_blank');
-            return;
-        }
+        // iOS doesn't support fullscreen for iframes, button is hidden in UI
+        if (isIOSDevice) return;
 
         // Check if already in fullscreen
         if (document.fullscreenElement || document.webkitFullscreenElement) {
@@ -405,10 +402,12 @@ export default function CustomPlayer({ videoId, thumbnail, onEnded }) {
                                 />
                             </div>
 
-                            {/* Fullscreen */}
-                            <button onClick={toggleFullscreen} className="text-gray-300 hover:text-white transition-colors">
-                                <Maximize size={18} />
-                            </button>
+                            {/* Fullscreen - hidden on iOS since not supported */}
+                            {!isIOSDevice && (
+                                <button onClick={toggleFullscreen} className="text-gray-300 hover:text-white transition-colors">
+                                    <Maximize size={18} />
+                                </button>
+                            )}
 
                             {/* Branding */}
                             <div className="px-2 py-0.5 rounded border border-cyan-400/30 bg-cyan-400/10 text-[10px] text-cyan-400 uppercase font-bold tracking-widest ml-2">
