@@ -50,6 +50,7 @@ export default function WatchPage({ params }) {
     if (loading) return (
         <div className="min-h-screen bg-background">
             <Header />
+            <div className="mesh-bg" />
             <div className="aurora-bg" />
             <div className="container mx-auto px-6 pt-32">
                 <div className="h-5 w-32 bg-white/5 rounded shimmer mb-8" />
@@ -80,6 +81,7 @@ export default function WatchPage({ params }) {
     return (
         <main className="min-h-screen bg-background pb-6 safe-bottom">
             <Header />
+            <div className="mesh-bg" />
             <div className="aurora-bg" />
 
             <div className="container mx-auto px-6 pt-32">
@@ -104,7 +106,7 @@ export default function WatchPage({ params }) {
                         </div>
                     </div>
 
-                    <div className="bg-surface/50 p-6 rounded-2xl border border-white/5 h-fit">
+                    <div className="glass-panel p-6 rounded-2xl h-fit">
                         <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">Description</h3>
                         <p className="text-gray-300 leading-relaxed whitespace-pre-wrap text-sm">
                             {video.description}

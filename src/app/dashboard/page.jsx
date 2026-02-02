@@ -94,6 +94,7 @@ export default function Dashboard() {
         return (
             <div className="min-h-screen bg-background">
                 <Header />
+                <div className="mesh-bg" />
                 <div className="aurora-bg" />
                 <div className="container mx-auto px-6 pt-32">
                     <div className="mb-12">
@@ -188,7 +189,7 @@ export default function Dashboard() {
                 >
                     <div className="flex flex-col gap-6">
                         {/* Header Section */}
-                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 sm:gap-6">
+                            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 sm:gap-6">
                             <div className="flex-1">
                                 <h1 className="hero-text text-2xl sm:text-4xl mb-1">
                                     Welcome, <span className="text-gradient">Dr. {user?.name?.split(' ')[0]}</span>
@@ -202,7 +203,7 @@ export default function Dashboard() {
                             {/* Level Badge */}
                             <div className="glass-panel px-4 py-3 sm:px-6 sm:py-4 rounded-2xl flex items-center gap-4">
                                 <div className="relative shrink-0">
-                                    <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center shadow-lg shadow-orange-500/25">
+                                    <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center shadow-lg shadow-orange-500/25 stats-icon">
                                         <Trophy className="text-white" size={24} />
                                     </div>
                                     <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-primary rounded-full flex items-center justify-center text-xs font-bold text-black border-2 border-background">
@@ -214,11 +215,11 @@ export default function Dashboard() {
                                         <p className="text-xs text-gray-400 uppercase tracking-wider font-bold">Current Level</p>
                                         <span className="text-xs text-gray-400">{xpProgress.current}/{xpProgress.needed} XP</span>
                                     </div>
-                                    <div className="w-full h-2 bg-white/10 rounded-full overflow-hidden">
+                                    <div className="progress-premium mt-1">
                                         <motion.div
                                             initial={{ width: 0 }}
                                             animate={{ width: `${(xpProgress.current / xpProgress.needed) * 100}%` }}
-                                            className="h-full bg-gradient-to-r from-primary to-secondary rounded-full"
+                                            className="progress-fill h-2"
                                         />
                                     </div>
                                 </div>

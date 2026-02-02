@@ -37,7 +37,7 @@ export default function RootLayout({ children }) {
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <meta name="color-scheme" content="dark" />
       </head>
-      <body className={`${plusJakarta.variable} ${spaceGrotesk.variable} ${outfit.variable} antialiased bg-black text-foreground`}>
+      <body className={`${plusJakarta.variable} ${spaceGrotesk.variable} ${outfit.variable} antialiased bg-black text-foreground grain-overlay`}>
         {children}
         <MobileNav />
         <Analytics />
