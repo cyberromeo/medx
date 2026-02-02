@@ -42,7 +42,6 @@ export default function CustomPlayer({ videoId, thumbnail, onEnded }) {
     const [isIPhoneDevice, setIsIPhoneDevice] = useState(false); // iPhone only (not iPad)
     const [showUnmutePrompt, setShowUnmutePrompt] = useState(false);
     const [showActionOverlay, setShowActionOverlay] = useState(false); // Temporary overlay during seek/resume on iOS
-    const [showInitialOverlay, setShowInitialOverlay] = useState(false); // Hides YT flash on iPhone initial load
 
     // 1. Load YouTube IFrame API
     useEffect(() => {
@@ -103,15 +102,16 @@ export default function CustomPlayer({ videoId, thumbnail, onEnded }) {
                             onReady: (event) => {
                                 setDuration(event.target.getDuration());
                                 event.target.playVideo();
-                                setStatus("playing");
-                                // On iPhone: show overlay to hide YT flash, then show unmute prompt
+
                                 if (iphoneDevice) {
-                                    setShowInitialOverlay(true);
+                                    // Delay hiding loading spinner on iPhone to cover YT flash
                                     setTimeout(() => {
-                                        setShowInitialOverlay(false);
+                                        setStatus("playing");
                                         setIsMuted(true);
                                         setShowUnmutePrompt(true);
-                                    }, 1500); // Wait for native player to fully take over
+                                    }, 1500);
+                                } else {
+                                    setStatus("playing");
                                 }
                             },
                             onStateChange: (event) => {
