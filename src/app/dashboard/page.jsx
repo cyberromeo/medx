@@ -24,7 +24,7 @@ export default function Dashboard() {
 
     const MIST_SUBJECTS = [
         "Anatomy", "Physiology", "Biochemistry", "Pathology",
-        "Microbiology", "Pharmacology", "Forensic Medicine (FMT)",
+        "Microbiology", "Pharmacology", "Forensic medicine",
         "Community Medicine (PSM)", "General Medicine", "General Surgery",
         "Obstetrics & Gynecology (OBG)", "Pediatrics", "Ophthalmology",
         "Otorhinolaryngology (ENT)", "Orthopedics", "Anesthesiology",
@@ -189,7 +189,7 @@ export default function Dashboard() {
                 >
                     <div className="flex flex-col gap-6">
                         {/* Header Section */}
-                            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 sm:gap-6">
+                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 sm:gap-6">
                             <div className="flex-1">
                                 <h1 className="hero-text text-2xl sm:text-4xl mb-1">
                                     Welcome, <span className="text-gradient">Dr. {user?.name?.split(' ')[0]}</span>
