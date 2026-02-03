@@ -21,7 +21,7 @@ const databases = new Databases(client);
 
 const DB_ID = process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID;
 const COL_ID = process.env.NEXT_PUBLIC_APPWRITE_COLLECTION_ID;
-const PLAYLIST_ID = "PLU7bbysyz36Als4NewRYenyNAkl89mV8Q";
+const PLAYLIST_ID = "";
 
 async function importPlaylist() {
     console.log(`fetching playlist: ${PLAYLIST_ID}...`);
