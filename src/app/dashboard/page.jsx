@@ -235,9 +235,9 @@ export default function Dashboard() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="flex gap-3 overflow-x-auto sm:grid sm:grid-cols-2 lg:grid-cols-4 sm:gap-4 mb-8 sm:mb-10 pb-2"
+          className="grid grid-cols-2 gap-3 sm:grid-cols-2 lg:grid-cols-4 sm:gap-4 mb-8 sm:mb-10"
         >
-          <div className="stat-card min-w-[160px] sm:min-w-0">
+          <div className="stat-card">
             <div className="flex items-center gap-3 mb-2">
               <div className="w-8 h-8 rounded-lg bg-secondary-soft flex items-center justify-center">
                 <Star className="text-secondary" size={16} />
@@ -247,7 +247,7 @@ export default function Dashboard() {
             <p className="text-2xl font-bold text-white font-mono">{progress.xp}</p>
           </div>
 
-          <div className="stat-card min-w-[160px] sm:min-w-0">
+          <div className="stat-card">
             <div className="flex items-center gap-3 mb-2">
               <div className="w-8 h-8 rounded-lg bg-primary-soft flex items-center justify-center">
                 <Target className="text-primary" size={16} />
@@ -260,7 +260,7 @@ export default function Dashboard() {
             </div>
           </div>
 
-          <div className="stat-card min-w-[160px] sm:min-w-0">
+          <div className="stat-card">
             <div className="flex items-center gap-3 mb-2">
               <div className="w-8 h-8 rounded-lg bg-accent-soft flex items-center justify-center">
                 <Flame className="text-accent" size={16} />
@@ -273,7 +273,7 @@ export default function Dashboard() {
             </div>
           </div>
 
-          <div className="stat-card min-w-[160px] sm:min-w-0">
+          <div className="stat-card">
             <div className="flex items-center gap-3 mb-2">
               <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center">
                 <Zap className="text-white" size={16} />

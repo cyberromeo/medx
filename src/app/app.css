@@ -55,17 +55,19 @@ body {
 .hero-sweep {
   position: absolute;
   inset: -20% 0 auto 0;
-  height: 260px;
-  background: linear-gradient(90deg, transparent, rgba(32, 227, 255, 0.2), transparent);
-  animation: heroSweep 6s ease-in-out infinite;
+  height: 220px;
+  background: radial-gradient(ellipse at center, rgba(32, 227, 255, 0.16), transparent 60%);
+  filter: blur(18px);
+  opacity: 0.7;
+  animation: heroSweep 7s ease-in-out infinite;
   pointer-events: none;
 }
 
 @keyframes heroSweep {
-  0% { transform: translateX(-30%); opacity: 0; }
+  0% { transform: translateX(-25%); opacity: 0; }
   30% { opacity: 0.7; }
-  60% { opacity: 0.2; }
-  100% { transform: translateX(30%); opacity: 0; }
+  60% { opacity: 0.25; }
+  100% { transform: translateX(25%); opacity: 0; }
 }
 
 /* Surfaces */

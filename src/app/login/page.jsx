@@ -121,7 +121,7 @@ export default function LoginPage() {
                   >
                     <label className="text-[10px] font-bold text-muted uppercase tracking-widest ml-1">Full Name</label>
                     <div className="relative mt-1">
-                      <User size={16} className="absolute left-4 top-3.5 text-muted" />
+                      <User size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted pointer-events-none" />
                       <input
                         type="text"
                         placeholder="John Doe"
@@ -138,7 +138,7 @@ export default function LoginPage() {
               <div>
                 <label className="text-[10px] font-bold text-muted uppercase tracking-widest ml-1">Email</label>
                 <div className="relative mt-1">
-                  <Mail size={16} className="absolute left-4 top-3.5 text-muted" />
+                  <Mail size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted pointer-events-none" />
                   <input
                     type="email"
                     placeholder="name@example.com"
@@ -153,7 +153,7 @@ export default function LoginPage() {
               <div>
                 <label className="text-[10px] font-bold text-muted uppercase tracking-widest ml-1">Password</label>
                 <div className="relative mt-1">
-                  <Lock size={16} className="absolute left-4 top-3.5 text-muted" />
+                  <Lock size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted pointer-events-none" />
                   <input
                     type="password"
                     placeholder="********"
