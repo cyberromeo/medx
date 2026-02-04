@@ -191,7 +191,7 @@ export default function SeriesPlayerPage() {
 
           <div className="lg:col-span-1">
             <div className="panel rounded-2xl p-3 md:p-5 lg:sticky lg:top-28 max-h-[calc(100vh-150px)] overflow-y-auto">
-              <h3 className="text-sm md:text-base font-semibold text-white mb-3 md:mb-4 flex items-center gap-2 sticky top-0 bg-black/80 backdrop-blur-md py-2 -mt-1 z-10">
+              <h3 className="text-sm md:text-base font-semibold text-white mb-3 md:mb-4 flex items-center gap-2 sticky top-0 bg-[rgba(18,24,35,0.92)] backdrop-blur-md py-2 px-2 -mx-2 rounded-lg border border-white/5 z-10">
                 <LayoutList className="text-primary" size={16} />
                 <span>Parts</span>
                 <span className="text-muted font-normal">({videos.length})</span>

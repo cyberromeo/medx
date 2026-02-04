@@ -8,6 +8,7 @@ import Header from "@/components/Header";
 import CustomPlayer from "@/components/CustomPlayer";
 import Link from "next/link";
 import { ArrowLeft, MessageSquare } from "lucide-react";
+import { useChatX } from "@/components/ChatXProvider";
 
 export default function WatchPage({ params }) {
   const { id } = use(params);
@@ -15,6 +16,7 @@ export default function WatchPage({ params }) {
   const [video, setVideo] = useState(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
+  const { openChat } = useChatX();
 
   const DB_ID = process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID;
   const COL_ID = process.env.NEXT_PUBLIC_APPWRITE_COLLECTION_ID;
@@ -112,12 +114,12 @@ export default function WatchPage({ params }) {
         </div>
       </div>
 
-      <Link
-        href="/chatx"
+      <button
+        onClick={openChat}
         className="fixed bottom-6 right-6 w-14 h-14 grad-primary rounded-full flex items-center justify-center shadow-lg hover:scale-110 active:scale-95 transition-all z-50 md:hidden"
       >
         <MessageSquare size={24} className="text-black" />
-      </Link>
+      </button>
     </main>
   );
 }
