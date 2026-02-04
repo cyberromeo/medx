@@ -47,44 +47,50 @@ export const getProgress = async (userId = null) => {
 
 // Calculate day streak from watch history
 const calculateStreak = (documents) => {
-    if (documents.length === 0) return 0;
+    if (!documents || documents.length === 0) return 0;
 
-    // Get unique dates in descending order (newest first)
-    const uniqueDays = [...new Set(
-        documents.map(doc => new Date(doc.watchedAt).toDateString())
-    )].sort((a, b) => new Date(b) - new Date(a));
-
-    if (uniqueDays.length === 0) return 0;
-
-    // Check if the most recent watch was Today or Yesterday
     const today = new Date();
-    const todayStr = today.toDateString();
+    today.setHours(0, 0, 0, 0);
 
     const yesterday = new Date(today);
     yesterday.setDate(yesterday.getDate() - 1);
-    const yesterdayStr = yesterday.toDateString();
 
-    const lastWatchedDay = uniqueDays[0];
+    // Check if the most recent watch was today or yesterday
+    // Documents are sorted descending by watchedAt because Appwrite query does it
+    // But even if they weren't perfectly sorted by time, we care about dates.
+    // Assuming the input usually comes sorted from the excessive Appwrite query overhead we are avoiding?
+    // Actually the query in getProgress does Query.orderDesc('watchedAt').
 
-    // If the last watched video was not today or yesterday, streak is broken
-    if (lastWatchedDay !== todayStr && lastWatchedDay !== yesterdayStr) {
+    const lastWatched = new Date(documents[0].watchedAt);
+    lastWatched.setHours(0, 0, 0, 0);
+
+    // If last watched was before yesterday, streak is broken (0)
+    // We compare time values for accurate date comparison
+    if (lastWatched.getTime() < yesterday.getTime()) {
         return 0;
     }
 
     let streak = 1;
+    let currentStreakDate = lastWatched;
 
-    // Count consecutive days
-    for (let i = 0; i < uniqueDays.length - 1; i++) {
-        const current = new Date(uniqueDays[i]);
-        const previous = new Date(uniqueDays[i + 1]);
+    // Iterate through history to find consecutive days
+    for (let i = 1; i < documents.length; i++) {
+        const docDate = new Date(documents[i].watchedAt);
+        docDate.setHours(0, 0, 0, 0);
 
-        // Calculate difference in days (ignoring time)
-        const diffTime = Math.abs(current - previous);
-        const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
+        // Calculate difference in days
+        const timeDiff = currentStreakDate.getTime() - docDate.getTime();
+        const diffDays = Math.round(timeDiff / (1000 * 60 * 60 * 24));
 
-        if (diffDays === 1) {
+        if (diffDays === 0) {
+            // Same day, continue to next document
+            continue;
+        } else if (diffDays === 1) {
+            // Consecutive day found, increment streak
             streak++;
+            currentStreakDate = docDate;
         } else {
+            // Gap found, streak ends
             break;
         }
     }

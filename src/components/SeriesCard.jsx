@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import {
@@ -12,7 +13,8 @@ export default function SeriesCard({ title, videos, itemVariants, watchedIds = [
     const seriesUrl = `/series/${encodeURIComponent(title)}`;
 
     // Calculate progress
-    const watchedCount = videos.filter(v => watchedIds.includes(v.$id)).length;
+    const watchedSet = useMemo(() => new Set(watchedIds), [watchedIds]);
+    const watchedCount = videos.filter(v => watchedSet.has(v.$id)).length;
     const totalCount = videos.length;
     const progressPercent = totalCount > 0 ? Math.round((watchedCount / totalCount) * 100) : 0;
     const isComplete = totalCount > 0 && watchedCount === totalCount;

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, memo } from "react";
 import { Play, Pause, Volume2, VolumeX, Maximize, Loader2, VolumeOff } from "lucide-react";
 
 // Helper to strictly extract YouTube ID
@@ -25,11 +25,39 @@ const isIPhone = () => {
     return /iPhone|iPod/.test(navigator.userAgent);
 };
 
-export default function CustomPlayer({ videoId, thumbnail, onEnded }) {
+// Memoized Video Container to prevent re-renders of the iframe wrapper
+const VideoContainer = memo(({ validId, status }) => {
+    return (
+        <div
+            className="absolute inset-0 z-10 overflow-hidden"
+            style={{ opacity: status === 'idle' ? 0 : 1, pointerEvents: status === 'idle' ? 'none' : 'auto' }}
+        >
+            {/* Scale up iframe slightly to crop out bottom YouTube branding */}
+            <div
+                id={`medx-player-${validId}`}
+                className="absolute top-0 left-0 w-full h-full"
+                style={{
+                    transform: 'scale(1.01)',
+                    transformOrigin: 'center center',
+                }}
+            />
+        </div>
+    );
+});
+
+VideoContainer.displayName = "VideoContainer";
+
+const CustomPlayer = ({ videoId, thumbnail, onEnded }) => {
     const validId = getYouTubeId(videoId);
     const containerRef = useRef(null);
     const playerRef = useRef(null);
     const shouldPlayRef = useRef(false);
+
+    // Store latest callback in ref to avoid stale closures and re-initialization
+    const onEndedRef = useRef(onEnded);
+    useEffect(() => {
+        onEndedRef.current = onEnded;
+    }, [onEnded]);
 
     const [status, setStatus] = useState("idle"); // idle, loading, playing, paused, ended
     const [progress, setProgress] = useState(0);
@@ -123,7 +151,7 @@ export default function CustomPlayer({ videoId, thumbnail, onEnded }) {
                                     if (event.data === window.YT.PlayerState.PAUSED) setStatus("paused");
                                     if (event.data === window.YT.PlayerState.ENDED) {
                                         setStatus("ended");
-                                        if (onEnded) onEnded();
+                                        if (onEndedRef.current) onEndedRef.current();
                                     }
                                 }
                             }
@@ -284,20 +312,7 @@ export default function CustomPlayer({ videoId, thumbnail, onEnded }) {
             )}
 
             {/* ===== YOUTUBE IFRAME CONTAINER ===== */}
-            <div
-                className="absolute inset-0 z-10 overflow-hidden"
-                style={{ opacity: status === 'idle' ? 0 : 1, pointerEvents: status === 'idle' ? 'none' : 'auto' }}
-            >
-                {/* Scale up iframe slightly to crop out bottom YouTube branding */}
-                <div
-                    id={`medx-player-${validId}`}
-                    className="absolute top-0 left-0 w-full h-full"
-                    style={{
-                        transform: 'scale(1.01)',
-                        transformOrigin: 'center center',
-                    }}
-                />
-            </div>
+            <VideoContainer validId={validId} status={status} />
 
             {/* ===== INTERACTION SHIELD ===== */}
             {/* Blocks all mouse/touch events on YouTube iframe and hides branding */}
@@ -362,8 +377,6 @@ export default function CustomPlayer({ videoId, thumbnail, onEnded }) {
                 </div>
             )}
 
-            {/* ===== iOS UNMUTE PROMPT REMOVED ===== */}
-
             {/* ===== CUSTOM CONTROLS ===== */}
             {(status === "playing" || status === "paused") && (
                 <div
@@ -396,8 +409,6 @@ export default function CustomPlayer({ videoId, thumbnail, onEnded }) {
                             <button onClick={togglePlay} className="text-white hover:text-cyan-400 transition-colors">
                                 {status === "playing" ? <Pause size={24} fill="currentColor" /> : <Play size={24} fill="currentColor" />}
                             </button>
-
-
 
                             {/* Time */}
                             <span className="text-xs font-mono text-gray-400">
@@ -444,4 +455,6 @@ export default function CustomPlayer({ videoId, thumbnail, onEnded }) {
             )}
         </div>
     );
-}
+};
+
+export default memo(CustomPlayer);
