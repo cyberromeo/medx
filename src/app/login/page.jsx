@@ -125,7 +125,7 @@ export default function LoginPage() {
                       <input
                         type="text"
                         placeholder="John Doe"
-                        className="input pl-11"
+                        className="input input-with-icon"
                         value={name}
                         onChange={(e) => setName(e.target.value)}
                         required={!isLogin}
@@ -142,7 +142,7 @@ export default function LoginPage() {
                   <input
                     type="email"
                     placeholder="name@example.com"
-                    className="input pl-11"
+                    className="input input-with-icon"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
@@ -157,7 +157,7 @@ export default function LoginPage() {
                   <input
                     type="password"
                     placeholder="********"
-                    className="input pl-11"
+                    className="input input-with-icon"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
