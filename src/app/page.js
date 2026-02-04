@@ -53,7 +53,7 @@ export default function Home() {
                   <p className="text-lg font-bold">19</p>
                 </div>
                 <div className="stat-card">
-                  <p className="text-xs text-muted">Videos</p>
+                  <p className="text-xs text-muted">Hours</p>
                   <p className="text-lg font-bold">1000+</p>
                 </div>
                 <div className="stat-card">
