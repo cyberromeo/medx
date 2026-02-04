@@ -6,7 +6,7 @@ import { ID, Query } from "appwrite";
 import { motion, AnimatePresence } from "framer-motion";
 import {
     Trash2, Plus, LogOut, Video, Lock, Users, Activity,
-    Search, Filter, ChevronDown, ExternalLink, Upload,
+    Search, ExternalLink, Upload,
     Stethoscope, AlertCircle, CheckCircle, X
 } from "lucide-react";
 import { getAdminStats } from "@/actions/admin";
@@ -26,7 +26,6 @@ const ARISE_SUBJECTS = [
 ];
 
 export default function AdminPage() {
-    const [user, setUser] = useState(null);
     const [videos, setVideos] = useState([]);
     const [filteredVideos, setFilteredVideos] = useState([]);
     const [stats, setStats] = useState({ totalUsers: 0, activeUsers: 0, totalVideos: 0 });
@@ -65,8 +64,7 @@ export default function AdminPage() {
 
     const checkSession = async () => {
         try {
-            const current = await account.get();
-            setUser(current);
+            await account.get();
         } catch {
             console.log("No active session");
         }
@@ -170,24 +168,25 @@ export default function AdminPage() {
     // Login Screen
     if (!isAdminAuthenticated) {
         return (
-            <div className="min-h-screen bg-background flex items-center justify-center p-6">
-                <div className="aurora-bg" />
+            <div className="min-h-screen flex items-center justify-center p-6 relative overflow-hidden">
+                <div className="halo-bg" />
+                <div className="grid-bg" />
                 <motion.div
                     initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    className="glass-panel p-8 rounded-3xl max-w-md w-full text-center relative z-10"
+                    className="panel rounded-3xl p-8 max-w-md w-full text-center relative z-10"
                 >
-                    <div className="w-16 h-16 bg-gradient-to-br from-primary to-secondary rounded-2xl flex items-center justify-center mx-auto mb-6">
-                        <Lock size={32} className="text-white" />
+                    <div className="w-16 h-16 grad-primary rounded-2xl flex items-center justify-center mx-auto mb-6">
+                        <Lock size={32} className="text-black" />
                     </div>
                     <h2 className="text-2xl font-bold text-white mb-2">Admin Portal</h2>
-                    <p className="text-gray-500 mb-8">Enter credentials to access the dashboard</p>
+                    <p className="text-muted mb-8">Enter credentials to access the dashboard</p>
 
                     <form onSubmit={handleAdminLogin} className="space-y-4">
                         <input
                             type="password"
                             placeholder="Enter Password"
-                            className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-4 outline-none focus:border-primary/50 text-center text-white placeholder-gray-500"
+                            className="input text-center"
                             value={adminPassword}
                             onChange={(e) => setAdminPassword(e.target.value)}
                         />
@@ -196,14 +195,14 @@ export default function AdminPage() {
                         )}
                         <button
                             type="submit"
-                            className="w-full bg-gradient-to-r from-primary to-secondary text-black font-bold py-4 rounded-xl hover:opacity-90 transition-opacity"
+                            className="w-full grad-primary text-black font-bold py-4 rounded-xl hover:opacity-90 transition-opacity"
                         >
                             Unlock Dashboard
                         </button>
                     </form>
 
-                    <Link href="/" className="text-gray-500 text-sm mt-6 block hover:text-white transition-colors">
-                        ← Back to Home
+                    <Link href="/" className="text-muted text-sm mt-6 block hover:text-white transition-colors">
+                        Back to Home
                     </Link>
                 </motion.div>
             </div>
@@ -211,8 +210,9 @@ export default function AdminPage() {
     }
 
     return (
-        <div className="min-h-screen bg-background text-white">
-            <div className="aurora-bg" />
+        <div className="min-h-screen text-white">
+            <div className="halo-bg" />
+            <div className="grid-bg" />
 
             {/* Toast Messages */}
             <AnimatePresence>
@@ -234,7 +234,7 @@ export default function AdminPage() {
                 {/* Header */}
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
                     <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 bg-gradient-to-br from-primary to-secondary rounded-xl flex items-center justify-center">
+                        <div className="w-12 h-12 grad-primary rounded-xl flex items-center justify-center">
                             <Stethoscope size={24} className="text-white" />
                         </div>
                         <div>
@@ -261,7 +261,7 @@ export default function AdminPage() {
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="glass-panel p-5 rounded-2xl"
+                        className="panel p-5 rounded-2xl"
                     >
                         <div className="flex items-center gap-4">
                             <div className="w-12 h-12 bg-blue-500/20 rounded-xl flex items-center justify-center">
@@ -278,7 +278,7 @@ export default function AdminPage() {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.1 }}
-                        className="glass-panel p-5 rounded-2xl"
+                        className="panel p-5 rounded-2xl"
                     >
                         <div className="flex items-center gap-4">
                             <div className="w-12 h-12 bg-green-500/20 rounded-xl flex items-center justify-center">
@@ -301,7 +301,7 @@ export default function AdminPage() {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.2 }}
-                        className="glass-panel p-5 rounded-2xl"
+                        className="panel p-5 rounded-2xl"
                     >
                         <div className="flex items-center gap-4">
                             <div className="w-12 h-12 bg-purple-500/20 rounded-xl flex items-center justify-center">
@@ -322,14 +322,14 @@ export default function AdminPage() {
                         <input
                             type="text"
                             placeholder="Search videos..."
-                            className="w-full bg-white/5 border border-white/10 rounded-xl pl-12 pr-4 py-3 outline-none focus:border-primary/50 text-white placeholder-gray-500"
+                            className="input pl-12"
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                         />
                     </div>
                     <div className="flex gap-3">
                         <select
-                            className="bg-white/5 border border-white/10 rounded-xl px-4 py-3 outline-none focus:border-primary/50 text-white"
+                            className="select"
                             value={filterCategory}
                             onChange={(e) => setFilterCategory(e.target.value)}
                         >
@@ -339,7 +339,7 @@ export default function AdminPage() {
                         </select>
                         <button
                             onClick={() => setShowAddForm(true)}
-                            className="bg-gradient-to-r from-primary to-secondary text-black font-bold px-6 py-3 rounded-xl hover:opacity-90 transition-opacity flex items-center gap-2"
+                            className="grad-primary text-black font-bold px-6 py-3 rounded-xl hover:opacity-90 transition-opacity flex items-center gap-2"
                         >
                             <Plus size={20} />
                             Add Video
@@ -355,7 +355,7 @@ export default function AdminPage() {
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: index * 0.03 }}
-                            className="glass-panel rounded-2xl overflow-hidden group"
+                            className="panel rounded-2xl overflow-hidden group"
                         >
                             <div className="relative aspect-video bg-black">
                                 <img
@@ -426,7 +426,7 @@ export default function AdminPage() {
                             initial={{ opacity: 0, scale: 0.95, y: 20 }}
                             animate={{ opacity: 1, scale: 1, y: 0 }}
                             exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                            className="glass-panel p-6 rounded-3xl max-w-lg w-full max-h-[90vh] overflow-y-auto"
+                            className="panel p-6 rounded-3xl max-w-lg w-full max-h-[90vh] overflow-y-auto"
                             onClick={(e) => e.stopPropagation()}
                         >
                             <div className="flex justify-between items-center mb-6">
@@ -449,7 +449,7 @@ export default function AdminPage() {
                                         type="text"
                                         required
                                         placeholder="Video title"
-                                        className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 outline-none focus:border-primary/50 text-white placeholder-gray-500"
+                                        className="input"
                                         value={title}
                                         onChange={(e) => setTitle(e.target.value)}
                                     />
@@ -460,7 +460,7 @@ export default function AdminPage() {
                                         <label className="block text-sm font-medium text-gray-400 mb-2">Category</label>
                                         <select
                                             required
-                                            className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 outline-none focus:border-primary/50 text-white"
+                                            className="select"
                                             value={category}
                                             onChange={(e) => { setCategory(e.target.value); setSubCategory(""); }}
                                         >
@@ -472,7 +472,7 @@ export default function AdminPage() {
                                         <label className="block text-sm font-medium text-gray-400 mb-2">Subject</label>
                                         <select
                                             required
-                                            className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 outline-none focus:border-primary/50 text-white"
+                                            className="select"
                                             value={subCategory}
                                             onChange={(e) => setSubCategory(e.target.value)}
                                         >
@@ -491,7 +491,7 @@ export default function AdminPage() {
                                             type="text"
                                             required
                                             placeholder="dQw4w9WgXcQ"
-                                            className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 outline-none focus:border-primary/50 text-white placeholder-gray-500"
+                                            className="input"
                                             value={videoId}
                                             onChange={(e) => setVideoId(e.target.value)}
                                             onBlur={autoFillFromYouTube}
@@ -503,7 +503,7 @@ export default function AdminPage() {
                                             type="text"
                                             required
                                             placeholder="10:05"
-                                            className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 outline-none focus:border-primary/50 text-white placeholder-gray-500"
+                                            className="input"
                                             value={duration}
                                             onChange={(e) => setDuration(e.target.value)}
                                         />
@@ -515,7 +515,7 @@ export default function AdminPage() {
                                     <input
                                         type="url"
                                         placeholder="Auto-generated from YouTube ID"
-                                        className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 outline-none focus:border-primary/50 text-white placeholder-gray-500"
+                                        className="input"
                                         value={thumbnailUrl}
                                         onChange={(e) => setThumbnailUrl(e.target.value)}
                                     />
@@ -527,7 +527,7 @@ export default function AdminPage() {
                                         required
                                         rows="3"
                                         placeholder="Brief description..."
-                                        className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 outline-none focus:border-primary/50 text-white placeholder-gray-500 resize-none"
+                                        className="input resize-none"
                                         value={description}
                                         onChange={(e) => setDescription(e.target.value)}
                                     />
@@ -548,7 +548,7 @@ export default function AdminPage() {
                                 <button
                                     type="submit"
                                     disabled={loading}
-                                    className="w-full bg-gradient-to-r from-primary to-secondary text-black font-bold py-4 rounded-xl hover:opacity-90 transition-opacity disabled:opacity-50"
+                                    className="w-full grad-primary text-black font-bold py-4 rounded-xl hover:opacity-90 transition-opacity disabled:opacity-50"
                                 >
                                     {loading ? "Adding..." : "Add Video"}
                                 </button>
@@ -560,3 +560,5 @@ export default function AdminPage() {
         </div>
     );
 }
+
+

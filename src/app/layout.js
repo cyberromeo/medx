@@ -1,30 +1,30 @@
 import "./app.css";
-import { Space_Grotesk, Plus_Jakarta_Sans, Outfit } from "next/font/google";
+import { Sora, Manrope, JetBrains_Mono } from "next/font/google";
 import MobileNav from "@/components/MobileNav";
-import { Analytics } from '@vercel/analytics/next';
+import { Analytics } from "@vercel/analytics/next";
 
-const spaceGrotesk = Space_Grotesk({ subsets: ["latin"], variable: "--font-display" });
-const plusJakarta = Plus_Jakarta_Sans({ subsets: ["latin"], variable: "--font-sans" });
-const outfit = Outfit({ subsets: ["latin"], variable: "--font-accent" });
+const sora = Sora({ subsets: ["latin"], variable: "--font-display" });
+const manrope = Manrope({ subsets: ["latin"], variable: "--font-sans" });
+const jetbrains = JetBrains_Mono({ subsets: ["latin"], variable: "--font-mono" });
 
 export const metadata = {
   title: "MedX - Medical Video Platform",
   description: "Premium FMGE preparation platform",
   themeColor: [
-    { media: '(prefers-color-scheme: light)', color: '#000000' },
-    { media: '(prefers-color-scheme: dark)', color: '#000000' },
+    { media: "(prefers-color-scheme: light)", color: "#0b0f14" },
+    { media: "(prefers-color-scheme: dark)", color: "#0b0f14" },
   ],
-  colorScheme: 'dark only',
+  colorScheme: "dark only",
   appleWebApp: {
     capable: true,
-    statusBarStyle: 'black-translucent',
-    title: 'MedX',
+    statusBarStyle: "black-translucent",
+    title: "MedX",
   },
   viewport: {
-    width: 'device-width',
+    width: "device-width",
     initialScale: 1,
     maximumScale: 1,
-    viewportFit: 'cover',
+    viewportFit: "cover",
   },
 };
 
@@ -32,16 +32,16 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" className="dark">
       <head>
-        <meta name="theme-color" content="#000000" />
+        <meta name="theme-color" content="#0b0f14" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <meta name="color-scheme" content="dark" />
       </head>
-      <body className={`${plusJakarta.variable} ${spaceGrotesk.variable} ${outfit.variable} antialiased bg-black text-foreground grain-overlay`}>
+      <body className={`${manrope.variable} ${sora.variable} ${jetbrains.variable} antialiased`}>
         {children}
         <MobileNav />
         <Analytics />
       </body>
-    </html >
+    </html>
   );
 }

@@ -7,178 +7,229 @@ import { Play, Shield, Zap, Globe, ArrowRight, AlertTriangle } from "lucide-reac
 
 export default function Home() {
   return (
-    <main className="min-h-screen relative overflow-hidden selection:bg-primary/30">
-      <div className="mesh-bg" />
-      <div className="aurora-bg" />
+    <main className="min-h-screen relative overflow-hidden">
+      <div className="halo-bg" />
+      <div className="grid-bg" />
       <Header />
 
-      {/* Hero Section */}
-      <section className="relative pt-32 sm:pt-48 pb-24 sm:pb-32 px-4 sm:px-6">
-        <div className="container mx-auto max-w-5xl text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-          >
+      {/* Hero */}
+      <section className="relative pt-32 sm:pt-40 pb-20 px-4 sm:px-6">
+        <div className="container mx-auto max-w-6xl relative">
+          <div className="hero-sweep" />
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
             <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.2, duration: 0.5 }}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 mb-8"
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
             >
-              <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
-              <span className="text-xs sm:text-sm text-gray-400 font-medium">Recorded Live Classes Available</span>
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 mb-6">
+                <span className="w-2 h-2 rounded-full bg-secondary pulse-soft" />
+                <span className="text-xs text-muted font-semibold">Recorded Live Classes Available</span>
+              </div>
+
+              <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight">
+                Build a
+                <span className="text-gradient"> world-class</span> medical foundation
+              </h1>
+
+              <p className="text-base sm:text-lg text-muted mt-4 max-w-xl">
+                The pass percentage is just a number. You only need one seat, one passing score,
+                and one Qualified status to start your dream career in India.
+              </p>
+
+              <div className="flex flex-col sm:flex-row items-center gap-3 mt-8">
+                <Link href="/login" className="btn-primary flex items-center gap-2 w-full sm:w-auto justify-center text-sm">
+                  Start Learning
+                  <ArrowRight size={16} />
+                </Link>
+                <Link href="/syllabus" className="btn-ghost w-full sm:w-auto text-center text-sm">
+                  View Syllabus
+                </Link>
+              </div>
+
+              <div className="mt-8 grid grid-cols-3 gap-3">
+                <div className="stat-card">
+                  <p className="text-xs text-muted">Subjects</p>
+                  <p className="text-lg font-bold">19</p>
+                </div>
+                <div className="stat-card">
+                  <p className="text-xs text-muted">Videos</p>
+                  <p className="text-lg font-bold">1000+</p>
+                </div>
+                <div className="stat-card">
+                  <p className="text-xs text-muted">Community</p>
+                  <p className="text-lg font-bold">Live</p>
+                </div>
+              </div>
             </motion.div>
 
-            <h1 className="hero-text text-4xl sm:text-5xl md:text-7xl mb-6 sm:mb-8">
-              Master the <br className="sm:hidden" />
-              <span className="text-gradient-animated">Medical Arts</span>
-            </h1>
-
-            <p className="text-base sm:text-lg text-gray-400 mb-8 sm:mb-10 max-w-2xl mx-auto leading-relaxed px-4">
-              The pass percentage is just a number. You only need one seat, one passing score,
-              and one &apos;Qualified&apos; status to start your dream career in India.
-            </p>
-
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
-              <Link href="/login" className="btn-shine flex items-center gap-2 w-full sm:w-auto justify-center text-base">
-                Start Learning
-                <ArrowRight size={18} />
-              </Link>
-              <Link href="/syllabus" className="px-6 sm:px-8 py-3.5 sm:py-4 rounded-full font-semibold text-base text-white border border-white/10 hover:bg-white/5 hover:border-primary/30 transition-all w-full sm:w-auto text-center backdrop-blur-sm">
-                View Syllabus
-              </Link>
-            </div>
-          </motion.div>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2, duration: 0.7 }}
+              className="panel-glow rounded-3xl p-6 lg:p-8 relative overflow-hidden"
+            >
+              <div className="absolute -top-12 -right-12 w-40 h-40 rounded-full bg-primary-soft blur-3xl" />
+              <div className="space-y-4 relative z-10">
+                <div className="flex items-center justify-between">
+                  <span className="chip">MedX Preview</span>
+                  <span className="text-xs text-muted">4K lectures</span>
+                </div>
+                <div className="aspect-video rounded-2xl bg-black/60 border border-white/10 flex items-center justify-center">
+                  <Play size={36} className="text-primary" />
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="surface-elev rounded-2xl p-3">
+                    <p className="text-xs text-muted">Streaming</p>
+                    <p className="text-sm font-semibold">Zero buffer</p>
+                  </div>
+                  <div className="surface-elev rounded-2xl p-3">
+                    <p className="text-xs text-muted">Audio</p>
+                    <p className="text-sm font-semibold">Studio quality</p>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </div>
         </div>
       </section>
 
-
-      {/* Bento Grid Features */}
+      {/* Features */}
       <section id="features" className="py-16 sm:py-24 px-4 sm:px-6 relative z-10">
         <div className="container mx-auto max-w-6xl">
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="font-display text-2xl sm:text-3xl font-bold text-center mb-10 sm:mb-14"
+            className="font-display text-2xl sm:text-3xl font-bold text-center mb-10"
           >
-            Why Choose <span className="text-gradient">MedX</span>?
+            Why Choose <span className="text-gradient">MedX</span>
           </motion.h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
 
-            {/* Large Card */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="md:col-span-2 card-premium p-6 sm:p-10 relative overflow-hidden group"
+              className="lg:col-span-2 panel-glow rounded-3xl p-8 relative overflow-hidden"
             >
-              <div className="absolute top-0 right-0 p-10 opacity-10 group-hover:opacity-20 transition-opacity">
+              <div className="absolute top-0 right-0 p-10 opacity-10">
                 <Play size={120} />
               </div>
-              <div className="relative z-10">
-                <h3 className="text-2xl font-bold mb-4">Cinematic Learning</h3>
-                <p className="text-gray-400 mb-6 max-w-md">Experience medical education like never before. 4K anatomical details, immersive surgery walkthroughs, and crystal clear audio.</p>
-                <div className="aspect-video bg-black/50 rounded-xl border border-white/5 overflow-hidden shadow-2xl">
-                  <div className="w-full h-full bg-gradient-to-br from-gray-900 to-black flex items-center justify-center">
-                    <Play size={40} className="text-primary/50" />
-                  </div>
-                </div>
+              <h3 className="text-2xl font-bold mb-3">Cinematic Learning</h3>
+              <p className="text-muted mb-6 max-w-md">
+                Experience medical education like never before. Crisp anatomy visuals, immersive walkthroughs,
+                and studio-grade sound.
+              </p>
+              <div className="aspect-video bg-black/60 rounded-2xl border border-white/10 flex items-center justify-center">
+                <Play size={40} className="text-primary" />
               </div>
             </motion.div>
 
-            {/* Mobile Friendly */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.1 }}
-              className="glass-panel p-8 rounded-3xl flex flex-col justify-between group hover:border-primary/30 transition-colors"
+              className="panel rounded-3xl p-6 flex flex-col justify-between"
             >
-              <div className="bg-primary/10 w-12 h-12 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+              <div className="bg-primary-soft w-12 h-12 rounded-xl flex items-center justify-center mb-6">
                 <Globe className="text-primary" />
               </div>
               <div>
                 <h3 className="text-xl font-bold mb-2">Learn Anywhere</h3>
-                <p className="text-sm text-gray-500">Fully optimized for mobile, tablet, and desktop. Your library travels with you.</p>
+                <p className="text-sm text-muted">Optimized for mobile, tablet, and desktop. Your library travels with you.</p>
               </div>
             </motion.div>
 
-            {/* Secure */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.2 }}
-              className="glass-panel p-8 rounded-3xl flex flex-col justify-between group hover:border-accent/30 transition-colors"
+              className="panel rounded-3xl p-6 flex flex-col justify-between"
             >
-              <div className="bg-accent/10 w-12 h-12 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+              <div className="bg-accent-soft w-12 h-12 rounded-xl flex items-center justify-center mb-6">
                 <Shield className="text-accent" />
               </div>
               <div>
                 <h3 className="text-xl font-bold mb-2">Secure Platform</h3>
-                <p className="text-sm text-gray-500">Enterprise-grade security. Your progress and data are protected.</p>
+                <p className="text-sm text-muted">Enterprise-grade security. Your progress and data stay protected.</p>
               </div>
             </motion.div>
 
-            {/* Speed */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.3 }}
-              className="md:col-span-2 glass-panel p-10 rounded-3xl relative overflow-hidden flex items-center justify-between group"
+              className="lg:col-span-2 panel rounded-3xl p-8 relative overflow-hidden flex items-center justify-between"
             >
               <div>
                 <h3 className="text-2xl font-bold mb-4">Lightning Fast</h3>
-                <p className="text-gray-400 max-w-xs">Optimized streaming engine ensures zero buffer, even on mobile networks.</p>
+                <p className="text-muted max-w-xs">Optimized streaming engine ensures zero buffer, even on mobile networks.</p>
               </div>
-              <div className="bg-gradient-to-br from-secondary to-primary w-24 h-24 rounded-full blur-[40px] opacity-50 absolute right-10" />
-              <Zap size={64} className="text-white relative z-10 group-hover:text-yellow-400 transition-colors" />
+              <div className="bg-secondary-soft w-24 h-24 rounded-full blur-[40px] opacity-70 absolute right-10" />
+              <Zap size={64} className="text-white relative z-10" />
             </motion.div>
-
           </div>
         </div>
       </section>
 
+      {/* About */}
+      <section id="about" className="py-12 px-4 sm:px-6 relative z-10">
+        <div className="container mx-auto max-w-5xl">
+          <div className="panel rounded-3xl p-6 sm:p-8">
+            <h2 className="text-2xl font-bold mb-3">About MedX</h2>
+            <p className="text-muted leading-relaxed">
+              MedX is a free, student-first platform built to help FMGE aspirants master the full medical
+              curriculum with clarity and confidence. Learn at your pace, track progress, and join the community.
+            </p>
+          </div>
+        </div>
+      </section>
 
-      {/* Disclaimer Section */}
-      <section className="py-12 px-4 sm:px-6 relative z-10 border-t border-white/5 bg-black/20">
-        <div className="container mx-auto max-w-4xl">
-          <div className="flex items-start gap-4 p-6 rounded-2xl bg-yellow-500/5 border border-yellow-500/10 text-left">
-            <AlertTriangle className="text-yellow-500 shrink-0 mt-1" size={24} />
-            <div className="space-y-4 text-sm text-gray-400">
-              <h3 className="text-lg font-bold text-yellow-500 mb-2">Important Disclaimer</h3>
-              <p>Please read the following terms and conditions carefully before using Medx:</p>
-
-              <div>
-                <strong className="text-gray-300 block mb-1">1. Zero Cost Policy</strong>
-                <p>Medx is, and will always be, completely free to use. We do not charge subscription fees, access fees, or "premium" charges. If any individual or third-party entity has charged you a fee to access this site or its services, please be aware that you have been defrauded. We are not responsible for any transactions made outside of our official platform.</p>
+      {/* Disclaimer */}
+      <section className="py-12 px-4 sm:px-6 relative z-10 border-t border-white/5">
+        <div className="container mx-auto max-w-5xl">
+          <div className="panel rounded-3xl p-6 sm:p-8">
+            <div className="flex items-start gap-4 mb-6">
+              <div className="w-10 h-10 rounded-xl bg-accent-soft flex items-center justify-center">
+                <AlertTriangle className="text-accent" size={22} />
               </div>
-
               <div>
-                <strong className="text-gray-300 block mb-1">2. Content Source & Liability</strong>
-                <p className="mb-2">The video content provided on this site consists of curated links aggregated from Telegram and other publicly available web sources.</p>
-                <ul className="list-disc pl-5 space-y-1">
-                  <li><strong>Intent:</strong> The developer’s sole intention is to facilitate the sharing of publicly accessible information for educational and free-use purposes.</li>
-                  <li><strong>No Ownership:</strong> Medx does not host, upload, or own the media content found herein.</li>
-                  <li><strong>Liability:</strong> Neither the site nor the developer shall be held liable for the accuracy, copyright compliance, legality, or decency of the material contained in these third-party links. Users access the content at their own risk.</li>
-                </ul>
+                <h3 className="text-lg font-bold">Important Disclaimer</h3>
+                <p className="text-sm text-muted">Please read the following terms carefully before using MedX.</p>
               </div>
+            </div>
 
-              <div>
-                <strong className="text-gray-300 block mb-1">3. DMCA & Takedown Requests</strong>
-                <p>As we only provide links to content hosted elsewhere, we cannot remove videos from the source. However, if you are a copyright owner and wish to have a specific link removed from Medx, please contact us directly, and we will process the request promptly.</p>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+              <div className="surface-elev rounded-2xl p-4">
+                <p className="font-semibold mb-2">Zero Cost Policy</p>
+                <p className="text-muted">
+                  MedX is, and will always be, free to use. If anyone charged you to access this platform,
+                  that transaction is not affiliated with us.
+                </p>
+              </div>
+              <div className="surface-elev rounded-2xl p-4">
+                <p className="font-semibold mb-2">Content Source</p>
+                <p className="text-muted">
+                  Video links are curated from public sources. MedX does not host or own the media content.
+                </p>
+              </div>
+              <div className="surface-elev rounded-2xl p-4">
+                <p className="font-semibold mb-2">DMCA Requests</p>
+                <p className="text-muted">
+                  If you are a copyright owner, contact us for prompt takedown processing.
+                </p>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="py-12 border-t border-white/5 text-center text-gray-600 text-sm">
-        <p>© 2026 MedX - FMGE Preparation Platform</p>
+      <footer className="py-10 border-t border-white/5 text-center text-muted text-sm">
+        <p>(c) 2026 MedX - FMGE Preparation Platform</p>
       </footer>
     </main>
   );

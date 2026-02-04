@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef, memo } from "react";
-import { Play, Pause, Volume2, VolumeX, Maximize, Loader2, VolumeOff } from "lucide-react";
+import { Play, Pause, Volume2, VolumeX, Maximize, Loader2 } from "lucide-react";
 
 // Helper to strictly extract YouTube ID
 const getYouTubeId = (url) => {
@@ -303,10 +303,10 @@ const CustomPlayer = ({ videoId, thumbnail, onEnded }) => {
             {/* ===== SPLASH SCREEN - Covers YouTube branding during initial load ===== */}
             {showSplash && (
                 <div className="absolute inset-0 z-50 bg-black flex flex-col items-center justify-center transition-opacity duration-500">
-                    <Loader2 className="w-12 h-12 text-cyan-400 animate-spin mb-4" />
-                    <span className="text-cyan-400 text-sm font-medium tracking-wider">Loading Video...</span>
-                    <div className="absolute top-4 left-4 px-3 py-1 rounded-full bg-cyan-400/10 border border-cyan-400/30">
-                        <span className="text-[10px] font-bold text-cyan-400 tracking-wider">MEDX PLAYER</span>
+                    <Loader2 className="w-12 h-12 text-primary animate-spin mb-4" />
+                    <span className="text-primary text-sm font-medium tracking-wider">Loading Video...</span>
+                    <div className="absolute top-4 left-4 px-3 py-1 rounded-full bg-primary-soft border border-primary-soft">
+                        <span className="text-[10px] font-bold text-primary tracking-wider">MEDX PLAYER</span>
                     </div>
                 </div>
             )}
@@ -331,8 +331,8 @@ const CustomPlayer = ({ videoId, thumbnail, onEnded }) => {
             {/* ===== iOS ACTION OVERLAY - shows during seek/resume to hide YouTube elements ===== */}
             {showActionOverlay && (
                 <div className="absolute inset-0 z-40 bg-black/90 flex items-center justify-center pointer-events-none transition-opacity duration-200">
-                    <div className="w-12 h-12 rounded-full bg-cyan-400/20 flex items-center justify-center">
-                        <div className="w-8 h-8 rounded-full bg-cyan-400/40 animate-ping" />
+                    <div className="w-12 h-12 rounded-full bg-primary-soft flex items-center justify-center">
+                        <div className="w-8 h-8 rounded-full bg-primary animate-ping" />
                     </div>
                 </div>
             )}
@@ -354,7 +354,7 @@ const CustomPlayer = ({ videoId, thumbnail, onEnded }) => {
                     {/* Big Play Button */}
                     <div className="relative z-50 group-hover:scale-110 transition-transform duration-300">
                         <div className="w-24 h-24 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center shadow-[0_0_40px_rgba(6,182,212,0.3)]">
-                            <div className="w-20 h-20 rounded-full bg-gradient-to-br from-cyan-400 to-blue-600 flex items-center justify-center">
+                            <div className="w-20 h-20 rounded-full grad-primary flex items-center justify-center">
                                 <Play size={40} className="text-white fill-white ml-2" />
                             </div>
                         </div>
@@ -365,7 +365,7 @@ const CustomPlayer = ({ videoId, thumbnail, onEnded }) => {
 
                     {/* Branding Tag */}
                     <div className="absolute top-4 left-4 px-3 py-1 rounded-full bg-black/50 backdrop-blur border border-white/10">
-                        <span className="text-[10px] font-bold text-cyan-400 tracking-wider">MEDX PLAYER</span>
+                        <span className="text-[10px] font-bold text-primary tracking-wider">MEDX PLAYER</span>
                     </div>
                 </div>
             )}
@@ -373,7 +373,7 @@ const CustomPlayer = ({ videoId, thumbnail, onEnded }) => {
             {/* ===== LOADING SPINNER ===== */}
             {status === "loading" && (
                 <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/90">
-                    <Loader2 className="w-12 h-12 text-cyan-400 animate-spin" />
+                    <Loader2 className="w-12 h-12 text-primary animate-spin" />
                 </div>
             )}
 
@@ -393,20 +393,20 @@ const CustomPlayer = ({ videoId, thumbnail, onEnded }) => {
                             [&::-webkit-slider-thumb]:appearance-none 
                             [&::-webkit-slider-thumb]:w-3 
                             [&::-webkit-slider-thumb]:h-3 
-                            [&::-webkit-slider-thumb]:bg-cyan-400 
+                            [&::-webkit-slider-thumb]:bg-[var(--primary)] 
                             [&::-webkit-slider-thumb]:rounded-full 
                             [&::-webkit-slider-thumb]:shadow-lg
                             hover:[&::-webkit-slider-thumb]:scale-125 
                             transition-all"
                         style={{
-                            background: `linear-gradient(to right, #22d3ee ${progress}%, rgba(255,255,255,0.2) ${progress}%)`
+                            background: `linear-gradient(to right, var(--primary) ${progress}%, rgba(255,255,255,0.2) ${progress}%)`
                         }}
                     />
 
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-4">
                             {/* Play/Pause */}
-                            <button onClick={togglePlay} className="text-white hover:text-cyan-400 transition-colors">
+                            <button onClick={togglePlay} className="text-white hover:text-primary transition-colors">
                                 {status === "playing" ? <Pause size={24} fill="currentColor" /> : <Play size={24} fill="currentColor" />}
                             </button>
 
@@ -446,7 +446,7 @@ const CustomPlayer = ({ videoId, thumbnail, onEnded }) => {
                             )}
 
                             {/* Branding */}
-                            <div className="px-2 py-0.5 rounded border border-cyan-400/30 bg-cyan-400/10 text-[10px] text-cyan-400 uppercase font-bold tracking-widest ml-2">
+                            <div className="px-2 py-0.5 rounded border border-primary-soft bg-primary-soft text-[10px] text-primary uppercase font-bold tracking-widest ml-2">
                                 MedX
                             </div>
                         </div>
