@@ -8,7 +8,7 @@ import { Send, MessageCircle, Loader2, Sparkles, ArrowDown, X } from "lucide-rea
 
 const MAX_MESSAGES = 50;
 
-export default function ChatXPanel({ onClose, className = "" }) {
+export default function DiscussPanel({ onClose, className = "" }) {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   const [loading, setLoading] = useState(true);
@@ -146,7 +146,7 @@ export default function ChatXPanel({ onClose, className = "" }) {
           </div>
           <div className="flex-1 min-w-0">
             <h1 className="text-sm font-semibold text-white flex items-center gap-2">
-              ChatX
+              Discuss
               <span className="relative flex h-2 w-2">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-secondary opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-secondary"></span>
@@ -165,7 +165,7 @@ export default function ChatXPanel({ onClose, className = "" }) {
             <button
               onClick={onClose}
               className="w-9 h-9 flex items-center justify-center rounded-xl bg-white/5 text-white hover:bg-white/10 transition-all active:scale-95"
-              aria-label="Close chat"
+              aria-label="Close discuss"
             >
               <X size={18} />
             </button>

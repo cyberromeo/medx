@@ -43,7 +43,7 @@ export default function MobileNav() {
             className="flex-1 flex flex-col items-center justify-center gap-1 py-2 rounded-xl transition-all duration-200 hover:bg-white/5"
           >
             <MessageSquare size={20} className="text-muted" />
-            <span className="text-[10px] font-semibold text-muted">Chat</span>
+            <span className="text-[10px] font-semibold text-muted">Discuss</span>
           </button>
 
           <Link

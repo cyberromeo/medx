@@ -71,7 +71,7 @@ export default function LoginPage() {
                 </div>
                 <div className="surface-elev rounded-2xl p-4">
                   <p className="text-xs text-muted">Community</p>
-                  <p className="font-semibold">Live ChatX support</p>
+                  <p className="font-semibold">Live Discuss support</p>
                 </div>
               </div>
             </div>
