@@ -35,7 +35,7 @@ export default function ChatXOverlay({ open, onClose }) {
           <button
             onClick={onClose}
             className="absolute inset-0 bg-black/40 backdrop-blur-sm"
-            aria-label="Close chat overlay"
+            aria-label="Close discuss overlay"
           />
           <motion.div
             initial={{ y: 30, opacity: 0 }}
