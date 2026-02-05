@@ -6,14 +6,14 @@ import { usePathname, useRouter } from "next/navigation";
 import { account } from "@/lib/appwrite";
 import { Stethoscope, ChevronRight, Trophy, LogOut, MessageSquare } from "lucide-react";
 import { motion } from "framer-motion";
-import { useDiscuss } from "@/components/DiscussProvider";
+import { useChatX } from "@/components/ChatXProvider";
 
 export default function Header() {
   const [user, setUser] = useState(null);
   const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
-  const { openChat } = useDiscuss();
+  const { openChat } = useChatX();
 
   const handleLogout = async () => {
     try {
