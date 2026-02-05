@@ -6,14 +6,14 @@ import { usePathname, useRouter } from "next/navigation";
 import { account } from "@/lib/appwrite";
 import { Stethoscope, ChevronRight, Trophy, LogOut, MessageSquare } from "lucide-react";
 import { motion } from "framer-motion";
-import { useChatX } from "@/components/ChatXProvider";
+import { useDiscuss } from "@/components/DiscussProvider";
 
 export default function Header() {
   const [user, setUser] = useState(null);
   const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
-  const { openChat } = useChatX();
+  const { openChat } = useDiscuss();
 
   const handleLogout = async () => {
     try {
@@ -104,7 +104,7 @@ export default function Header() {
               <>
                 <button onClick={openChat} className="nav-link flex items-center gap-2">
                   <MessageSquare size={16} />
-                  ChatX
+                  Discuss
                 </button>
                 <Link href="/leaderboard" className="nav-link flex items-center gap-2">
                   <Trophy size={16} />
