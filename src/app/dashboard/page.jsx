@@ -195,9 +195,6 @@ export default function Dashboard() {
         >
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
             <div className="panel rounded-3xl p-6 lg:col-span-2">
-              <div className="flex items-center gap-3 mb-3">
-                <span className="kpi-pill">Command Center</span>
-              </div>
               <h1 className="font-display text-2xl sm:text-3xl font-bold">
                 Welcome, <span className="text-gradient">Dr. {user?.name?.split(" ")[0]}</span>
               </h1>
