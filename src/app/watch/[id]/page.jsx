@@ -98,6 +98,7 @@ export default function WatchPage({ params }) {
                 videoId={video.videoId}
                 title={video.title}
                 initialTime={initialTime}
+                docId={video.$id}
               />
             </div>
 

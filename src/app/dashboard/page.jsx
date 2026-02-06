@@ -212,6 +212,13 @@ export default function Dashboard() {
     const remaining = Math.max(0, lastActive.duration - lastActive.timestamp);
     const mins = Math.floor(remaining / 60);
 
+    const handleDismiss = (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      localStorage.removeItem('medx_last_active');
+      setLastActive(null);
+    };
+
     return (
       <motion.div
         initial={{ opacity: 0, y: -20 }}
@@ -219,6 +226,14 @@ export default function Dashboard() {
         className="w-full mb-8 relative group"
       >
         <div className="panel p-6 rounded-3xl relative overflow-hidden flex flex-col md:flex-row items-center gap-6 group-hover:shadow-[0_0_40px_rgba(45,212,191,0.15)] transition-all duration-500">
+          {/* Dismiss Button */}
+          <button
+            onClick={handleDismiss}
+            className="absolute top-4 right-4 z-20 p-2 rounded-full bg-black/20 hover:bg-black/40 text-white/50 hover:text-white transition-colors"
+          >
+            <X size={16} />
+          </button>
+
           <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none" />
 
           {/* Icon Section */}
@@ -252,7 +267,7 @@ export default function Dashboard() {
 
           {/* Action Button */}
           <Link
-            href={`/watch/${lastActive.videoId}?t=${Math.floor(lastActive.timestamp)}`}
+            href={`/watch/${lastActive.docId || lastActive.videoId}?t=${Math.floor(lastActive.timestamp)}`}
             className="shrink-0 w-full md:w-auto z-10"
           >
             <button className="btn-primary w-full md:w-auto py-3 px-6 rounded-xl flex items-center justify-center gap-2 group-hover:scale-105 transition-transform">

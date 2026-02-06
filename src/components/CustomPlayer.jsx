@@ -47,7 +47,7 @@ const VideoContainer = memo(({ validId, status }) => {
 
 VideoContainer.displayName = "VideoContainer";
 
-const CustomPlayer = ({ videoId, thumbnail, onEnded, title, initialTime = 0 }) => {
+const CustomPlayer = ({ videoId, thumbnail, onEnded, title, initialTime = 0, docId }) => {
     const validId = getYouTubeId(videoId);
     const containerRef = useRef(null);
     const playerRef = useRef(null);
@@ -109,26 +109,28 @@ const CustomPlayer = ({ videoId, thumbnail, onEnded, title, initialTime = 0 }) =
         setIsIPhoneDevice(isIPhone());
     }, []);
 
-    const latestStateRef = useRef({ currentTime: 0, duration: 0, status: 'idle', title: null, videoId: null });
+    const latestStateRef = useRef({ currentTime: 0, duration: 0, status: 'idle', title: null, videoId: null, docId: null });
 
     // Update refs whenever state changes
     useEffect(() => {
-        latestStateRef.current = { currentTime, duration, status, title, videoId: validId };
-    }, [currentTime, duration, status, title, validId]);
+        latestStateRef.current = { currentTime, duration, status, title, videoId: validId, docId };
+    }, [currentTime, duration, status, title, validId, docId]);
 
     // Save progress helper
     const saveProgress = () => {
-        const { currentTime, duration, title, videoId } = latestStateRef.current;
+        const { currentTime, duration, title, videoId, docId } = latestStateRef.current;
 
         if (!videoId) return;
 
         // Allow saving if we have a title (or fallback) and valid time
         const safeTitle = title || "Unknown Video";
+        const safeDocId = docId || videoId; // Fallback to videoId if docId not provided (though it should be)
 
         if (duration > 0 && currentTime > 5 && currentTime < duration - 5) {
             try {
                 localStorage.setItem('medx_last_active', JSON.stringify({
-                    videoId,
+                    videoId, // YouTube ID
+                    docId: safeDocId, // Appwrite Document ID
                     title: safeTitle,
                     timestamp: currentTime,
                     duration,
