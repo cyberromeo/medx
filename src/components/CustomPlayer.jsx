@@ -330,7 +330,7 @@ const CustomPlayer = ({ videoId, thumbnail, onEnded }) => {
 
             {/* ===== iOS ACTION OVERLAY - shows during seek/resume to hide YouTube elements ===== */}
             {showActionOverlay && (
-                <div className="absolute inset-0 z-40 bg-black/90 flex items-center justify-center pointer-events-none transition-opacity duration-200">
+                <div className="absolute inset-0 z-40 bg-black flex items-center justify-center pointer-events-none transition-opacity duration-200">
                     <div className="w-12 h-12 rounded-full bg-primary-soft flex items-center justify-center">
                         <div className="w-8 h-8 rounded-full bg-primary animate-ping" />
                     </div>
