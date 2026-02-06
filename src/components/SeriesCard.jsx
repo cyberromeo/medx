@@ -47,9 +47,9 @@ export default function SeriesCard({ title, videos, itemVariants, watchedIds = [
   return (
     <motion.div variants={itemVariants}>
       {videos.length > 0 ? (
-        <Link href={seriesUrl} className="group flex flex-col items-center gap-2.5">
-          <div className={`neo-card relative w-full aspect-square max-w-[120px] md:max-w-[140px] rounded-2xl overflow-hidden transition-all duration-300 group-hover:-translate-y-1 ${isComplete ? "border-green-400/60" : ""}`}>
-            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-white/10 to-transparent">
+        <Link href={seriesUrl} className="group flex flex-col items-center gap-3">
+          <div className={`panel relative w-full aspect-square max-w-[120px] md:max-w-[140px] rounded-2xl md:rounded-[2rem] overflow-hidden transition-all duration-300 group-hover:-translate-y-1 group-hover:shadow-[0_20px_60px_rgba(2,6,23,0.6)] ${isComplete ? "border border-green-500/40" : ""}`}>
+            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-white/5 to-transparent">
               {getSeriesIcon(title)}
             </div>
 
@@ -62,7 +62,7 @@ export default function SeriesCard({ title, videos, itemVariants, watchedIds = [
                       cy="16"
                       r="12"
                       fill="none"
-                      stroke="rgba(255,255,255,0.2)"
+                      stroke="rgba(255,255,255,0.12)"
                       strokeWidth="3"
                     />
                     <circle
@@ -70,7 +70,7 @@ export default function SeriesCard({ title, videos, itemVariants, watchedIds = [
                       cy="16"
                       r="12"
                       fill="none"
-                      stroke={isComplete ? "#22c55e" : "#1ec8ff"}
+                      stroke={isComplete ? "#22c55e" : "#20e3ff"}
                       strokeWidth="3"
                       strokeLinecap="round"
                       strokeDasharray={`${(progressPercent / 100) * 75.4} 75.4`}
@@ -88,24 +88,24 @@ export default function SeriesCard({ title, videos, itemVariants, watchedIds = [
             )}
 
             {isComplete && (
-              <div className="absolute top-2 left-2 bg-green-500/90 text-white text-[8px] font-bold px-1.5 py-0.5 rounded-full flex items-center gap-0.5 border border-white/30">
+              <div className="absolute top-2 left-2 bg-green-500/90 text-white text-[8px] font-bold px-1.5 py-0.5 rounded-full flex items-center gap-0.5">
                 <CheckCircle size={8} />
                 DONE
               </div>
             )}
 
             <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/40">
-              <PlayCircle size={34} className="text-primary drop-shadow-[0_0_12px_rgba(30,200,255,0.8)]" />
+              <PlayCircle size={34} className="text-primary drop-shadow-[0_0_12px_rgba(32,227,255,0.8)]" />
             </div>
           </div>
 
           <div className="text-center w-full px-1">
-            <h3 className="text-[11px] md:text-xs font-semibold text-white/90 group-hover:text-primary transition-all duration-300 line-clamp-2 leading-tight uppercase tracking-wide">
+            <h3 className="text-[11px] md:text-xs font-semibold text-white/80 group-hover:text-primary transition-all duration-300 line-clamp-2 leading-tight">
               {title}
             </h3>
             <div className="flex items-center justify-center gap-1 mt-1">
               <span className={`w-1.5 h-1.5 rounded-full ${isComplete ? "bg-green-400" : "bg-primary"}`} />
-              <p className="text-[9px] text-muted font-bold uppercase tracking-wider">
+              <p className="text-[9px] text-muted font-medium">
                 {watchedCount}/{totalCount}
               </p>
             </div>
@@ -113,17 +113,17 @@ export default function SeriesCard({ title, videos, itemVariants, watchedIds = [
         </Link>
       ) : (
         <div className="flex flex-col items-center gap-2 opacity-40 cursor-not-allowed">
-          <div className="neo-card relative w-full aspect-square max-w-[120px] md:max-w-[140px] rounded-2xl overflow-hidden border border-white/15">
+          <div className="panel relative w-full aspect-square max-w-[120px] md:max-w-[140px] rounded-2xl md:rounded-[2rem] overflow-hidden border border-white/5">
             <div className="w-full h-full flex items-center justify-center text-white/10">
               {getSeriesIcon(title)}
             </div>
           </div>
 
           <div className="text-center w-full px-1">
-            <h3 className="text-[11px] md:text-xs font-semibold text-muted leading-tight line-clamp-2 uppercase tracking-wide">
+            <h3 className="text-[11px] md:text-xs font-semibold text-muted leading-tight line-clamp-2">
               {title}
             </h3>
-            <p className="text-[9px] text-muted mt-0.5 uppercase tracking-wider">
+            <p className="text-[9px] text-muted mt-0.5">
               Coming Soon
             </p>
           </div>
