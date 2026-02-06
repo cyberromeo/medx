@@ -129,7 +129,7 @@ export default function Dashboard() {
         <div className="flex items-center gap-4 mb-6 relative z-10">
           <div
             className="w-14 h-14 rounded-2xl flex items-center justify-center text-2xl font-display font-bold text-white"
-            style={{ background: `linear-gradient(135deg, ${tone.accent}, #090820)` }}
+            style={{ background: `linear-gradient(135deg, ${tone.accent}, #020617)` }}
           >
             {name.charAt(0)}
           </div>

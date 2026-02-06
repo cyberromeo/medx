@@ -71,7 +71,7 @@ export default function InstallPrompt() {
                         exit={{ opacity: 0, y: 50 }}
                         className="fixed inset-x-4 bottom-6 z-50 md:right-6 md:left-auto md:w-96"
                     >
-                        <div className="panel-glow bg-[#0f172a] border border-[rgba(45,212,191,0.2)] rounded-2xl p-5 shadow-2xl">
+                        <div className="panel-glow bg-[var(--surface)] border border-primary/20 rounded-2xl p-5 shadow-2xl">
                             <div className="flex justify-between items-start mb-4">
                                 <div className="flex gap-3">
                                     <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center shadow-lg">
@@ -101,7 +101,7 @@ export default function InstallPrompt() {
                                 </div>
                             </div>
 
-                            <div className="absolute -bottom-2 transform translate-x-1/2 left-1/2 w-4 h-4 bg-[#0f172a] border-r border-b border-[rgba(45,212,191,0.2)] rotate-45 md:hidden"></div>
+                            <div className="absolute -bottom-2 transform translate-x-1/2 left-1/2 w-4 h-4 bg-[var(--surface)] border-r border-b border-primary/20 rotate-45 md:hidden"></div>
                         </div>
                     </motion.div>
                 )}

@@ -14,6 +14,7 @@ export default function WatchPage({ params }) {
   const { id } = use(params);
 
   const [video, setVideo] = useState(null);
+  const [initialTime, setInitialTime] = useState(0);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
   const { openChat } = useChatX();
@@ -23,6 +24,19 @@ export default function WatchPage({ params }) {
 
   useEffect(() => {
     checkAuth();
+
+    // Check for saved progress
+    try {
+      const saved = localStorage.getItem('medx_last_active');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed.videoId === id) {
+          setInitialTime(parsed.timestamp);
+        }
+      }
+    } catch (e) {
+      console.error("Error loading progress", e);
+    }
   }, []);
 
   const checkAuth = async () => {
@@ -95,6 +109,8 @@ export default function WatchPage({ params }) {
               <CustomPlayer
                 videoId={video.videoId}
                 title={video.title}
+                docId={video.$id}
+                initialTime={initialTime}
               />
             </div>
 

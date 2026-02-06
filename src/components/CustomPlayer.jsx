@@ -47,7 +47,7 @@ const VideoContainer = memo(({ validId, status }) => {
 
 VideoContainer.displayName = "VideoContainer";
 
-const CustomPlayer = ({ videoId, thumbnail, onEnded, title }) => {
+const CustomPlayer = ({ videoId, thumbnail, onEnded, title, initialTime = 0, docId }) => {
     const validId = getYouTubeId(videoId);
     const containerRef = useRef(null);
     const playerRef = useRef(null);

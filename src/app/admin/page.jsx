@@ -66,7 +66,7 @@ export default function AdminPage() {
         try {
             await account.get();
         } catch {
-            console.log("No active session");
+
         }
         fetchVideos();
     };
@@ -382,8 +382,8 @@ export default function AdminPage() {
                                         <h3 className="font-semibold text-white truncate">{video.title}</h3>
                                         <div className="flex items-center gap-2 mt-1">
                                             <span className={`text-xs px-2 py-0.5 rounded-full ${video.category === 'MIST'
-                                                    ? 'bg-blue-500/20 text-blue-400'
-                                                    : 'bg-purple-500/20 text-purple-400'
+                                                ? 'bg-blue-500/20 text-blue-400'
+                                                : 'bg-purple-500/20 text-purple-400'
                                                 }`}>
                                                 {video.category}
                                             </span>

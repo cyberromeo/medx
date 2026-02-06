@@ -15,7 +15,7 @@ export async function GET() {
             Query.limit(5000) // Increase limit to capture more history
         ]);
 
-        console.log(`[Leaderboard API] Fetched ${response.documents.length} progress documents`);
+
 
         // Aggregate XP per user
         const userXpMap = {};
@@ -33,7 +33,7 @@ export async function GET() {
         }
 
         const userIds = Object.keys(userXpMap);
-        console.log(`[Leaderboard API] Found ${userIds.length} unique users:`, userIds);
+
 
         // Convert to array and sort
         let sortedUsers = userIds
