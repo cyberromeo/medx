@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { use } from "react";
 import { account, databases } from "@/lib/appwrite";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import Header from "@/components/Header";
 import CustomPlayer from "@/components/CustomPlayer";
 import Link from "next/link";
@@ -12,8 +12,6 @@ import { useChatX } from "@/components/ChatXProvider";
 
 export default function WatchPage({ params }) {
   const { id } = use(params);
-  const searchParams = useSearchParams();
-  const initialTime = parseFloat(searchParams.get("t") || "0");
 
   const [video, setVideo] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -97,8 +95,6 @@ export default function WatchPage({ params }) {
               <CustomPlayer
                 videoId={video.videoId}
                 title={video.title}
-                initialTime={initialTime}
-                docId={video.$id}
               />
             </div>
 

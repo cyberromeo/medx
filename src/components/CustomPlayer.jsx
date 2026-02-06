@@ -47,7 +47,7 @@ const VideoContainer = memo(({ validId, status }) => {
 
 VideoContainer.displayName = "VideoContainer";
 
-const CustomPlayer = ({ videoId, thumbnail, onEnded, title, initialTime = 0, docId }) => {
+const CustomPlayer = ({ videoId, thumbnail, onEnded, title }) => {
     const validId = getYouTubeId(videoId);
     const containerRef = useRef(null);
     const playerRef = useRef(null);
@@ -439,7 +439,7 @@ const CustomPlayer = ({ videoId, thumbnail, onEnded, title, initialTime = 0, doc
                             </div>
                         </div>
                         <div className="mt-4 text-center">
-                            <span className="text-white/90 font-medium tracking-widest text-sm uppercase">{initialTime > 0 ? 'Resume Video' : 'Play Video'}</span>
+                            <span className="text-white/90 font-medium tracking-widest text-sm uppercase">Play Video</span>
                         </div>
                     </div>
 

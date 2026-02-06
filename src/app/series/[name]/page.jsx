@@ -145,8 +145,6 @@ export default function SeriesPlayerPage() {
                 videoId={currentVideo.videoId}
                 thumbnail={currentVideo.thumbnailUrl}
                 onEnded={handleVideoComplete}
-                title={currentVideo.title}
-                docId={currentVideo.$id}
               />
             </motion.div>
 
