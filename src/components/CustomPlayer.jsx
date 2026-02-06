@@ -47,11 +47,12 @@ const VideoContainer = memo(({ validId, status }) => {
 
 VideoContainer.displayName = "VideoContainer";
 
-const CustomPlayer = ({ videoId, thumbnail, onEnded }) => {
+const CustomPlayer = ({ videoId, thumbnail, onEnded, title, initialTime = 0 }) => {
     const validId = getYouTubeId(videoId);
     const containerRef = useRef(null);
     const playerRef = useRef(null);
     const shouldPlayRef = useRef(false);
+    const initialSeekDoneRef = useRef(false);
 
     // Store latest callback in ref to avoid stale closures and re-initialization
     const onEndedRef = useRef(onEnded);
@@ -96,6 +97,10 @@ const CustomPlayer = ({ videoId, thumbnail, onEnded }) => {
         setProgress(0);
         setCurrentTime(0);
         setDuration(0);
+        initialSeekDoneRef.current = false;
+
+        // If we have an initial time, we might want to start there
+        // But we wait for player ready
     }, [videoId]);
 
     // Detect iOS on mount
@@ -103,6 +108,36 @@ const CustomPlayer = ({ videoId, thumbnail, onEnded }) => {
         setIsIOSDevice(isIOS());
         setIsIPhoneDevice(isIPhone());
     }, []);
+
+    // Save progress to localStorage periodically
+    useEffect(() => {
+        if (!validId || !title) return;
+
+        // Only save if playing or paused (and we have duration)
+        if ((status === 'playing' || status === 'paused') && duration > 0 && currentTime > 0) {
+            // Debounce saving or just save periodically is fine.
+            // Since this effect depends on currentTime which updates every 500ms, 
+            // we should throttle the actual write.
+
+            // Only save if we are past 5 seconds and not at the very end
+            if (currentTime > 5 && currentTime < duration - 5) {
+                const saveProgress = () => {
+                    localStorage.setItem('medx_last_active', JSON.stringify({
+                        videoId: validId,
+                        title,
+                        timestamp: currentTime,
+                        duration,
+                        lastUpdated: Date.now()
+                    }));
+                };
+
+                // Throttle: only save if last second ends in 0 or 5 (approx every 5s)
+                if (Math.floor(currentTime) % 5 === 0) {
+                    saveProgress();
+                }
+            }
+        }
+    }, [currentTime, duration, status, validId, title]);
 
     // 2. Initialize Player ON MOUNT (Pre-load)
     useEffect(() => {
@@ -137,11 +172,28 @@ const CustomPlayer = ({ videoId, thumbnail, onEnded }) => {
                                 enablejsapi: 1,
                                 playsinline: iphoneDevice ? 0 : 1,
                                 origin: typeof window !== 'undefined' ? window.location.origin : '',
+                                start: initialTime > 0 ? Math.floor(initialTime) : undefined
                             },
                             events: {
                                 onReady: (event) => {
                                     setDuration(event.target.getDuration());
-                                    // If user already clicked play
+
+                                    // Make sure we seek if start param failed or if we have specific logic
+                                    if (initialTime > 0 && !initialSeekDoneRef.current) {
+                                        event.target.seekTo(initialTime, true);
+                                        initialSeekDoneRef.current = true;
+                                        // Set initial progress immediately so UI reflects it
+                                        setCurrentTime(initialTime);
+                                        // duration might be 0 yet, handle safely
+                                        const d = event.target.getDuration();
+                                        if (d > 0) setProgress((initialTime / d) * 100);
+
+                                        // If resuming, usually we play automatically
+                                        // But browser policies might block unmuted autoplay
+                                        shouldPlayRef.current = true;
+                                    }
+
+                                    // If user already clicked play or we are resuming
                                     if (shouldPlayRef.current) {
                                         event.target.playVideo();
                                     }
@@ -164,7 +216,7 @@ const CustomPlayer = ({ videoId, thumbnail, onEnded }) => {
 
             setTimeout(initPlayer, 0);
         }
-    }, [validId]);
+    }, [validId, initialTime]);
 
     // 3. Progress Loop
     useEffect(() => {
@@ -359,7 +411,7 @@ const CustomPlayer = ({ videoId, thumbnail, onEnded }) => {
                             </div>
                         </div>
                         <div className="mt-4 text-center">
-                            <span className="text-white/90 font-medium tracking-widest text-sm uppercase">Play Video</span>
+                            <span className="text-white/90 font-medium tracking-widest text-sm uppercase">{initialTime > 0 ? 'Resume Video' : 'Play Video'}</span>
                         </div>
                     </div>
 

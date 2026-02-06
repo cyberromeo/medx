@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Header from "@/components/Header";
 import { motion, AnimatePresence } from "framer-motion";
-import { Trophy, Flame, Target, Star, Zap, ArrowRight, X, ChevronLeft } from "lucide-react";
+import { Trophy, Flame, Target, Star, Zap, ArrowRight, X, ChevronLeft, Play, Clock } from "lucide-react";
 import SeriesCard from "@/components/SeriesCard";
 import { getProgress, calculateLevel, getXpToNextLevel } from "@/lib/progress";
 
@@ -17,6 +17,7 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [progress, setProgress] = useState({ watched: [], xp: 0, streak: 0, lastWatch: null });
+  const [lastActive, setLastActive] = useState(null);
   const router = useRouter();
 
   const DB_ID = process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID;
@@ -33,7 +34,27 @@ export default function Dashboard() {
 
   useEffect(() => {
     checkAuth();
+    checkLastActive();
   }, []);
+
+  const checkLastActive = () => {
+    try {
+      const stored = localStorage.getItem('medx_last_active');
+      if (stored) {
+        const data = JSON.parse(stored);
+        // Only show if less than 7 days old
+        if (Date.now() - data.lastUpdated < 7 * 24 * 60 * 60 * 1000) {
+          // Verify video still exists logic could go here, but for now we trust the cache
+          // Also only show if progress < 90% (don't resume finished videos)
+          if (data.timestamp < data.duration * 0.9) {
+            setLastActive(data);
+          }
+        }
+      }
+    } catch (e) {
+      console.error("Error reading last active", e);
+    }
+  };
 
   const checkAuth = async () => {
     try {
@@ -181,6 +202,69 @@ export default function Dashboard() {
     );
   };
 
+  const ResumeCard = () => {
+    if (!lastActive) return null;
+
+    // Calculate percentage for progress bar
+    const resumePercent = Math.min(100, Math.max(0, (lastActive.timestamp / lastActive.duration) * 100));
+
+    // Format time remaining
+    const remaining = Math.max(0, lastActive.duration - lastActive.timestamp);
+    const mins = Math.floor(remaining / 60);
+
+    return (
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="w-full mb-8 relative group"
+      >
+        <div className="panel p-6 rounded-3xl relative overflow-hidden flex flex-col md:flex-row items-center gap-6 group-hover:shadow-[0_0_40px_rgba(45,212,191,0.15)] transition-all duration-500">
+          <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none" />
+
+          {/* Icon Section */}
+          <div className="relative shrink-0">
+            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5 border border-primary/20 flex items-center justify-center relative z-10">
+              <Play size={32} className="text-primary ml-1" fill="currentColor" />
+            </div>
+            <div className="absolute inset-0 bg-primary/20 blur-xl rounded-full animate-pulse" />
+          </div>
+
+          {/* Content Section */}
+          <div className="flex-1 text-center md:text-left z-10 w-full">
+            <div className="flex items-center justify-center md:justify-start gap-2 mb-1">
+              <span className="text-[10px] font-bold text-primary tracking-widest uppercase bg-primary/10 px-2 py-0.5 rounded border border-primary/20">Resume Learning</span>
+              <span className="text-xs text-muted flex items-center gap-1">
+                <Clock size={12} />
+                {mins}m left
+              </span>
+            </div>
+
+            <h3 className="text-xl font-bold text-white mb-3 line-clamp-1">{lastActive.title}</h3>
+
+            {/* Progress Bar */}
+            <div className="w-full h-1.5 bg-white/10 rounded-full overflow-hidden flex">
+              <div
+                className="h-full bg-gradient-to-r from-primary to-accent transition-all duration-1000 ease-out"
+                style={{ width: `${resumePercent}%` }}
+              />
+            </div>
+          </div>
+
+          {/* Action Button */}
+          <Link
+            href={`/watch/${lastActive.videoId}?t=${Math.floor(lastActive.timestamp)}`}
+            className="shrink-0 w-full md:w-auto z-10"
+          >
+            <button className="btn-primary w-full md:w-auto py-3 px-6 rounded-xl flex items-center justify-center gap-2 group-hover:scale-105 transition-transform">
+              <span>Continue Watching</span>
+              <ArrowRight size={18} />
+            </button>
+          </Link>
+        </div>
+      </motion.div>
+    );
+  };
+
   return (
     <main className="min-h-screen pb-32">
       <Header />
@@ -193,6 +277,9 @@ export default function Dashboard() {
           animate={{ opacity: 1, y: 0 }}
           className="mb-8"
         >
+          {/* Resume Card if active */}
+          <ResumeCard />
+
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
             <div className="panel rounded-3xl p-6 lg:col-span-2">
               <h1 className="font-display text-2xl sm:text-3xl font-bold">
