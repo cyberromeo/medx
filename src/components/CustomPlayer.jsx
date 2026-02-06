@@ -130,16 +130,14 @@ const CustomPlayer = ({ videoId, thumbnail, onEnded, title, initialTime = 0, doc
 
         if (duration > 0 && currentTime > 5 && currentTime < duration - 5) {
             try {
-                const payload = {
+                localStorage.setItem('medx_last_active', JSON.stringify({
                     videoId,
                     docId: safeDocId,
                     title: safeTitle,
                     timestamp: currentTime,
                     duration,
                     lastUpdated: Date.now()
-                };
-                console.log("MedX: Progress saved payload:", payload);
-                localStorage.setItem('medx_last_active', JSON.stringify(payload));
+                }));
             } catch (e) {
                 console.error("MedX: Error saving progress", e);
             }
