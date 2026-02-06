@@ -37,39 +37,51 @@ export default function Header() {
 
   const navLinks = [
     { name: "Features", href: "/#features" },
-    { name: "About", href: "/#about" },
+    { name: "Roadmap", href: "/#about" },
   ];
 
   return (
     <motion.header
       initial={{ y: -80 }}
       animate={{ y: 0 }}
-      className={`fixed top-3 sm:top-4 left-0 right-0 z-50 transition-all duration-300 pt-[env(safe-area-inset-top)] ${scrolled ? "py-2" : "py-3"}`}
+      className={`fixed left-0 right-0 z-50 transition-all duration-300 pt-[env(safe-area-inset-top)] ${scrolled ? "top-2 sm:top-3" : "top-3 sm:top-4"}`}
     >
-      <div className="container mx-auto px-4">
+      <div className="container mx-auto px-3 sm:px-4">
         {/* Mobile */}
         <div className="md:hidden">
-          <div className={`nav-shell rounded-2xl px-4 py-2 flex items-center justify-between ${scrolled ? "" : "bg-transparent border-transparent"}`}>
-            <Link href={user ? "/dashboard" : "/"} className="flex items-center gap-2">
-              <div className="w-9 h-9 rounded-xl grad-primary flex items-center justify-center shadow-lg">
-                <Stethoscope size={18} className="text-black" />
+          <div className={`nav-shell rounded-2xl px-3.5 py-2.5 flex items-center justify-between ${scrolled ? "" : "bg-[rgba(10,10,10,0.72)]"}`}>
+            <Link href={user ? "/dashboard" : "/"} className="flex items-center gap-2.5">
+              <div className="w-9 h-9 rounded-lg grad-primary flex items-center justify-center">
+                <Stethoscope size={17} className="text-black" />
               </div>
-              <span className="font-display font-bold text-base">MedX</span>
+              <div>
+                <p className="font-display text-base leading-none">MEDX</p>
+                <p className="text-[10px] uppercase tracking-[0.22em] text-muted">Study Lab</p>
+              </div>
             </Link>
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5">
               {user ? (
-                <button
-                  onClick={handleLogout}
-                  className="w-9 h-9 flex items-center justify-center rounded-xl bg-white/5 text-gray-300 hover:text-red-400 transition-colors"
-                  title="Logout"
-                >
-                  <LogOut size={18} />
-                </button>
+                <>
+                  <button
+                    onClick={openChat}
+                    className="w-9 h-9 flex items-center justify-center rounded-lg bg-white/8 border border-white/20 text-muted hover:text-white transition-colors"
+                    title="Discuss"
+                  >
+                    <MessageSquare size={16} />
+                  </button>
+                  <button
+                    onClick={handleLogout}
+                    className="w-9 h-9 flex items-center justify-center rounded-lg bg-white/8 border border-white/20 text-muted hover:text-red-300 transition-colors"
+                    title="Logout"
+                  >
+                    <LogOut size={16} />
+                  </button>
+                </>
               ) : (
                 <Link
                   href="/login"
-                  className="px-3 py-1.5 rounded-full text-xs font-semibold bg-white/10 text-white"
+                  className="px-3 py-2 rounded-lg text-[11px] font-bold tracking-wide border border-white/25 bg-white/8"
                 >
                   Sign In
                 </Link>
@@ -79,40 +91,43 @@ export default function Header() {
         </div>
 
         {/* Desktop */}
-        <div className={`hidden md:flex mx-auto max-w-6xl nav-shell rounded-full px-5 py-3 items-center justify-between ${scrolled ? "" : "bg-transparent border-transparent"}`}>
+        <div className={`hidden md:flex mx-auto max-w-6xl nav-shell rounded-2xl px-4 lg:px-5 py-3 items-center justify-between ${scrolled ? "" : "bg-[rgba(10,10,10,0.72)]"}`}>
           <Link href="/" className="flex items-center gap-3 group">
-            <div className="w-9 h-9 rounded-xl grad-primary flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform">
+            <div className="w-9 h-9 rounded-lg grad-primary flex items-center justify-center group-hover:scale-105 transition-transform">
               <Stethoscope size={18} className="text-black" />
             </div>
-            <span className="font-display font-bold text-lg tracking-tight">MedX</span>
+            <div>
+              <p className="font-display text-xl leading-none">MEDX</p>
+              <p className="text-[10px] uppercase tracking-[0.22em] text-muted">Medical Education</p>
+            </div>
           </Link>
 
-          <nav className="flex items-center gap-8">
+          <nav className="flex items-center gap-6">
             {!user && navLinks.map(link => (
               <Link
                 key={link.name}
                 href={link.href}
-                className={`nav-link ${pathname === link.href ? "nav-active" : ""}`}
+                className={`nav-link ${pathname === link.href ? "nav-active" : ""} text-[11px]`}
               >
                 {link.name}
               </Link>
             ))}
           </nav>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
             {user ? (
               <>
-                <button onClick={openChat} className="nav-link flex items-center gap-2">
+                <button onClick={openChat} className="nav-link flex items-center gap-1.5">
                   <MessageSquare size={16} />
                   Discuss
                 </button>
-                <Link href="/leaderboard" className="nav-link flex items-center gap-2">
+                <Link href="/leaderboard" className="nav-link flex items-center gap-1.5">
                   <Trophy size={16} />
                   Leaderboard
                 </Link>
                 <button
                   onClick={handleLogout}
-                  className="nav-link flex items-center gap-2 text-red-300 hover:text-red-400"
+                  className="nav-link flex items-center gap-1.5 text-red-300 hover:text-red-200"
                   title="Logout"
                 >
                   <LogOut size={16} />
@@ -124,7 +139,7 @@ export default function Header() {
 
             <Link
               href={user ? "/dashboard" : "/login"}
-              className="btn-primary flex items-center gap-2 text-sm"
+              className="btn-primary flex items-center gap-2"
             >
               {user ? "Open Library" : "Get Started"}
               <ChevronRight size={16} />
