@@ -6,6 +6,7 @@ import Header from "@/components/Header";
 import { motion } from "framer-motion";
 import { Play, Shield, Zap, Globe, ArrowRight, AlertTriangle } from "lucide-react";
 import { account } from "@/lib/appwrite";
+import InstallPrompt from "@/components/InstallPrompt";
 
 export default function Home() {
   const [user, setUser] = useState(null);
@@ -50,6 +51,12 @@ export default function Home() {
                   Start Learning
                   <ArrowRight size={16} />
                 </Link>
+                <div className="hidden sm:block">
+                  <InstallPrompt />
+                </div>
+                <div className="block sm:hidden w-full">
+                  <InstallPrompt />
+                </div>
                 <Link href="/syllabus" className="btn-ghost w-full sm:w-auto text-center text-sm">
                   View Syllabus
                 </Link>

@@ -6,17 +6,16 @@ import SessionGuard from "@/components/SessionGuard";
 import { Analytics } from "@vercel/analytics/next";
 
 const sora = Sora({ subsets: ["latin"], variable: "--font-display" });
+
+
 const manrope = Manrope({ subsets: ["latin"], variable: "--font-sans" });
 const jetbrains = JetBrains_Mono({ subsets: ["latin"], variable: "--font-mono" });
 
 export const metadata = {
   title: "MedX - Medical Video Platform",
   description: "Premium FMGE preparation platform",
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#090820" },
-    { media: "(prefers-color-scheme: dark)", color: "#090820" },
-  ],
-  colorScheme: "dark only",
+  manifest: "/manifest.json",
+  themeColor: "#020617",
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
