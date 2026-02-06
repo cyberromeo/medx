@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { account } from "@/lib/appwrite";
+import { clearProgressCache } from "@/lib/progress";
 import { Stethoscope, ChevronRight, Trophy, LogOut, MessageSquare } from "lucide-react";
 import { motion } from "framer-motion";
 import { useChatX } from "@/components/ChatXProvider";
@@ -18,6 +19,7 @@ export default function Header() {
   const handleLogout = async () => {
     try {
       await account.deleteSession("current");
+      clearProgressCache();
       setUser(null);
       router.push("/");
     } catch (error) {

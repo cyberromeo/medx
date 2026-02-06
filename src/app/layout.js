@@ -2,6 +2,7 @@ import "./app.css";
 import { Sora, Manrope, JetBrains_Mono } from "next/font/google";
 import MobileNav from "@/components/MobileNav";
 import { ChatXProvider } from "@/components/ChatXProvider";
+import SessionGuard from "@/components/SessionGuard";
 import { Analytics } from "@vercel/analytics/next";
 
 const sora = Sora({ subsets: ["latin"], variable: "--font-display" });
@@ -40,6 +41,7 @@ export default function RootLayout({ children }) {
       </head>
       <body className={`${manrope.variable} ${sora.variable} ${jetbrains.variable} antialiased`}>
         <ChatXProvider>
+          <SessionGuard />
           {children}
           <MobileNav />
           <Analytics />

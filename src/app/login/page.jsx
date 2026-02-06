@@ -5,6 +5,7 @@ import { account } from "@/lib/appwrite";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ID } from "appwrite";
+import { enforceSingleDeviceSession } from "@/lib/session-security";
 import { motion, AnimatePresence } from "framer-motion";
 import { Mail, Lock, User, ArrowRight, AlertCircle, Loader2, Stethoscope } from "lucide-react";
 
@@ -21,6 +22,7 @@ export default function LoginPage() {
     e.preventDefault();
     setError("");
     setLoading(true);
+    let createdSession = null;
 
     try {
       try {
@@ -28,13 +30,19 @@ export default function LoginPage() {
       } catch (ignore) {}
 
       if (isLogin) {
-        await account.createEmailPasswordSession(email, password);
+        createdSession = await account.createEmailPasswordSession(email, password);
       } else {
         await account.create(ID.unique(), email, password, name);
-        await account.createEmailPasswordSession(email, password);
+        createdSession = await account.createEmailPasswordSession(email, password);
       }
+      await enforceSingleDeviceSession(createdSession?.$id);
       router.push("/dashboard");
     } catch (err) {
+      if (createdSession?.$id) {
+        try {
+          await account.deleteSession("current");
+        } catch (ignore) {}
+      }
       console.error(err);
       setError(err.message || "Authentication failed");
     } finally {
