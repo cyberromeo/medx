@@ -107,9 +107,9 @@ export default function Dashboard() {
   };
 
   const tones = {
-    MIST: { accent: "#7030ef", soft: "rgba(112,48,239,0.2)" },
-    ARISE: { accent: "#db1fff", soft: "rgba(219,31,255,0.2)" },
-    PYQs: { accent: "#ffffff", soft: "rgba(255,255,255,0.16)" },
+    MIST: { accent: "#2dd4bf", soft: "rgba(45, 212, 191, 0.2)" },
+    ARISE: { accent: "#60a5fa", soft: "rgba(96, 165, 250, 0.2)" },
+    PYQs: { accent: "#f0f9ff", soft: "rgba(240, 249, 255, 0.16)" },
   };
 
   const CategoryCard = ({ name, isComingSoon = false }) => {

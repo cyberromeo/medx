@@ -1,11 +1,19 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Header from "@/components/Header";
 import { motion } from "framer-motion";
 import { Play, Shield, Zap, Globe, ArrowRight, AlertTriangle } from "lucide-react";
+import { account } from "@/lib/appwrite";
 
 export default function Home() {
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    account.get().then(setUser).catch(() => setUser(null));
+  }, []);
+
   return (
     <main className="min-h-screen relative overflow-hidden">
       <div className="halo-bg" />
@@ -38,7 +46,7 @@ export default function Home() {
               </p>
 
               <div className="flex flex-col sm:flex-row items-center gap-3 mt-8">
-                <Link href="/login" className="btn-primary flex items-center gap-2 w-full sm:w-auto justify-center text-sm">
+                <Link href={user ? "/dashboard" : "/login"} className="btn-primary flex items-center gap-2 w-full sm:w-auto justify-center text-sm">
                   Start Learning
                   <ArrowRight size={16} />
                 </Link>
