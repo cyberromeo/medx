@@ -109,35 +109,60 @@ const CustomPlayer = ({ videoId, thumbnail, onEnded, title, initialTime = 0 }) =
         setIsIPhoneDevice(isIPhone());
     }, []);
 
-    // Save progress to localStorage periodically
+    const latestStateRef = useRef({ currentTime: 0, duration: 0, status: 'idle', title: null, videoId: null });
+
+    // Update refs whenever state changes
     useEffect(() => {
-        if (!validId || !title) return;
+        latestStateRef.current = { currentTime, duration, status, title, videoId: validId };
+    }, [currentTime, duration, status, title, validId]);
 
-        // Only save if playing or paused (and we have duration)
-        if ((status === 'playing' || status === 'paused') && duration > 0 && currentTime > 0) {
-            // Debounce saving or just save periodically is fine.
-            // Since this effect depends on currentTime which updates every 500ms, 
-            // we should throttle the actual write.
+    // Save progress helper
+    const saveProgress = () => {
+        const { currentTime, duration, title, videoId } = latestStateRef.current;
 
-            // Only save if we are past 5 seconds and not at the very end
-            if (currentTime > 5 && currentTime < duration - 5) {
-                const saveProgress = () => {
-                    localStorage.setItem('medx_last_active', JSON.stringify({
-                        videoId: validId,
-                        title,
-                        timestamp: currentTime,
-                        duration,
-                        lastUpdated: Date.now()
-                    }));
-                };
+        if (!videoId) return;
 
-                // Throttle: only save if last second ends in 0 or 5 (approx every 5s)
-                if (Math.floor(currentTime) % 5 === 0) {
-                    saveProgress();
-                }
+        // Allow saving if we have a title (or fallback) and valid time
+        const safeTitle = title || "Unknown Video";
+
+        if (duration > 0 && currentTime > 5 && currentTime < duration - 5) {
+            try {
+                localStorage.setItem('medx_last_active', JSON.stringify({
+                    videoId,
+                    title: safeTitle,
+                    timestamp: currentTime,
+                    duration,
+                    lastUpdated: Date.now()
+                }));
+                console.log("MedX: Progress saved", currentTime);
+            } catch (e) {
+                console.error("MedX: Error saving progress", e);
             }
         }
-    }, [currentTime, duration, status, validId, title]);
+    };
+
+    // Save on Pause
+    useEffect(() => {
+        if (status === 'paused') {
+            saveProgress();
+        }
+    }, [status]);
+
+    // Periodic Save & Unmount Save
+    useEffect(() => {
+        // Periodic save every 5 seconds
+        const interval = setInterval(() => {
+            if (latestStateRef.current.status === 'playing') {
+                saveProgress();
+            }
+        }, 5000);
+
+        // Save on unmount
+        return () => {
+            clearInterval(interval);
+            saveProgress();
+        };
+    }, []);
 
     // 2. Initialize Player ON MOUNT (Pre-load)
     useEffect(() => {
