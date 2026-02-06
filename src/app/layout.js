@@ -12,8 +12,8 @@ export const metadata = {
   title: "MedX - Medical Video Platform",
   description: "Premium FMGE preparation platform",
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#0b0f14" },
-    { media: "(prefers-color-scheme: dark)", color: "#0b0f14" },
+    { media: "(prefers-color-scheme: light)", color: "#090820" },
+    { media: "(prefers-color-scheme: dark)", color: "#090820" },
   ],
   colorScheme: "dark only",
   appleWebApp: {
@@ -33,7 +33,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" className="dark">
       <head>
-        <meta name="theme-color" content="#0b0f14" />
+        <meta name="theme-color" content="#090820" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <meta name="color-scheme" content="dark" />

@@ -52,7 +52,7 @@ export default function Header() {
           <div className={`nav-shell rounded-2xl px-4 py-2 flex items-center justify-between ${scrolled ? "" : "bg-transparent border-transparent"}`}>
             <Link href={user ? "/dashboard" : "/"} className="flex items-center gap-2">
               <div className="w-9 h-9 rounded-xl grad-primary flex items-center justify-center shadow-lg">
-                <Stethoscope size={18} className="text-black" />
+                <Stethoscope size={18} className="text-white" />
               </div>
               <span className="font-display font-bold text-base">MedX</span>
             </Link>
@@ -82,7 +82,7 @@ export default function Header() {
         <div className={`hidden md:flex mx-auto max-w-6xl nav-shell rounded-full px-5 py-3 items-center justify-between ${scrolled ? "" : "bg-transparent border-transparent"}`}>
           <Link href="/" className="flex items-center gap-3 group">
             <div className="w-9 h-9 rounded-xl grad-primary flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform">
-              <Stethoscope size={18} className="text-black" />
+              <Stethoscope size={18} className="text-white" />
             </div>
             <span className="font-display font-bold text-lg tracking-tight">MedX</span>
           </Link>

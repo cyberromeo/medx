@@ -57,7 +57,7 @@ export default function LoginPage() {
           >
             <div>
               <div className="w-14 h-14 rounded-2xl grad-primary flex items-center justify-center mb-6">
-                <Stethoscope size={28} className="text-black" />
+                <Stethoscope size={28} className="text-white" />
               </div>
               <h1 className="font-display text-3xl font-bold mb-3">Welcome to MedX</h1>
               <p className="text-muted mb-6">

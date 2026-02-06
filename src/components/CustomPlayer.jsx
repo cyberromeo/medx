@@ -353,7 +353,7 @@ const CustomPlayer = ({ videoId, thumbnail, onEnded }) => {
 
                     {/* Big Play Button */}
                     <div className="relative z-50 group-hover:scale-110 transition-transform duration-300">
-                        <div className="w-24 h-24 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center shadow-[0_0_40px_rgba(6,182,212,0.3)]">
+                        <div className="w-24 h-24 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center shadow-[0_0_40px_rgba(219,31,255,0.35)]">
                             <div className="w-20 h-20 rounded-full grad-primary flex items-center justify-center">
                                 <Play size={40} className="text-white fill-white ml-2" />
                             </div>

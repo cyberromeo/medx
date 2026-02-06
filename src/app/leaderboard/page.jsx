@@ -42,11 +42,11 @@ export default function LeaderboardPage() {
   const getRankIcon = (rank) => {
     switch (rank) {
       case 1:
-        return <Crown className="text-yellow-400" size={24} />;
+        return <Crown className="text-secondary" size={24} />;
       case 2:
-        return <Medal className="text-gray-300" size={22} />;
+        return <Medal className="text-primary" size={22} />;
       case 3:
-        return <Medal className="text-amber-600" size={22} />;
+        return <Medal className="text-white/70" size={22} />;
       default:
         return <span className="text-muted font-bold w-6 text-center">{rank}</span>;
     }
@@ -89,7 +89,7 @@ export default function LeaderboardPage() {
             </Link>
             <div>
               <h1 className="text-2xl sm:text-3xl font-bold text-white flex items-center gap-2 sm:gap-3">
-                <Trophy className="text-yellow-400" size={24} />
+                <Trophy className="text-secondary" size={24} />
                 Leaderboard
               </h1>
               <p className="text-muted text-sm">Top learners by XP</p>
@@ -108,7 +108,7 @@ export default function LeaderboardPage() {
                     </div>
                     <p className="text-xs text-muted mt-2 truncate">{user.displayName}</p>
                     <div className="flex items-center justify-center gap-1 mt-1">
-                      <Star className="text-yellow-400" size={12} />
+                      <Star className="text-secondary" size={12} />
                       <span className="text-xs font-semibold text-white">{user.xp.toLocaleString()}</span>
                     </div>
                   </div>
@@ -186,7 +186,7 @@ export default function LeaderboardPage() {
 
                     <div className="text-right">
                       <div className="flex items-center gap-1 justify-end">
-                        <Star className="text-yellow-400" size={14} />
+                        <Star className="text-secondary" size={14} />
                         <span className="font-bold text-white text-sm sm:text-base">{user.xp.toLocaleString()}</span>
                       </div>
                       <p className="text-[10px] sm:text-xs text-muted">XP</p>

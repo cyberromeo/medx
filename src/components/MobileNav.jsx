@@ -34,7 +34,7 @@ export default function MobileNav() {
               Dashboard
             </span>
             {pathname.startsWith("/dashboard") && (
-              <span className="mt-1 h-[2px] w-6 rounded-full bg-primary shadow-[0_0_12px_rgba(32,227,255,0.6)]" />
+              <span className="mt-1 h-[2px] w-6 rounded-full bg-secondary shadow-[0_0_12px_rgba(219,31,255,0.65)]" />
             )}
           </Link>
 
@@ -55,7 +55,7 @@ export default function MobileNav() {
               Leaderboard
             </span>
             {pathname.startsWith("/leaderboard") && (
-              <span className="mt-1 h-[2px] w-6 rounded-full bg-primary shadow-[0_0_12px_rgba(32,227,255,0.6)]" />
+              <span className="mt-1 h-[2px] w-6 rounded-full bg-secondary shadow-[0_0_12px_rgba(219,31,255,0.65)]" />
             )}
           </Link>
         </div>

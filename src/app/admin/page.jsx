@@ -177,7 +177,7 @@ export default function AdminPage() {
                     className="panel rounded-3xl p-8 max-w-md w-full text-center relative z-10"
                 >
                     <div className="w-16 h-16 grad-primary rounded-2xl flex items-center justify-center mx-auto mb-6">
-                        <Lock size={32} className="text-black" />
+                        <Lock size={32} className="text-white" />
                     </div>
                     <h2 className="text-2xl font-bold text-white mb-2">Admin Portal</h2>
                     <p className="text-muted mb-8">Enter credentials to access the dashboard</p>
@@ -195,7 +195,7 @@ export default function AdminPage() {
                         )}
                         <button
                             type="submit"
-                            className="w-full grad-primary text-black font-bold py-4 rounded-xl hover:opacity-90 transition-opacity"
+                            className="w-full grad-primary text-white font-bold py-4 rounded-xl hover:opacity-90 transition-opacity"
                         >
                             Unlock Dashboard
                         </button>
@@ -339,7 +339,7 @@ export default function AdminPage() {
                         </select>
                         <button
                             onClick={() => setShowAddForm(true)}
-                            className="grad-primary text-black font-bold px-6 py-3 rounded-xl hover:opacity-90 transition-opacity flex items-center gap-2"
+                            className="grad-primary text-white font-bold px-6 py-3 rounded-xl hover:opacity-90 transition-opacity flex items-center gap-2"
                         >
                             <Plus size={20} />
                             Add Video
@@ -548,7 +548,7 @@ export default function AdminPage() {
                                 <button
                                     type="submit"
                                     disabled={loading}
-                                    className="w-full grad-primary text-black font-bold py-4 rounded-xl hover:opacity-90 transition-opacity disabled:opacity-50"
+                                    className="w-full grad-primary text-white font-bold py-4 rounded-xl hover:opacity-90 transition-opacity disabled:opacity-50"
                                 >
                                     {loading ? "Adding..." : "Add Video"}
                                 </button>

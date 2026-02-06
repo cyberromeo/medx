@@ -118,7 +118,7 @@ export default function WatchPage({ params }) {
         onClick={openChat}
         className="fixed bottom-6 right-6 w-14 h-14 grad-primary rounded-full flex items-center justify-center shadow-lg hover:scale-110 active:scale-95 transition-all z-50 md:hidden"
       >
-        <MessageSquare size={24} className="text-black" />
+        <MessageSquare size={24} className="text-white" />
       </button>
     </main>
   );

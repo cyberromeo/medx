@@ -107,9 +107,9 @@ export default function Dashboard() {
   };
 
   const tones = {
-    MIST: { accent: "#20e3ff", soft: "rgba(32,227,255,0.12)" },
-    ARISE: { accent: "#b7ff3a", soft: "rgba(183,255,58,0.12)" },
-    PYQs: { accent: "#ffb547", soft: "rgba(255,181,71,0.12)" },
+    MIST: { accent: "#7030ef", soft: "rgba(112,48,239,0.2)" },
+    ARISE: { accent: "#db1fff", soft: "rgba(219,31,255,0.2)" },
+    PYQs: { accent: "#ffffff", soft: "rgba(255,255,255,0.16)" },
   };
 
   const CategoryCard = ({ name, isComingSoon = false }) => {
@@ -128,8 +128,8 @@ export default function Dashboard() {
 
         <div className="flex items-center gap-4 mb-6 relative z-10">
           <div
-            className="w-14 h-14 rounded-2xl flex items-center justify-center text-2xl font-display font-bold text-black"
-            style={{ background: `linear-gradient(135deg, ${tone.accent}, #0b0f14)` }}
+            className="w-14 h-14 rounded-2xl flex items-center justify-center text-2xl font-display font-bold text-white"
+            style={{ background: `linear-gradient(135deg, ${tone.accent}, #090820)` }}
           >
             {name.charAt(0)}
           </div>

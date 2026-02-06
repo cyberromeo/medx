@@ -48,7 +48,7 @@ export default function SeriesCard({ title, videos, itemVariants, watchedIds = [
     <motion.div variants={itemVariants}>
       {videos.length > 0 ? (
         <Link href={seriesUrl} className="group flex flex-col items-center gap-3">
-          <div className={`panel relative w-full aspect-square max-w-[120px] md:max-w-[140px] rounded-2xl md:rounded-[2rem] overflow-hidden transition-all duration-300 group-hover:-translate-y-1 group-hover:shadow-[0_20px_60px_rgba(2,6,23,0.6)] ${isComplete ? "border border-green-500/40" : ""}`}>
+          <div className={`panel relative w-full aspect-square max-w-[120px] md:max-w-[140px] rounded-2xl md:rounded-[2rem] overflow-hidden transition-all duration-300 group-hover:-translate-y-1 group-hover:shadow-[0_20px_60px_rgba(4,3,19,0.62)] ${isComplete ? "border border-secondary-soft" : ""}`}>
             <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-white/5 to-transparent">
               {getSeriesIcon(title)}
             </div>
@@ -70,7 +70,7 @@ export default function SeriesCard({ title, videos, itemVariants, watchedIds = [
                       cy="16"
                       r="12"
                       fill="none"
-                      stroke={isComplete ? "#22c55e" : "#20e3ff"}
+                      stroke={isComplete ? "#db1fff" : "#7030ef"}
                       strokeWidth="3"
                       strokeLinecap="round"
                       strokeDasharray={`${(progressPercent / 100) * 75.4} 75.4`}
@@ -78,7 +78,7 @@ export default function SeriesCard({ title, videos, itemVariants, watchedIds = [
                   </svg>
                   <div className="absolute inset-0 flex items-center justify-center">
                     {isComplete ? (
-                      <CheckCircle size={12} className="text-green-400" />
+                      <CheckCircle size={12} className="text-secondary" />
                     ) : (
                       <span className="text-[8px] font-bold text-primary">{progressPercent}%</span>
                     )}
@@ -88,14 +88,14 @@ export default function SeriesCard({ title, videos, itemVariants, watchedIds = [
             )}
 
             {isComplete && (
-              <div className="absolute top-2 left-2 bg-green-500/90 text-white text-[8px] font-bold px-1.5 py-0.5 rounded-full flex items-center gap-0.5">
+              <div className="absolute top-2 left-2 bg-secondary/90 text-white text-[8px] font-bold px-1.5 py-0.5 rounded-full flex items-center gap-0.5">
                 <CheckCircle size={8} />
                 DONE
               </div>
             )}
 
             <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/40">
-              <PlayCircle size={34} className="text-primary drop-shadow-[0_0_12px_rgba(32,227,255,0.8)]" />
+              <PlayCircle size={34} className="text-primary drop-shadow-[0_0_12px_rgba(219,31,255,0.72)]" />
             </div>
           </div>
 
@@ -104,7 +104,7 @@ export default function SeriesCard({ title, videos, itemVariants, watchedIds = [
               {title}
             </h3>
             <div className="flex items-center justify-center gap-1 mt-1">
-              <span className={`w-1.5 h-1.5 rounded-full ${isComplete ? "bg-green-400" : "bg-primary"}`} />
+              <span className={`w-1.5 h-1.5 rounded-full ${isComplete ? "bg-secondary" : "bg-primary"}`} />
               <p className="text-[9px] text-muted font-medium">
                 {watchedCount}/{totalCount}
               </p>

@@ -127,11 +127,11 @@ export default function DiscussPanel({ onClose, className = "" }) {
   const getAvatarColor = (name) => {
     const colors = [
       "from-violet-500 to-purple-600",
-      "from-blue-500 to-cyan-500",
-      "from-emerald-500 to-teal-500",
-      "from-orange-500 to-amber-500",
-      "from-pink-500 to-rose-500",
-      "from-indigo-500 to-blue-600",
+      "from-fuchsia-500 to-violet-600",
+      "from-purple-500 to-indigo-600",
+      "from-indigo-500 to-fuchsia-600",
+      "from-violet-400 to-pink-500",
+      "from-purple-500 to-fuchsia-500",
     ];
     const index = name.charCodeAt(0) % colors.length;
     return colors[index];
@@ -142,7 +142,7 @@ export default function DiscussPanel({ onClose, className = "" }) {
       <div className="shrink-0 px-4 py-3 border-b border-white/5 bg-black/60 backdrop-blur-xl">
         <div className="flex items-center gap-3">
           <div className="w-9 h-9 grad-primary rounded-xl flex items-center justify-center shadow-lg">
-            <MessageCircle className="text-black" size={18} />
+            <MessageCircle className="text-white" size={18} />
           </div>
           <div className="flex-1 min-w-0">
             <h1 className="text-sm font-semibold text-white flex items-center gap-2">
@@ -276,7 +276,7 @@ export default function DiscussPanel({ onClose, className = "" }) {
             <button
               type="submit"
               disabled={!newMessage.trim() || sending}
-              className="w-10 h-10 grad-primary text-black rounded-xl flex items-center justify-center transition-all disabled:opacity-30 disabled:scale-95 active:scale-90 shrink-0"
+              className="w-10 h-10 grad-primary text-white rounded-xl flex items-center justify-center transition-all disabled:opacity-30 disabled:scale-95 active:scale-90 shrink-0"
             >
               {sending ? <Loader2 size={18} className="animate-spin" /> : <Send size={18} className="ml-0.5" />}
             </button>

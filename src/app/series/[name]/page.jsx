@@ -157,7 +157,7 @@ export default function SeriesPlayerPage() {
                   className="fixed bottom-20 left-1/2 -translate-x-1/2 md:bottom-8 md:right-8 md:left-auto md:translate-x-0 z-50 panel px-4 py-3 md:px-6 md:py-4 rounded-xl md:rounded-2xl flex items-center gap-3 md:gap-4"
                 >
                   <div className="w-10 h-10 md:w-12 md:h-12 rounded-lg md:rounded-xl grad-primary flex items-center justify-center">
-                    <Star className="text-black" size={20} />
+                    <Star className="text-white" size={20} />
                   </div>
                   <div>
                     <p className="text-white font-bold text-sm md:text-base">+{earnedXp} XP</p>
@@ -191,7 +191,7 @@ export default function SeriesPlayerPage() {
 
           <div className="lg:col-span-1">
             <div className="panel rounded-2xl p-3 md:p-5 lg:sticky lg:top-28 max-h-[calc(100vh-150px)] overflow-y-auto">
-              <h3 className="text-sm md:text-base font-semibold text-white mb-3 md:mb-4 flex items-center gap-2 sticky top-0 bg-[rgba(18,24,35,0.92)] backdrop-blur-md py-2 px-2 -mx-2 rounded-lg border border-white/5 z-10">
+              <h3 className="text-sm md:text-base font-semibold text-white mb-3 md:mb-4 flex items-center gap-2 sticky top-0 bg-[rgba(17,12,42,0.92)] backdrop-blur-md py-2 px-2 -mx-2 rounded-lg border border-white/10 z-10">
                 <LayoutList className="text-primary" size={16} />
                 <span>Parts</span>
                 <span className="text-muted font-normal">({videos.length})</span>
@@ -231,7 +231,7 @@ export default function SeriesPlayerPage() {
                           </div>
                         )}
                         {isWatched && !isActive && (
-                          <div className="absolute top-0.5 right-0.5 w-4 h-4 bg-green-500 rounded-full flex items-center justify-center shadow-sm">
+                          <div className="absolute top-0.5 right-0.5 w-4 h-4 bg-secondary rounded-full flex items-center justify-center shadow-sm">
                             <CheckCircle size={10} className="text-white" />
                           </div>
                         )}
@@ -248,7 +248,7 @@ export default function SeriesPlayerPage() {
                         </h4>
                         <p className="text-[10px] md:text-xs text-muted mt-0.5 flex items-center gap-1.5">
                           <span>Part {index + 1}</span>
-                          {isWatched && <span className="text-green-400">- Done</span>}
+                          {isWatched && <span className="text-secondary">- Done</span>}
                         </p>
                       </div>
 
