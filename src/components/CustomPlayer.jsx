@@ -215,11 +215,10 @@ const CustomPlayer = ({ videoId, thumbnail, onEnded }) => {
         if (status === "playing") {
             playerRef.current.pauseVideo();
         } else {
-            // On iPhone, show temporary overlay when resuming to hide YouTube elements
-            if (isIPhoneDevice) {
-                setShowActionOverlay(true);
-                setTimeout(() => setShowActionOverlay(false), 800);
-            }
+            // Show temporary overlay when resuming to hide YouTube elements
+            // iPhone gets 800ms, others get 1000ms
+            setShowActionOverlay(true);
+            setTimeout(() => setShowActionOverlay(false), isIPhoneDevice ? 800 : 1000);
             playerRef.current.playVideo();
         }
     };
@@ -237,11 +236,12 @@ const CustomPlayer = ({ videoId, thumbnail, onEnded }) => {
 
     const handleSeek = (e) => {
         if (!playerRef.current) return;
-        // On iPhone, show temporary overlay during seek to hide YouTube elements
-        if (isIPhoneDevice) {
-            setShowActionOverlay(true);
-            setTimeout(() => setShowActionOverlay(false), 800);
-        }
+
+        // Show temporary overlay during seek to hide YouTube elements
+        // iPhone gets 800ms, others get 1000ms
+        setShowActionOverlay(true);
+        setTimeout(() => setShowActionOverlay(false), isIPhoneDevice ? 800 : 1000);
+
         const seekTo = (e.target.value / 100) * duration;
         playerRef.current.seekTo(seekTo, true);
         setProgress(e.target.value);
