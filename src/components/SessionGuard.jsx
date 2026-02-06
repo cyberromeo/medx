@@ -5,7 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { account } from "@/lib/appwrite";
 import { clearProgressCache } from "@/lib/progress";
 
-const CHECK_INTERVAL_MS = 15000;
+const CHECK_INTERVAL_MS = 5000;
 
 const isProtectedPath = (pathname) => {
   return (
@@ -13,6 +13,10 @@ const isProtectedPath = (pathname) => {
     pathname.startsWith("/dashboard/") ||
     pathname === "/leaderboard" ||
     pathname.startsWith("/leaderboard/") ||
+    pathname === "/admin" ||
+    pathname.startsWith("/admin/") ||
+    pathname === "/discuss" ||
+    pathname.startsWith("/discuss/") ||
     pathname.startsWith("/watch/") ||
     pathname.startsWith("/series/")
   );
@@ -56,8 +60,13 @@ export default function SessionGuard() {
       }
 
       checkingRef.current = true;
-      void account
-        .get()
+      void Promise.all([account.getSession("current"), account.getPrefs()])
+        .then(([currentSession, prefs]) => {
+          const activeSessionId = prefs?.activeSessionId;
+          if (activeSessionId && currentSession?.$id !== activeSessionId) {
+            forceLogout();
+          }
+        })
         .catch(() => {
           forceLogout();
         })

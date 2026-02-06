@@ -5,7 +5,7 @@ import { account } from "@/lib/appwrite";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ID } from "appwrite";
-import { enforceSingleDeviceSession } from "@/lib/session-security";
+import { activateSingleDeviceSession } from "@/lib/session-security";
 import { motion, AnimatePresence } from "framer-motion";
 import { Mail, Lock, User, ArrowRight, AlertCircle, Loader2, Stethoscope } from "lucide-react";
 
@@ -35,7 +35,7 @@ export default function LoginPage() {
         await account.create(ID.unique(), email, password, name);
         createdSession = await account.createEmailPasswordSession(email, password);
       }
-      await enforceSingleDeviceSession(createdSession?.$id);
+      await activateSingleDeviceSession(createdSession?.$id);
       router.push("/dashboard");
     } catch (err) {
       if (createdSession?.$id) {
