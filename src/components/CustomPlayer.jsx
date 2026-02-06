@@ -109,6 +109,8 @@ const CustomPlayer = ({ videoId, thumbnail, onEnded, title, initialTime = 0, doc
         setIsIPhoneDevice(isIPhone());
     }, []);
 
+
+
     const latestStateRef = useRef({ currentTime: 0, duration: 0, status: 'idle', title: null, videoId: null, docId: null });
 
     // Update refs whenever state changes
@@ -123,20 +125,21 @@ const CustomPlayer = ({ videoId, thumbnail, onEnded, title, initialTime = 0, doc
         if (!videoId) return;
 
         // Allow saving if we have a title (or fallback) and valid time
-        const safeTitle = title || "Unknown Video";
-        const safeDocId = docId || videoId; // Fallback to videoId if docId not provided (though it should be)
+        const safeTitle = title || "Video Title Missing"; // distinct from old default
+        const safeDocId = docId || videoId;
 
         if (duration > 0 && currentTime > 5 && currentTime < duration - 5) {
             try {
-                localStorage.setItem('medx_last_active', JSON.stringify({
-                    videoId, // YouTube ID
-                    docId: safeDocId, // Appwrite Document ID
+                const payload = {
+                    videoId,
+                    docId: safeDocId,
                     title: safeTitle,
                     timestamp: currentTime,
                     duration,
                     lastUpdated: Date.now()
-                }));
-                console.log("MedX: Progress saved", currentTime);
+                };
+                console.log("MedX: Progress saved payload:", payload);
+                localStorage.setItem('medx_last_active', JSON.stringify(payload));
             } catch (e) {
                 console.error("MedX: Error saving progress", e);
             }
