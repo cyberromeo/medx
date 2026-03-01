@@ -47,18 +47,23 @@ const VideoContainer = memo(({ validId, status }) => {
 
 VideoContainer.displayName = "VideoContainer";
 
-const CustomPlayer = ({ videoId, thumbnail, onEnded, title, initialTime = 0, docId }) => {
+const CustomPlayer = ({ videoId, thumbnail, onEnded, onPlay, title, initialTime = 0, docId }) => {
     const validId = getYouTubeId(videoId);
     const containerRef = useRef(null);
     const playerRef = useRef(null);
     const shouldPlayRef = useRef(false);
     const initialSeekDoneRef = useRef(false);
 
-    // Store latest callback in ref to avoid stale closures and re-initialization
+    // Store latest callbacks in refs to avoid stale closures and re-initialization
     const onEndedRef = useRef(onEnded);
+    const onPlayRef = useRef(onPlay);
+    const playFiredRef = useRef(false);
     useEffect(() => {
         onEndedRef.current = onEnded;
     }, [onEnded]);
+    useEffect(() => {
+        onPlayRef.current = onPlay;
+    }, [onPlay]);
 
     const [status, setStatus] = useState("idle"); // idle, loading, playing, paused, ended
     const [progress, setProgress] = useState(0);
@@ -66,6 +71,7 @@ const CustomPlayer = ({ videoId, thumbnail, onEnded, title, initialTime = 0, doc
     const [duration, setDuration] = useState(0);
     const [isMuted, setIsMuted] = useState(false);
     const [volume, setVolume] = useState(100);
+    const [playbackSpeed, setPlaybackSpeed] = useState(1);
     const [isHovering, setIsHovering] = useState(false);
     const [showSplash, setShowSplash] = useState(false);
     const [isIOSDevice, setIsIOSDevice] = useState(false);
@@ -98,6 +104,7 @@ const CustomPlayer = ({ videoId, thumbnail, onEnded, title, initialTime = 0, doc
         setCurrentTime(0);
         setDuration(0);
         initialSeekDoneRef.current = false;
+        playFiredRef.current = false;
 
         // If we have an initial time, we might want to start there
         // But we wait for player ready
@@ -227,7 +234,13 @@ const CustomPlayer = ({ videoId, thumbnail, onEnded, title, initialTime = 0, doc
                                     }
                                 },
                                 onStateChange: (event) => {
-                                    if (event.data === window.YT.PlayerState.PLAYING) setStatus("playing");
+                                    if (event.data === window.YT.PlayerState.PLAYING) {
+                                        setStatus("playing");
+                                        if (!playFiredRef.current) {
+                                            playFiredRef.current = true;
+                                            if (onPlayRef.current) onPlayRef.current();
+                                        }
+                                    }
                                     if (event.data === window.YT.PlayerState.PAUSED) setStatus("paused");
                                     if (event.data === window.YT.PlayerState.ENDED) {
                                         setStatus("ended");
@@ -337,6 +350,17 @@ const CustomPlayer = ({ videoId, thumbnail, onEnded, title, initialTime = 0, doc
         } else {
             setIsMuted(false);
         }
+    };
+
+    const SPEED_OPTIONS = [1, 1.25, 1.5, 1.75, 2];
+
+    const cycleSpeed = () => {
+        if (!playerRef.current) return;
+        const currentIndex = SPEED_OPTIONS.indexOf(playbackSpeed);
+        const nextIndex = (currentIndex + 1) % SPEED_OPTIONS.length;
+        const nextSpeed = SPEED_OPTIONS[nextIndex];
+        setPlaybackSpeed(nextSpeed);
+        playerRef.current.setPlaybackRate(nextSpeed);
     };
 
     const toggleFullscreen = () => {
@@ -517,6 +541,15 @@ const CustomPlayer = ({ videoId, thumbnail, onEnded, title, initialTime = 0, doc
                                         [&::-webkit-slider-thumb]:rounded-full"
                                 />
                             </div>
+
+                            {/* Playback Speed */}
+                            <button
+                                onClick={cycleSpeed}
+                                className="text-gray-300 hover:text-white transition-colors text-xs font-mono font-bold min-w-[40px] text-center px-1.5 py-0.5 rounded border border-white/10 hover:border-white/30 bg-white/5"
+                                title="Playback Speed"
+                            >
+                                {playbackSpeed}x
+                            </button>
 
                             {/* Fullscreen - hidden on iPhone only, iPads support it */}
                             {!isIPhoneDevice && (

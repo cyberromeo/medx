@@ -9,6 +9,7 @@ import CustomPlayer from "@/components/CustomPlayer";
 import Link from "next/link";
 import { ArrowLeft, MessageSquare } from "lucide-react";
 import { useChatX } from "@/components/ChatXProvider";
+import { markVideoStarted, markVideoWatched } from "@/lib/progress";
 
 export default function WatchPage({ params }) {
   const { id } = use(params);
@@ -16,6 +17,7 @@ export default function WatchPage({ params }) {
   const [video, setVideo] = useState(null);
   const [initialTime, setInitialTime] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [userId, setUserId] = useState(null);
   const router = useRouter();
   const { openChat } = useChatX();
 
@@ -41,7 +43,8 @@ export default function WatchPage({ params }) {
 
   const checkAuth = async () => {
     try {
-      await account.get();
+      const user = await account.get();
+      setUserId(user.$id);
       await fetchVideo(id);
     } catch {
       router.push("/login");
@@ -57,6 +60,20 @@ export default function WatchPage({ params }) {
       console.error("Video not found", err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  // Award 10 XP when a video is played
+  const handlePlay = () => {
+    if (userId && video) {
+      markVideoStarted(video.$id, userId);
+    }
+  };
+
+  // Award 100 XP when a video is finished
+  const handleEnded = () => {
+    if (userId && video) {
+      markVideoWatched(video.$id, userId);
     }
   };
 
@@ -111,6 +128,8 @@ export default function WatchPage({ params }) {
                 title={video.title}
                 docId={video.$id}
                 initialTime={initialTime}
+                onPlay={handlePlay}
+                onEnded={handleEnded}
               />
             </div>
 
@@ -142,3 +161,4 @@ export default function WatchPage({ params }) {
     </main>
   );
 }
+

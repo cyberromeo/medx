@@ -98,7 +98,37 @@ const calculateStreak = (documents) => {
     return streak;
 };
 
-// Mark a video as watched and award XP
+// Mark a video as started/opened and award 10 XP
+export const markVideoStarted = async (videoId, userId) => {
+    if (!userId || !videoId) return;
+
+    try {
+        const startedId = `${videoId}_started`;
+
+        // Check if already awarded start XP for this video
+        const existing = await databases.listDocuments(DB_ID, PROGRESS_COL_ID, [
+            Query.equal('userId', userId),
+            Query.equal('videoId', startedId),
+            Query.limit(1)
+        ]);
+
+        if (existing.documents.length > 0) return; // Already awarded
+
+        await databases.createDocument(DB_ID, PROGRESS_COL_ID, ID.unique(), {
+            userId,
+            videoId: startedId,
+            watchedAt: new Date().toISOString(),
+            xpEarned: 10
+        });
+
+        // Invalidate cache
+        progressCache = null;
+    } catch (error) {
+        console.error('Error marking video started:', error);
+    }
+};
+
+// Mark a video as fully watched and award 100 XP
 export const markVideoWatched = async (videoId, userId) => {
     if (!userId || !videoId) {
         return getProgress(userId);

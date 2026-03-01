@@ -21,7 +21,7 @@ const databases = new Databases(client);
 
 const DB_ID = process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID;
 const COL_ID = process.env.NEXT_PUBLIC_APPWRITE_COLLECTION_ID;
-const PLAYLIST_ID = "";
+const PLAYLIST_ID = "PLmFEMcr2GNVufli-s4jsxbfc1FM3OB_o5";
 
 async function importPlaylist() {
     console.log(`fetching playlist: ${PLAYLIST_ID}...`);
@@ -38,7 +38,7 @@ async function importPlaylist() {
                     videoId: video.id,
                     thumbnailUrl: video.thumbnail?.url || `https://img.youtube.com/vi/${video.id}/hqdefault.jpg`,
                     category: "MIST",
-                    subCategory: "Pediatrics",
+                    subCategory: "Obstetrics & Gynecology (OBG)",
                     duration: video.durationFormatted || "00:00"
                 });
                 console.log(`  -> Success!`);
