@@ -7,6 +7,8 @@ import { motion } from "framer-motion";
 import { Trophy, Medal, Crown, Star, ArrowLeft, User } from "lucide-react";
 import Link from "next/link";
 
+const drName = (name) => name?.startsWith('Dr.') ? name : `Dr. ${name}`;
+
 export default function LeaderboardPage() {
   const [leaderboard, setLeaderboard] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -106,7 +108,7 @@ export default function LeaderboardPage() {
                     <div className="w-10 h-10 rounded-xl bg-white/10 mx-auto flex items-center justify-center text-sm font-bold">
                       {user.displayName.charAt(0).toUpperCase()}
                     </div>
-                    <p className="text-xs text-muted mt-2 truncate">{user.displayName}</p>
+                    <p className="text-xs text-muted mt-2 truncate">{drName(user.displayName)}</p>
                     <div className="flex items-center justify-center gap-1 mt-1">
                       <Star className="text-secondary" size={12} />
                       <span className="text-xs font-semibold text-white">{user.xp.toLocaleString()}</span>
@@ -173,7 +175,7 @@ export default function LeaderboardPage() {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
                         <p className={`font-semibold text-sm sm:text-base truncate ${isCurrentUser ? "text-primary" : "text-white"}`}>
-                          {isCurrentUser ? "You" : user.displayName}
+                          {isCurrentUser ? "You" : drName(user.displayName)}
                         </p>
                         {isCurrentUser && <span className="text-[10px] bg-primary-soft text-primary px-1.5 py-0.5 rounded">Me</span>}
                       </div>
