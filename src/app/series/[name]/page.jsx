@@ -8,7 +8,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, Play, Clock, LayoutList, CheckCircle, Star } from "lucide-react";
 import CustomPlayer from "@/components/CustomPlayer";
 import Header from "@/components/Header";
-import { markVideoWatched, isVideoWatched, getProgress } from "@/lib/progress";
+import { markVideoStarted, markVideoWatched, isVideoWatched, getProgress } from "@/lib/progress";
 
 export default function SeriesPlayerPage() {
   const params = useParams();
@@ -66,13 +66,22 @@ export default function SeriesPlayerPage() {
     fetchSeriesVideos();
   }, [seriesName, DB_ID, COL_ID]);
 
+  // Award 10 XP when a video starts playing
+  const handleVideoStart = () => {
+    if (currentVideo && userId) {
+      markVideoStarted(currentVideo.$id, userId);
+    }
+  };
+
   const handleVideoComplete = async () => {
-    if (currentVideo && userId && !isVideoWatched(watchedIds, currentVideo.$id)) {
+    if (currentVideo && userId) {
       const newProgress = await markVideoWatched(currentVideo.$id, userId);
-      setWatchedIds(newProgress.watched);
-      setEarnedXp(100 + (newProgress.streak > 1 ? Math.min(newProgress.streak * 10, 100) : 0));
-      setShowXpToast(true);
-      setTimeout(() => setShowXpToast(false), 3000);
+      if (newProgress) {
+        setWatchedIds(newProgress.watched);
+        setEarnedXp(100 + (newProgress.streak > 1 ? Math.min(newProgress.streak * 10, 100) : 0));
+        setShowXpToast(true);
+        setTimeout(() => setShowXpToast(false), 3000);
+      }
     }
 
     const currentIndex = videos.findIndex(v => v.$id === currentVideo.$id);
@@ -144,6 +153,7 @@ export default function SeriesPlayerPage() {
               <CustomPlayer
                 videoId={currentVideo.videoId}
                 thumbnail={currentVideo.thumbnailUrl}
+                onPlay={handleVideoStart}
                 onEnded={handleVideoComplete}
               />
             </motion.div>
