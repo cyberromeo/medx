@@ -9,7 +9,7 @@ import Header from "@/components/Header";
 import { motion, AnimatePresence } from "framer-motion";
 import { Trophy, Flame, Target, Star, Zap, ArrowRight, X, ChevronLeft, Award } from "lucide-react";
 import SeriesCard from "@/components/SeriesCard";
-import { getProgress, calculateLevel, getXpToNextLevel, getLevelTitle } from "@/lib/progress";
+import { getProgress, calculateLevel, getXpToNextLevel, getLevelTitle, claimDailyLoginXp } from "@/lib/progress";
 
 // Animated number counter hook
 function useAnimatedCounter(target, duration = 1200) {
@@ -67,6 +67,8 @@ export default function Dashboard() {
       const current = await account.get();
       setUser(current);
       await fetchVideos();
+      // Claim daily login XP (5 XP, once per day)
+      await claimDailyLoginXp(current.$id);
       const userProgress = await getProgress(current.$id);
       setProgress(userProgress);
     } catch {

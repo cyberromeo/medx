@@ -61,13 +61,14 @@ export const getProgress = async (userId = null) => {
             Query.limit(500)
         ]);
 
-        const watched = response.documents.map(doc => doc.videoId).filter(id => !id.endsWith('_started'));
+        const watched = response.documents.map(doc => doc.videoId).filter(id => !id.endsWith('_started') && !id.startsWith('daily_login_'));
         const xp = response.documents.reduce((sum, doc) => sum + (doc.xpEarned || 100), 0);
         const lastWatch = response.documents.length > 0 ? response.documents[0].watchedAt : null;
         const todayXp = getTodayXp(response.documents);
 
-        // Calculate streak
-        const streak = calculateStreak(response.documents);
+        // Calculate streak from completions + daily logins (exclude _started records)
+        const streakDocs = response.documents.filter(doc => !doc.videoId.endsWith('_started'));
+        const streak = calculateStreak(streakDocs);
 
         progressCache = { watched, xp, streak, lastWatch, todayXp };
         cacheUserId = userId;
@@ -147,6 +148,39 @@ export const markVideoStarted = async (videoId, userId) => {
         return { awarded: true, xp: 10 };
     } catch (error) {
         console.error('Error marking video started:', error);
+        return { awarded: false, xp: 0 };
+    }
+};
+
+// Claim daily login XP (5 XP, once per day)
+export const claimDailyLoginXp = async (userId) => {
+    if (!userId) return { awarded: false, xp: 0 };
+
+    try {
+        const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+        const loginId = `daily_login_${today}`;
+
+        // Check if already claimed today
+        const existing = await databases.listDocuments(DB_ID, PROGRESS_COL_ID, [
+            Query.equal('userId', userId),
+            Query.equal('videoId', loginId),
+            Query.limit(1)
+        ]);
+
+        if (existing.documents.length > 0) return { awarded: false, xp: 0 };
+
+        await databases.createDocument(DB_ID, PROGRESS_COL_ID, ID.unique(), {
+            userId,
+            videoId: loginId,
+            watchedAt: new Date().toISOString(),
+            xpEarned: 5
+        });
+
+        // Invalidate cache
+        progressCache = null;
+        return { awarded: true, xp: 5 };
+    } catch (error) {
+        console.error('Error claiming daily login XP:', error);
         return { awarded: false, xp: 0 };
     }
 };
