@@ -28,7 +28,7 @@ export const getProgress = async (userId = null) => {
             Query.limit(500)
         ]);
 
-        const watched = response.documents.map(doc => doc.videoId);
+        const watched = response.documents.map(doc => doc.videoId).filter(id => !id.endsWith('_started'));
         const xp = response.documents.reduce((sum, doc) => sum + (doc.xpEarned || 100), 0);
         const lastWatch = response.documents.length > 0 ? response.documents[0].watchedAt : null;
 
@@ -103,19 +103,20 @@ export const markVideoStarted = async (videoId, userId) => {
     if (!userId || !videoId) return;
 
     try {
-        // Check if any record already exists for this video (started or finished)
+        const startedId = `${videoId}_started`;
+
+        // Check if already awarded start XP for this video
         const existing = await databases.listDocuments(DB_ID, PROGRESS_COL_ID, [
             Query.equal('userId', userId),
-            Query.equal('videoId', videoId),
+            Query.equal('videoId', startedId),
             Query.limit(1)
         ]);
 
         if (existing.documents.length > 0) return; // Already awarded
 
-        // Create record with 10 XP for starting
         await databases.createDocument(DB_ID, PROGRESS_COL_ID, ID.unique(), {
             userId,
-            videoId,
+            videoId: startedId,
             watchedAt: new Date().toISOString(),
             xpEarned: 10
         });
@@ -134,7 +135,7 @@ export const markVideoWatched = async (videoId, userId) => {
     }
 
     try {
-        // Check if a record already exists
+        // Check if already watched (completed)
         const existing = await databases.listDocuments(DB_ID, PROGRESS_COL_ID, [
             Query.equal('userId', userId),
             Query.equal('videoId', videoId),
@@ -142,17 +143,7 @@ export const markVideoWatched = async (videoId, userId) => {
         ]);
 
         if (existing.documents.length > 0) {
-            const doc = existing.documents[0];
-            // If it was only a "started" record (10 XP), upgrade to 100 XP
-            if (doc.xpEarned < 100) {
-                await databases.updateDocument(DB_ID, PROGRESS_COL_ID, doc.$id, {
-                    xpEarned: 100,
-                    watchedAt: new Date().toISOString()
-                });
-                progressCache = null;
-                return getProgress(userId);
-            }
-            // Already fully watched
+            // Already watched, return current progress
             return getProgress(userId);
         }
 
@@ -161,7 +152,7 @@ export const markVideoWatched = async (videoId, userId) => {
         const streakBonus = Math.min(currentProgress.streak * 10, 100);
         const xpEarned = 100 + (currentProgress.streak > 0 ? streakBonus : 0);
 
-        // Create new watch record with 100 XP
+        // Create new watch record
         await databases.createDocument(DB_ID, PROGRESS_COL_ID, ID.unique(), {
             userId,
             videoId,
