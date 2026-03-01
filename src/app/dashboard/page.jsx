@@ -1,22 +1,49 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { account, databases } from "@/lib/appwrite";
 import { Query } from "appwrite";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Header from "@/components/Header";
 import { motion, AnimatePresence } from "framer-motion";
-import { Trophy, Flame, Target, Star, Zap, ArrowRight, X, ChevronLeft } from "lucide-react";
+import { Trophy, Flame, Target, Star, Zap, ArrowRight, X, ChevronLeft, Award } from "lucide-react";
 import SeriesCard from "@/components/SeriesCard";
-import { getProgress, calculateLevel, getXpToNextLevel } from "@/lib/progress";
+import { getProgress, calculateLevel, getXpToNextLevel, getLevelTitle } from "@/lib/progress";
+
+// Animated number counter hook
+function useAnimatedCounter(target, duration = 1200) {
+  const [count, setCount] = useState(0);
+  const prevTarget = useRef(0);
+
+  useEffect(() => {
+    if (target === prevTarget.current) return;
+    const start = prevTarget.current;
+    prevTarget.current = target;
+    const diff = target - start;
+    if (diff === 0) return;
+
+    const startTime = performance.now();
+    const step = (now) => {
+      const elapsed = now - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      // ease-out cubic
+      const eased = 1 - Math.pow(1 - progress, 3);
+      setCount(Math.round(start + diff * eased));
+      if (progress < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  }, [target, duration]);
+
+  return count;
+}
 
 export default function Dashboard() {
   const [user, setUser] = useState(null);
   const [videos, setVideos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState(null);
-  const [progress, setProgress] = useState({ watched: [], xp: 0, streak: 0, lastWatch: null });
+  const [progress, setProgress] = useState({ watched: [], xp: 0, streak: 0, lastWatch: null, todayXp: 0 });
   const router = useRouter();
 
   const DB_ID = process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID;
@@ -71,10 +98,17 @@ export default function Dashboard() {
   };
 
   const level = calculateLevel(progress.xp);
+  const levelTitle = getLevelTitle(level);
   const xpProgress = getXpToNextLevel(progress.xp);
   const totalWatched = progress.watched.length;
   const totalVideos = videos.length;
   const overallProgress = totalVideos > 0 ? Math.round((totalWatched / totalVideos) * 100) : 0;
+
+  // Animated counters
+  const animatedXp = useAnimatedCounter(progress.xp);
+  const animatedTodayXp = useAnimatedCounter(progress.todayXp);
+  const animatedWatched = useAnimatedCounter(totalWatched);
+  const animatedStreak = useAnimatedCounter(progress.streak);
 
   if (loading) {
     return (
@@ -197,14 +231,24 @@ export default function Dashboard() {
         >
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
             <div className="panel rounded-3xl p-6 lg:col-span-2">
-              <h1 className="font-display text-2xl sm:text-3xl font-bold">
-                Welcome, <span className="text-gradient">Dr. {user?.name?.split(" ")[0]}</span>
-              </h1>
+              <div className="flex items-start justify-between mb-1">
+                <h1 className="font-display text-2xl sm:text-3xl font-bold">
+                  Welcome, <span className="text-gradient">Dr. {user?.name?.split(" ")[0]}</span>
+                </h1>
+                <div className="level-badge">
+                  <Award size={12} />
+                  {levelTitle}
+                </div>
+              </div>
               <p className="text-muted text-sm mt-1">Continue your medical journey</p>
 
               <div className="mt-5">
                 <div className="flex items-center justify-between text-xs text-muted mb-2">
-                  <span>Level {level}</span>
+                  <span className="flex items-center gap-1.5">
+                    Level {level}
+                    <span className="text-primary/60">·</span>
+                    <span className="text-primary/80">{levelTitle}</span>
+                  </span>
                   <span>{xpProgress.current}/{xpProgress.needed} XP</span>
                 </div>
                 <div className="progress-track">
@@ -236,14 +280,14 @@ export default function Dashboard() {
           transition={{ delay: 0.1 }}
           className="grid grid-cols-2 gap-3 sm:grid-cols-2 lg:grid-cols-4 sm:gap-4 mb-8 sm:mb-10"
         >
-          <div className="stat-card">
+          <div className="stat-card xp-glow">
             <div className="flex items-center gap-3 mb-2">
               <div className="w-8 h-8 rounded-lg bg-secondary-soft flex items-center justify-center">
                 <Star className="text-secondary" size={16} />
               </div>
               <span className="text-xs text-muted uppercase tracking-wider">Total XP</span>
             </div>
-            <p className="text-2xl font-bold text-white font-mono">{progress.xp}</p>
+            <p className="text-2xl font-bold text-white font-mono">{animatedXp.toLocaleString()}</p>
           </div>
 
           <div className="stat-card">
@@ -254,7 +298,7 @@ export default function Dashboard() {
               <span className="text-xs text-muted uppercase tracking-wider">Watched</span>
             </div>
             <div className="flex items-end gap-2">
-              <p className="text-2xl font-bold text-white font-mono">{totalWatched}</p>
+              <p className="text-2xl font-bold text-white font-mono">{animatedWatched}</p>
               <span className="text-sm text-muted mb-1">/{totalVideos}</span>
             </div>
           </div>
@@ -267,7 +311,7 @@ export default function Dashboard() {
               <span className="text-xs text-muted uppercase tracking-wider">Streak</span>
             </div>
             <div className="flex items-end gap-2">
-              <p className="text-2xl font-bold text-white font-mono">{progress.streak}</p>
+              <p className="text-2xl font-bold text-white font-mono">{animatedStreak}</p>
               <span className="text-sm text-muted mb-1">days</span>
             </div>
           </div>
@@ -275,13 +319,13 @@ export default function Dashboard() {
           <div className="stat-card">
             <div className="flex items-center gap-3 mb-2">
               <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center">
-                <Zap className="text-white" size={16} />
+                <Zap className="text-primary" size={16} />
               </div>
-              <span className="text-xs text-muted uppercase tracking-wider">Progress</span>
+              <span className="text-xs text-muted uppercase tracking-wider">Today</span>
             </div>
             <div className="flex items-end gap-2">
-              <p className="text-2xl font-bold text-white font-mono">{overallProgress}%</p>
-              <span className="text-sm text-muted mb-1">complete</span>
+              <p className="text-2xl font-bold text-white font-mono today-xp-pulse">{animatedTodayXp}</p>
+              <span className="text-sm text-muted mb-1">XP</span>
             </div>
           </div>
         </motion.div>

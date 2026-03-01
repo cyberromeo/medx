@@ -6,8 +6,9 @@ import { account, databases } from "@/lib/appwrite";
 import { useRouter } from "next/navigation";
 import Header from "@/components/Header";
 import CustomPlayer from "@/components/CustomPlayer";
+import XpToast from "@/components/XpToast";
 import Link from "next/link";
-import { ArrowLeft, MessageSquare } from "lucide-react";
+import { ArrowLeft, MessageSquare, Star, Flame } from "lucide-react";
 import { useChatX } from "@/components/ChatXProvider";
 import { markVideoStarted, markVideoWatched } from "@/lib/progress";
 
@@ -18,6 +19,7 @@ export default function WatchPage({ params }) {
   const [initialTime, setInitialTime] = useState(0);
   const [loading, setLoading] = useState(true);
   const [userId, setUserId] = useState(null);
+  const [toast, setToast] = useState({ show: false, xp: 0, type: "start", streakBonus: 0, leveledUp: false, newLevel: null });
   const router = useRouter();
   const { openChat } = useChatX();
 
@@ -64,17 +66,34 @@ export default function WatchPage({ params }) {
   };
 
   // Award 10 XP when a video is played
-  const handlePlay = () => {
+  const handlePlay = async () => {
     if (userId && video) {
-      markVideoStarted(video.$id, userId);
+      const result = await markVideoStarted(video.$id, userId);
+      if (result.awarded) {
+        setToast({ show: true, xp: result.xp, type: "start", streakBonus: 0, leveledUp: false, newLevel: null });
+      }
     }
   };
 
   // Award 100 XP when a video is finished
-  const handleEnded = () => {
+  const handleEnded = async () => {
     if (userId && video) {
-      markVideoWatched(video.$id, userId);
+      const result = await markVideoWatched(video.$id, userId);
+      if (result.xpAwarded > 0) {
+        setToast({
+          show: true,
+          xp: result.xpAwarded,
+          type: "complete",
+          streakBonus: result.streakBonus,
+          leveledUp: result.leveledUp,
+          newLevel: result.newLevel
+        });
+      }
     }
+  };
+
+  const clearToast = () => {
+    setToast(prev => ({ ...prev, show: false }));
   };
 
   if (loading) return (
@@ -136,6 +155,14 @@ export default function WatchPage({ params }) {
             <div className="panel rounded-2xl p-4 sm:p-5 flex flex-wrap items-center gap-3">
               <span className="tag">{video.category}</span>
               <span className="text-sm text-muted">{video.duration}</span>
+              <div className="ml-auto flex items-center gap-2">
+                <div className="flex items-center gap-1.5 text-xs bg-white/5 rounded-lg px-3 py-1.5 border border-white/10">
+                  <Star className="text-secondary" size={13} />
+                  <span className="font-semibold text-white/80">+10 start</span>
+                  <span className="text-white/30 mx-1">·</span>
+                  <span className="font-semibold text-white/80">+100 finish</span>
+                </div>
+              </div>
             </div>
 
             <div>
@@ -152,6 +179,17 @@ export default function WatchPage({ params }) {
         </div>
       </div>
 
+      {/* XP Toast */}
+      <XpToast
+        show={toast.show}
+        xp={toast.xp}
+        type={toast.type}
+        streakBonus={toast.streakBonus}
+        leveledUp={toast.leveledUp}
+        newLevel={toast.newLevel}
+        onDone={clearToast}
+      />
+
       <button
         onClick={openChat}
         className="fixed bottom-6 right-6 w-14 h-14 grad-primary rounded-full flex items-center justify-center shadow-lg hover:scale-110 active:scale-95 transition-all z-50 md:hidden"
@@ -161,4 +199,3 @@ export default function WatchPage({ params }) {
     </main>
   );
 }
-

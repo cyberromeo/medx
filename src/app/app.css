@@ -522,3 +522,116 @@ body {
     justify-content: center;
   }
 }
+
+/* XP Toast */
+.xp-toast {
+  position: relative;
+  overflow: hidden;
+  padding: 0.85rem 1.25rem;
+  border-radius: 1rem;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  min-width: 220px;
+  box-shadow:
+    0 20px 50px rgba(0, 0, 0, 0.5),
+    0 1px 0 rgba(255, 255, 255, 0.08) inset;
+}
+
+.xp-toast-start {
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.92), rgba(2, 6, 23, 0.95));
+  border: 1px solid rgba(45, 212, 191, 0.3);
+  box-shadow:
+    0 20px 50px rgba(0, 0, 0, 0.5),
+    0 0 30px rgba(45, 212, 191, 0.1),
+    0 1px 0 rgba(255, 255, 255, 0.08) inset;
+}
+
+.xp-toast-complete {
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.92), rgba(2, 6, 23, 0.95));
+  border: 1px solid rgba(96, 165, 250, 0.3);
+  box-shadow:
+    0 20px 50px rgba(0, 0, 0, 0.5),
+    0 0 30px rgba(96, 165, 250, 0.15),
+    0 1px 0 rgba(255, 255, 255, 0.08) inset;
+}
+
+/* Level Badge */
+.level-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.3rem 0.75rem;
+  border-radius: 9999px;
+  background: linear-gradient(135deg, rgba(45, 212, 191, 0.15), rgba(96, 165, 250, 0.1));
+  border: 1px solid rgba(45, 212, 191, 0.2);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: var(--primary);
+}
+
+/* XP Counter Glow */
+.xp-glow {
+  position: relative;
+}
+
+.xp-glow::after {
+  content: "";
+  position: absolute;
+  inset: -4px;
+  border-radius: 1.5rem;
+  background: radial-gradient(circle at 50% 50%, rgba(96, 165, 250, 0.12), transparent 70%);
+  pointer-events: none;
+  animation: xpGlow 3s ease-in-out infinite;
+}
+
+@keyframes xpGlow {
+
+  0%,
+  100% {
+    opacity: 0.4;
+  }
+
+  50% {
+    opacity: 1;
+  }
+}
+
+/* Level Up Celebration */
+@keyframes levelUpBurst {
+  0% {
+    transform: scale(0);
+    opacity: 1;
+  }
+
+  100% {
+    transform: scale(4);
+    opacity: 0;
+  }
+}
+
+.level-up-burst {
+  animation: levelUpBurst 0.8s ease-out forwards;
+  background: radial-gradient(circle, rgba(45, 212, 191, 0.35), transparent 60%);
+  border-radius: 50%;
+  position: absolute;
+  inset: -20%;
+  pointer-events: none;
+}
+
+/* Today XP Pulse */
+.today-xp-pulse {
+  animation: todayPulse 2.5s ease-in-out infinite;
+}
+
+@keyframes todayPulse {
+
+  0%,
+  100% {
+    text-shadow: 0 0 8px rgba(45, 212, 191, 0.3);
+  }
+
+  50% {
+    text-shadow: 0 0 16px rgba(45, 212, 191, 0.6);
+  }
+}

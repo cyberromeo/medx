@@ -10,6 +10,39 @@ const PROGRESS_COL_ID = process.env.NEXT_PUBLIC_APPWRITE_PROGRESS_COLLECTION_ID;
 let progressCache = null;
 let cacheUserId = null;
 
+// Medical-themed level titles
+const LEVEL_TITLES = [
+    'Intern',        // 1
+    'Junior Resident', // 2
+    'Resident',      // 3
+    'Senior Resident', // 4
+    'Registrar',     // 5
+    'Specialist',    // 6
+    'Senior Specialist', // 7
+    'Consultant',    // 8
+    'Senior Consultant', // 9
+    'Professor',     // 10+
+];
+
+// Get level title from level number
+export const getLevelTitle = (level) => {
+    const index = Math.min(level - 1, LEVEL_TITLES.length - 1);
+    return LEVEL_TITLES[Math.max(0, index)];
+};
+
+// Calculate XP earned today from documents
+const getTodayXp = (documents) => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return documents
+        .filter(doc => {
+            const docDate = new Date(doc.watchedAt);
+            docDate.setHours(0, 0, 0, 0);
+            return docDate.getTime() === today.getTime();
+        })
+        .reduce((sum, doc) => sum + (doc.xpEarned || 100), 0);
+};
+
 // Get current user's progress from Appwrite
 export const getProgress = async (userId = null) => {
     // If no userId provided, try to get from cache or return empty
@@ -18,7 +51,7 @@ export const getProgress = async (userId = null) => {
     }
 
     if (!userId) {
-        return { watched: [], xp: 0, streak: 0, lastWatch: null };
+        return { watched: [], xp: 0, streak: 0, lastWatch: null, todayXp: 0 };
     }
 
     try {
@@ -31,17 +64,18 @@ export const getProgress = async (userId = null) => {
         const watched = response.documents.map(doc => doc.videoId).filter(id => !id.endsWith('_started'));
         const xp = response.documents.reduce((sum, doc) => sum + (doc.xpEarned || 100), 0);
         const lastWatch = response.documents.length > 0 ? response.documents[0].watchedAt : null;
+        const todayXp = getTodayXp(response.documents);
 
         // Calculate streak
         const streak = calculateStreak(response.documents);
 
-        progressCache = { watched, xp, streak, lastWatch };
+        progressCache = { watched, xp, streak, lastWatch, todayXp };
         cacheUserId = userId;
 
         return progressCache;
     } catch (error) {
         console.error('Error fetching progress:', error);
-        return { watched: [], xp: 0, streak: 0, lastWatch: null };
+        return { watched: [], xp: 0, streak: 0, lastWatch: null, todayXp: 0 };
     }
 };
 
@@ -55,17 +89,9 @@ const calculateStreak = (documents) => {
     const yesterday = new Date(today);
     yesterday.setDate(yesterday.getDate() - 1);
 
-    // Check if the most recent watch was today or yesterday
-    // Documents are sorted descending by watchedAt because Appwrite query does it
-    // But even if they weren't perfectly sorted by time, we care about dates.
-    // Assuming the input usually comes sorted from the excessive Appwrite query overhead we are avoiding?
-    // Actually the query in getProgress does Query.orderDesc('watchedAt').
-
     const lastWatched = new Date(documents[0].watchedAt);
     lastWatched.setHours(0, 0, 0, 0);
 
-    // If last watched was before yesterday, streak is broken (0)
-    // We compare time values for accurate date comparison
     if (lastWatched.getTime() < yesterday.getTime()) {
         return 0;
     }
@@ -73,24 +99,19 @@ const calculateStreak = (documents) => {
     let streak = 1;
     let currentStreakDate = lastWatched;
 
-    // Iterate through history to find consecutive days
     for (let i = 1; i < documents.length; i++) {
         const docDate = new Date(documents[i].watchedAt);
         docDate.setHours(0, 0, 0, 0);
 
-        // Calculate difference in days
         const timeDiff = currentStreakDate.getTime() - docDate.getTime();
         const diffDays = Math.round(timeDiff / (1000 * 60 * 60 * 24));
 
         if (diffDays === 0) {
-            // Same day, continue to next document
             continue;
         } else if (diffDays === 1) {
-            // Consecutive day found, increment streak
             streak++;
             currentStreakDate = docDate;
         } else {
-            // Gap found, streak ends
             break;
         }
     }
@@ -100,7 +121,7 @@ const calculateStreak = (documents) => {
 
 // Mark a video as started/opened and award 10 XP
 export const markVideoStarted = async (videoId, userId) => {
-    if (!userId || !videoId) return;
+    if (!userId || !videoId) return { awarded: false, xp: 0 };
 
     try {
         const startedId = `${videoId}_started`;
@@ -112,7 +133,7 @@ export const markVideoStarted = async (videoId, userId) => {
             Query.limit(1)
         ]);
 
-        if (existing.documents.length > 0) return; // Already awarded
+        if (existing.documents.length > 0) return { awarded: false, xp: 0 };
 
         await databases.createDocument(DB_ID, PROGRESS_COL_ID, ID.unique(), {
             userId,
@@ -123,15 +144,17 @@ export const markVideoStarted = async (videoId, userId) => {
 
         // Invalidate cache
         progressCache = null;
+        return { awarded: true, xp: 10 };
     } catch (error) {
         console.error('Error marking video started:', error);
+        return { awarded: false, xp: 0 };
     }
 };
 
 // Mark a video as fully watched and award 100 XP
 export const markVideoWatched = async (videoId, userId) => {
     if (!userId || !videoId) {
-        return getProgress(userId);
+        return { progress: await getProgress(userId), xpAwarded: 0, streakBonus: 0, leveledUp: false };
     }
 
     try {
@@ -143,14 +166,15 @@ export const markVideoWatched = async (videoId, userId) => {
         ]);
 
         if (existing.documents.length > 0) {
-            // Already watched, return current progress
-            return getProgress(userId);
+            const progress = await getProgress(userId);
+            return { progress, xpAwarded: 0, streakBonus: 0, leveledUp: false };
         }
 
         // Calculate bonus XP for streak
         const currentProgress = await getProgress(userId);
-        const streakBonus = Math.min(currentProgress.streak * 10, 100);
-        const xpEarned = 100 + (currentProgress.streak > 0 ? streakBonus : 0);
+        const oldLevel = calculateLevel(currentProgress.xp);
+        const streakBonus = currentProgress.streak > 0 ? Math.min(currentProgress.streak * 10, 100) : 0;
+        const xpEarned = 100 + streakBonus;
 
         // Create new watch record
         await databases.createDocument(DB_ID, PROGRESS_COL_ID, ID.unique(), {
@@ -163,11 +187,21 @@ export const markVideoWatched = async (videoId, userId) => {
         // Invalidate cache
         progressCache = null;
 
-        // Return updated progress
-        return getProgress(userId);
+        // Return updated progress with metadata
+        const newProgress = await getProgress(userId);
+        const newLevel = calculateLevel(newProgress.xp);
+
+        return {
+            progress: newProgress,
+            xpAwarded: xpEarned,
+            streakBonus,
+            leveledUp: newLevel > oldLevel,
+            newLevel
+        };
     } catch (error) {
         console.error('Error marking video watched:', error);
-        return getProgress(userId);
+        const progress = await getProgress(userId);
+        return { progress, xpAwarded: 0, streakBonus: 0, leveledUp: false };
     }
 };
 
