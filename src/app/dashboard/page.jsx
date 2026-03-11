@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
+import { ClipboardList } from "lucide-react";
 import { account, databases } from "@/lib/appwrite";
 import { Query } from "appwrite";
 import { useRouter } from "next/navigation";
@@ -36,6 +37,77 @@ function useAnimatedCounter(target, duration = 1200) {
   }, [target, duration]);
 
   return count;
+}
+
+// FMGE Countdown Widget
+function FmgeCountdown() {
+  const TARGET = new Date("2026-06-28T09:00:00+05:30").getTime();
+  const [timeLeft, setTimeLeft] = useState(null);
+
+  useEffect(() => {
+    const calc = () => {
+      const diff = Math.max(0, TARGET - Date.now());
+      const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const h = Math.floor((diff / (1000 * 60 * 60)) % 24);
+      const m = Math.floor((diff / (1000 * 60)) % 60);
+      const s = Math.floor((diff / 1000) % 60);
+      setTimeLeft({ d, h, m, s, total: diff });
+    };
+    calc();
+    const id = setInterval(calc, 1000);
+    return () => clearInterval(id);
+  }, []);
+
+  if (!timeLeft) return null;
+
+  const units = [
+    { label: "DAYS", value: timeLeft.d },
+    { label: "HRS", value: timeLeft.h },
+    { label: "MIN", value: timeLeft.m },
+    { label: "SEC", value: timeLeft.s },
+  ];
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: 0.15 }}
+      className="mb-8 sm:mb-10"
+    >
+      <div className="rounded-3xl p-5 sm:p-6 relative overflow-hidden" style={{ background: "linear-gradient(135deg, rgba(45,212,191,0.06) 0%, rgba(15,15,20,0.95) 40%, rgba(96,165,250,0.05) 100%)", border: "1px solid rgba(255,255,255,0.06)" }}>
+        <div className="absolute top-0 left-0 right-0 h-[1px]" style={{ background: "linear-gradient(90deg, transparent, rgba(45,212,191,0.4), rgba(96,165,250,0.4), transparent)" }} />
+
+        <div className="relative z-10">
+          <div className="text-center mb-5">
+            <h2 className="text-xl sm:text-2xl font-black font-display tracking-wide" style={{ background: "linear-gradient(90deg, #2dd4bf, #60a5fa)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
+              FMGE JUNE 2026
+            </h2>
+            <p className="text-[11px] text-gray-500 mt-1 tracking-widest uppercase">June 28 · 9:00 AM IST</p>
+          </div>
+
+          <div className="flex items-center justify-center gap-2 sm:gap-3">
+            {units.map((u, i) => (
+              <div key={u.label} className="flex items-center gap-2 sm:gap-3">
+                <div className="text-center">
+                  <div className="rounded-xl sm:rounded-2xl px-3 sm:px-5 py-2.5 sm:py-3" style={{ background: "rgba(45,212,191,0.04)", border: "1px solid rgba(45,212,191,0.08)" }}>
+                    <p className={`text-2xl sm:text-4xl font-black font-mono text-white leading-none tabular-nums ${u.label === "SEC" ? "animate-pulse" : ""}`} style={u.label === "SEC" ? { animationDuration: "2s" } : {}}>
+                      {String(u.value).padStart(2, "0")}
+                    </p>
+                  </div>
+                  <p className="text-[9px] sm:text-[10px] text-gray-600 font-bold uppercase tracking-[0.2em] mt-1.5">
+                    {u.label}
+                  </p>
+                </div>
+                {i < units.length - 1 && (
+                  <span className="text-xl sm:text-2xl font-bold -mt-4 sm:-mt-5" style={{ color: "rgba(45,212,191,0.3)" }}>:</span>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </motion.div>
+  );
 }
 
 export default function Dashboard() {
@@ -144,11 +216,11 @@ export default function Dashboard() {
 
   const tones = {
     MIST: { accent: "#2dd4bf", soft: "rgba(45, 212, 191, 0.2)" },
-    ARISE: { accent: "#60a5fa", soft: "rgba(96, 165, 250, 0.2)" },
     PYQs: { accent: "#f0f9ff", soft: "rgba(240, 249, 255, 0.16)" },
+    MCQs: { accent: "#a78bfa", soft: "rgba(167, 139, 250, 0.2)" },
   };
 
-  const CategoryCard = ({ name, isComingSoon = false }) => {
+  const renderCategoryCard = (name, delay = 0, isComingSoon = false) => {
     const categoryProgress = getCategoryProgress(name);
     const watched = countWatched(name);
     const total = countVideos(name);
@@ -156,8 +228,10 @@ export default function Dashboard() {
 
     return (
       <motion.div
+        key={name}
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
+        transition={{ delay }}
         className={`panel rounded-3xl p-6 relative overflow-hidden ${isComingSoon ? "opacity-80" : ""}`}
       >
         <div className="absolute -top-16 -right-16 w-40 h-40 rounded-full blur-3xl" style={{ background: tone.soft }} />
@@ -276,6 +350,9 @@ export default function Dashboard() {
           </div>
         </motion.div>
 
+        {/* FMGE Countdown Widget */}
+        <FmgeCountdown />
+
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -333,9 +410,41 @@ export default function Dashboard() {
         </motion.div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 max-w-5xl mx-auto mb-12">
-          <CategoryCard name="MIST" />
-          <CategoryCard name="ARISE" />
-          <CategoryCard name="PYQs" isComingSoon={true} />
+          {renderCategoryCard("MIST", 0.2)}
+
+          {/* MCQs Card */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            className="panel rounded-3xl p-6 relative overflow-hidden"
+          >
+            <div className="absolute -top-16 -right-16 w-40 h-40 rounded-full blur-3xl" style={{ background: "rgba(167, 139, 250, 0.2)" }} />
+            <div className="flex items-center gap-4 mb-6 relative z-10">
+              <div
+                className="w-14 h-14 rounded-2xl flex items-center justify-center text-white"
+                style={{ background: "linear-gradient(135deg, #a78bfa, #7c3aed)" }}
+              >
+                <ClipboardList size={26} />
+              </div>
+              <div className="flex-1">
+                <h2 className="text-2xl font-bold font-display">MCQs</h2>
+                <p className="text-sm text-muted">MCQ Archive</p>
+              </div>
+            </div>
+            <div className="mb-6 h-10 flex items-center">
+              <p className="text-xs text-muted">Practice MCQs with Exam & Revision modes</p>
+            </div>
+            <Link
+              href="/mcq"
+              className="w-full py-3.5 rounded-xl font-semibold text-sm flex items-center justify-center gap-2 transition-all active:scale-[0.98] btn-outline"
+            >
+              <span>Open MCQs</span>
+              <ArrowRight size={16} />
+            </Link>
+          </motion.div>
+
+          {renderCategoryCard("PYQs", 0.4, true)}
         </div>
       </div>
 

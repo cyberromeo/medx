@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Trophy, MessageSquare } from "lucide-react";
+import { LayoutDashboard, Trophy, MessageSquare, ClipboardList } from "lucide-react";
 import { motion } from "framer-motion";
 import { useChatX } from "@/components/ChatXProvider";
 
@@ -13,7 +13,8 @@ export default function MobileNav() {
     pathname === "/login" ||
     pathname === "/" ||
     pathname.startsWith("/watch/") ||
-    pathname.startsWith("/series/")
+    pathname.startsWith("/series/") ||
+    (pathname.startsWith("/mcq/") && pathname !== "/mcq")
   ) return null;
 
   return (
@@ -34,6 +35,19 @@ export default function MobileNav() {
               Dashboard
             </span>
             {pathname.startsWith("/dashboard") && (
+              <span className="mt-1 h-[2px] w-6 rounded-full bg-secondary shadow-[0_0_12px_rgba(219,31,255,0.65)]" />
+            )}
+          </Link>
+
+          <Link
+            href="/mcq"
+            className={`flex-1 flex flex-col items-center justify-center gap-1 py-2 rounded-xl transition-all duration-200 ${pathname === "/mcq" ? "bg-white/5" : "hover:bg-white/5"}`}
+          >
+            <ClipboardList size={20} className={pathname === "/mcq" ? "text-primary" : "text-muted"} />
+            <span className={`text-[10px] font-semibold ${pathname === "/mcq" ? "text-white" : "text-muted"}`}>
+              MCQs
+            </span>
+            {pathname === "/mcq" && (
               <span className="mt-1 h-[2px] w-6 rounded-full bg-secondary shadow-[0_0_12px_rgba(219,31,255,0.65)]" />
             )}
           </Link>

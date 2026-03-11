@@ -21,9 +21,7 @@ const MIST_SUBJECTS = [
     "Dermatology & Venereology", "Psychiatry", "Radiodiagnosis (Radiology)"
 ];
 
-const ARISE_SUBJECTS = [
-    "Clinical Skills", "Case Studies", "Exam Preparation", "General"
-];
+
 
 export default function AdminPage() {
     const [videos, setVideos] = useState([]);
@@ -335,7 +333,6 @@ export default function AdminPage() {
                         >
                             <option value="all">All Categories</option>
                             <option value="MIST">MIST</option>
-                            <option value="ARISE">ARISE</option>
                         </select>
                         <button
                             onClick={() => setShowAddForm(true)}
@@ -383,7 +380,7 @@ export default function AdminPage() {
                                         <div className="flex items-center gap-2 mt-1">
                                             <span className={`text-xs px-2 py-0.5 rounded-full ${video.category === 'MIST'
                                                 ? 'bg-blue-500/20 text-blue-400'
-                                                : 'bg-purple-500/20 text-purple-400'
+                                                : 'bg-white/10 text-gray-400'
                                                 }`}>
                                                 {video.category}
                                             </span>
@@ -465,7 +462,6 @@ export default function AdminPage() {
                                             onChange={(e) => { setCategory(e.target.value); setSubCategory(""); }}
                                         >
                                             <option value="MIST">MIST</option>
-                                            <option value="ARISE">ARISE</option>
                                         </select>
                                     </div>
                                     <div>
@@ -477,7 +473,7 @@ export default function AdminPage() {
                                             onChange={(e) => setSubCategory(e.target.value)}
                                         >
                                             <option value="">Select Subject</option>
-                                            {(category === "MIST" ? MIST_SUBJECTS : ARISE_SUBJECTS).map(subject => (
+                                            {MIST_SUBJECTS.map(subject => (
                                                 <option key={subject} value={subject}>{subject}</option>
                                             ))}
                                         </select>

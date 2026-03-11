@@ -635,3 +635,193 @@ body {
     text-shadow: 0 0 16px rgba(45, 212, 191, 0.6);
   }
 }
+
+/* ═══════════════════════════════════════════════════ */
+/* MCQ SYSTEM STYLES                                  */
+/* ═══════════════════════════════════════════════════ */
+
+/* Subject Card */
+.mcq-subject-card {
+  min-height: 120px;
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.mcq-subject-card:hover {
+  border-color: rgba(45, 212, 191, 0.3);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
+/* Option Card */
+.mcq-option {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 1rem 1.15rem;
+  border-radius: 1rem;
+  background: rgba(15, 23, 42, 0.6);
+  border: 1.5px solid rgba(255, 255, 255, 0.08);
+  color: var(--text);
+  transition: all 0.2s ease;
+  cursor: pointer;
+  min-height: 56px;
+  text-align: left;
+}
+
+.mcq-option:hover:not(:disabled) {
+  border-color: rgba(45, 212, 191, 0.35);
+  background: rgba(15, 23, 42, 0.8);
+}
+
+.mcq-option:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.mcq-option-label {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 0.6rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 800;
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--muted);
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+}
+
+.mcq-option-selected {
+  border-color: rgba(45, 212, 191, 0.6);
+  background: rgba(45, 212, 191, 0.08);
+  box-shadow: 0 0 20px rgba(45, 212, 191, 0.08);
+}
+
+.mcq-option-selected .mcq-option-label {
+  background: var(--primary);
+  color: #020617;
+}
+
+.mcq-option-correct {
+  border-color: rgba(52, 211, 153, 0.6) !important;
+  background: rgba(52, 211, 153, 0.1) !important;
+}
+
+.mcq-option-correct .mcq-option-label {
+  background: #34d399;
+  color: #020617;
+}
+
+.mcq-option-wrong {
+  border-color: rgba(239, 68, 68, 0.6) !important;
+  background: rgba(239, 68, 68, 0.08) !important;
+}
+
+.mcq-option-wrong .mcq-option-label {
+  background: #ef4444;
+  color: white;
+}
+
+.mcq-option-disabled {
+  opacity: 0.5;
+}
+
+/* Result option (non-interactive) */
+.mcq-option-result {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-radius: 0.75rem;
+  background: rgba(15, 23, 42, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  font-size: 0.875rem;
+}
+
+.mcq-option-result.mcq-option-correct {
+  border-color: rgba(52, 211, 153, 0.4);
+  background: rgba(52, 211, 153, 0.08);
+}
+
+.mcq-option-result.mcq-option-wrong {
+  border-color: rgba(239, 68, 68, 0.4);
+  background: rgba(239, 68, 68, 0.06);
+}
+
+/* Timer Pill */
+.mcq-timer-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.85rem;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--text);
+  flex-shrink: 0;
+}
+
+.mcq-timer-danger {
+  border-color: rgba(239, 68, 68, 0.5);
+  background: rgba(239, 68, 68, 0.1);
+  color: #fca5a5;
+  animation: timerPulse 1s ease-in-out infinite;
+}
+
+@keyframes timerPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.3); }
+  50% { box-shadow: 0 0 0 6px rgba(239, 68, 68, 0.1); }
+}
+
+/* Navigation Pills */
+.mcq-nav-pill {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  font-weight: 700;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  color: var(--muted);
+  transition: all 0.15s ease;
+  flex-shrink: 0;
+}
+
+.mcq-nav-pill:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.mcq-nav-active {
+  background: var(--primary) !important;
+  color: #020617 !important;
+  border-color: var(--primary) !important;
+  box-shadow: 0 0 12px rgba(45, 212, 191, 0.3);
+}
+
+.mcq-nav-answered {
+  background: rgba(45, 212, 191, 0.15);
+  border-color: rgba(45, 212, 191, 0.3);
+  color: var(--primary);
+}
+
+/* Explanation Card */
+.mcq-explanation {
+  padding: 1rem 1.15rem;
+  border-radius: 1rem;
+  background: linear-gradient(135deg, rgba(45, 212, 191, 0.06), rgba(96, 165, 250, 0.04));
+  border: 1px solid rgba(45, 212, 191, 0.15);
+}
+
+/* Hide scrollbar on nav pills */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
