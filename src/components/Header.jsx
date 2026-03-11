@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { account } from "@/lib/appwrite";
@@ -15,6 +15,8 @@ export default function Header() {
   const pathname = usePathname();
   const router = useRouter();
   const { openChat } = useChatX();
+
+  const firstName = useMemo(() => user?.name?.trim()?.split(" ")[0] || "Learner", [user]);
 
   const handleLogout = async () => {
     try {
@@ -49,30 +51,40 @@ export default function Header() {
       className={`fixed top-3 sm:top-4 left-0 right-0 z-50 transition-all duration-300 pt-[env(safe-area-inset-top)] ${scrolled ? "py-2" : "py-3"}`}
     >
       <div className="container mx-auto px-4">
-        {/* Mobile */}
         <div className="md:hidden">
-          <div className={`nav-shell rounded-2xl px-4 py-2 flex items-center justify-between ${scrolled ? "" : "bg-transparent border-transparent"}`}>
-            <Link href={user ? "/dashboard" : "/"} className="flex items-center gap-2">
+          <div
+            className={`nav-shell rounded-2xl px-4 py-2.5 flex items-center justify-between ${scrolled ? "nav-shell-scrolled" : "bg-transparent border-transparent"}`}
+          >
+            <Link href={user ? "/dashboard" : "/"} className="flex items-center gap-2.5">
               <div className="w-9 h-9 rounded-xl grad-primary flex items-center justify-center shadow-lg">
                 <Stethoscope size={18} className="text-white" />
               </div>
-              <span className="font-display font-bold text-base">MedX</span>
+              <div>
+                <span className="font-display font-bold text-base leading-none">MedX</span>
+                <p className="text-[10px] text-muted leading-none mt-1">FMGE Companion</p>
+              </div>
             </Link>
 
             <div className="flex items-center gap-2">
               {user ? (
-                <button
-                  onClick={handleLogout}
-                  className="w-9 h-9 flex items-center justify-center rounded-xl bg-white/5 text-gray-300 hover:text-red-400 transition-colors"
-                  title="Logout"
-                >
-                  <LogOut size={18} />
-                </button>
+                <>
+                  <button
+                    onClick={openChat}
+                    className="w-9 h-9 flex items-center justify-center rounded-xl bg-white/5 text-gray-300 hover:text-primary hover:bg-white/10 transition-colors"
+                    title="Discuss"
+                  >
+                    <MessageSquare size={16} />
+                  </button>
+                  <button
+                    onClick={handleLogout}
+                    className="w-9 h-9 flex items-center justify-center rounded-xl bg-white/5 text-gray-300 hover:text-red-400 hover:bg-white/10 transition-colors"
+                    title="Logout"
+                  >
+                    <LogOut size={16} />
+                  </button>
+                </>
               ) : (
-                <Link
-                  href="/login"
-                  className="px-3 py-1.5 rounded-full text-xs font-semibold bg-white/10 text-white"
-                >
+                <Link href="/login" className="px-3 py-1.5 rounded-full text-xs font-semibold bg-white/10 text-white">
                   Sign In
                 </Link>
               )}
@@ -80,35 +92,48 @@ export default function Header() {
           </div>
         </div>
 
-        {/* Desktop */}
-        <div className={`hidden md:flex mx-auto max-w-6xl nav-shell rounded-full px-5 py-3 items-center justify-between ${scrolled ? "" : "bg-transparent border-transparent"}`}>
-          <Link href="/" className="flex items-center gap-3 group">
+        <div
+          className={`hidden md:flex mx-auto max-w-6xl nav-shell rounded-full px-5 items-center justify-between ${scrolled ? "nav-shell-scrolled py-2.5" : "py-3 bg-transparent border-transparent"}`}
+        >
+          <Link href={user ? "/dashboard" : "/"} className="flex items-center gap-3 group">
             <div className="w-9 h-9 rounded-xl grad-primary flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform">
               <Stethoscope size={18} className="text-white" />
             </div>
-            <span className="font-display font-bold text-lg tracking-tight">MedX</span>
+            <div>
+              <span className="font-display font-bold text-lg tracking-tight leading-none">MedX</span>
+              <p className="text-[10px] text-muted leading-none mt-1">Study with precision</p>
+            </div>
           </Link>
 
           <nav className="flex items-center gap-8">
-            {!user && navLinks.map(link => (
-              <Link
-                key={link.name}
-                href={link.href}
-                className={`nav-link ${pathname === link.href ? "nav-active" : ""}`}
-              >
-                {link.name}
-              </Link>
-            ))}
+            {!user &&
+              navLinks.map((link) => (
+                <Link
+                  key={link.name}
+                  href={link.href}
+                  className="nav-link"
+                >
+                  {link.name}
+                </Link>
+              ))}
+            {user && (
+              <span className="nav-user-pill">
+                <span className="w-5 h-5 rounded-full bg-primary-soft text-primary flex items-center justify-center text-[10px]">
+                  {firstName.charAt(0)}
+                </span>
+                Dr. {firstName}
+              </span>
+            )}
           </nav>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
             {user ? (
               <>
                 <button onClick={openChat} className="nav-link flex items-center gap-2">
                   <MessageSquare size={16} />
                   Discuss
                 </button>
-                <Link href="/leaderboard" className="nav-link flex items-center gap-2">
+                <Link href="/leaderboard" className={`nav-link flex items-center gap-2 ${pathname.startsWith("/leaderboard") ? "nav-active" : ""}`}>
                   <Trophy size={16} />
                   Leaderboard
                 </Link>
@@ -121,13 +146,12 @@ export default function Header() {
                 </button>
               </>
             ) : (
-              <Link href="/login" className="nav-link">Sign In</Link>
+              <Link href="/login" className={`nav-link ${pathname === "/login" ? "nav-active" : ""}`}>
+                Sign In
+              </Link>
             )}
 
-            <Link
-              href={user ? "/dashboard" : "/login"}
-              className="btn-primary flex items-center gap-2 text-sm"
-            >
+            <Link href={user ? "/dashboard" : "/login"} className="btn-primary flex items-center gap-2 text-sm">
               {user ? "Open Library" : "Get Started"}
               <ChevronRight size={16} />
             </Link>
@@ -137,3 +161,4 @@ export default function Header() {
     </motion.header>
   );
 }
+

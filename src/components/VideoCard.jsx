@@ -8,7 +8,7 @@ export default function VideoCard({ video, itemVariants }) {
   return (
     <motion.div variants={itemVariants}>
       <Link href={`/watch/${video.$id}`} className="group block relative">
-        <article className="panel rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_20px_60px_rgba(2,6,23,0.6)]">
+        <article className="panel card-hover-lift rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-1">
           <div className="aspect-video relative overflow-hidden">
             <img
               src={video.thumbnailUrl}
@@ -41,3 +41,4 @@ export default function VideoCard({ video, itemVariants }) {
     </motion.div>
   );
 }
+

@@ -48,7 +48,7 @@ export default function SeriesCard({ title, videos, itemVariants, watchedIds = [
     <motion.div variants={itemVariants}>
       {videos.length > 0 ? (
         <Link href={seriesUrl} className="group flex flex-col items-center gap-3">
-          <div className={`panel relative w-full aspect-square max-w-[120px] md:max-w-[140px] rounded-2xl md:rounded-[2rem] overflow-hidden transition-all duration-300 group-hover:-translate-y-1 group-hover:shadow-[0_20px_60px_rgba(4,3,19,0.62)] ${isComplete ? "border border-secondary-soft" : ""}`}>
+          <div className={`panel card-hover-lift relative w-full aspect-square max-w-[120px] md:max-w-[140px] rounded-2xl md:rounded-[2rem] overflow-hidden transition-all duration-300 group-hover:-translate-y-1 group-hover:shadow-[0_24px_62px_rgba(2,6,23,0.68)] ${isComplete ? "border border-secondary-soft" : ""}`}>
             <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-white/5 to-transparent">
               {getSeriesIcon(title)}
             </div>
@@ -95,7 +95,7 @@ export default function SeriesCard({ title, videos, itemVariants, watchedIds = [
             )}
 
             <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/40">
-              <PlayCircle size={34} className="text-primary drop-shadow-[0_0_12px_rgba(219,31,255,0.72)]" />
+              <PlayCircle size={34} className="text-primary drop-shadow-[0_0_14px_rgba(45,212,191,0.55)]" />
             </div>
           </div>
 
@@ -132,3 +132,4 @@ export default function SeriesCard({ title, videos, itemVariants, watchedIds = [
     </motion.div>
   );
 }
+
