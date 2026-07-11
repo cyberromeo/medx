@@ -1,10 +1,9 @@
-// Progress tracking utilities with Appwrite backend
+// Progress tracking utilities with Firebase backend
 
-import { databases, account } from './appwrite';
-import { ID, Query } from 'appwrite';
+import { db } from './firebase';
+import { collection, query, where, orderBy, limit, getDocs, addDoc } from 'firebase/firestore';
 
-const DB_ID = process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID;
-const PROGRESS_COL_ID = process.env.NEXT_PUBLIC_APPWRITE_PROGRESS_COLLECTION_ID;
+const PROGRESS_COL_ID = "user_progress";
 
 // Cache for progress data
 let progressCache = null;
@@ -43,7 +42,7 @@ const getTodayXp = (documents) => {
         .reduce((sum, doc) => sum + (doc.xpEarned || 100), 0);
 };
 
-// Get current user's progress from Appwrite
+// Get current user's progress from Firebase
 export const getProgress = async (userId = null) => {
     // If no userId provided, try to get from cache or return empty
     if (!userId && cacheUserId && progressCache) {
@@ -55,19 +54,24 @@ export const getProgress = async (userId = null) => {
     }
 
     try {
-        const response = await databases.listDocuments(DB_ID, PROGRESS_COL_ID, [
-            Query.equal('userId', userId),
-            Query.orderDesc('watchedAt'),
-            Query.limit(500)
-        ]);
+        const progressRef = collection(db, PROGRESS_COL_ID);
+        const q = query(
+            progressRef,
+            where('userId', '==', userId),
+            orderBy('watchedAt', 'desc'),
+            limit(500)
+        );
 
-        const watched = response.documents.map(doc => doc.videoId).filter(id => !id.endsWith('_started') && !id.startsWith('daily_login_'));
-        const xp = response.documents.reduce((sum, doc) => sum + (doc.xpEarned || 100), 0);
-        const lastWatch = response.documents.length > 0 ? response.documents[0].watchedAt : null;
-        const todayXp = getTodayXp(response.documents);
+        const snapshot = await getDocs(q);
+        const documents = snapshot.docs.map(doc => doc.data());
+
+        const watched = documents.map(doc => doc.videoId).filter(id => !id.endsWith('_started') && !id.startsWith('daily_login_'));
+        const xp = documents.reduce((sum, doc) => sum + (doc.xpEarned || 100), 0);
+        const lastWatch = documents.length > 0 ? documents[0].watchedAt : null;
+        const todayXp = getTodayXp(documents);
 
         // Calculate streak from completions + daily logins (exclude _started records)
-        const streakDocs = response.documents.filter(doc => !doc.videoId.endsWith('_started'));
+        const streakDocs = documents.filter(doc => !doc.videoId.endsWith('_started'));
         const streak = calculateStreak(streakDocs);
 
         progressCache = { watched, xp, streak, lastWatch, todayXp };
@@ -126,17 +130,20 @@ export const markVideoStarted = async (videoId, userId) => {
 
     try {
         const startedId = `${videoId}_started`;
+        const progressRef = collection(db, PROGRESS_COL_ID);
 
         // Check if already awarded start XP for this video
-        const existing = await databases.listDocuments(DB_ID, PROGRESS_COL_ID, [
-            Query.equal('userId', userId),
-            Query.equal('videoId', startedId),
-            Query.limit(1)
-        ]);
+        const q = query(
+            progressRef,
+            where('userId', '==', userId),
+            where('videoId', '==', startedId),
+            limit(1)
+        );
 
-        if (existing.documents.length > 0) return { awarded: false, xp: 0 };
+        const existing = await getDocs(q);
+        if (!existing.empty) return { awarded: false, xp: 0 };
 
-        await databases.createDocument(DB_ID, PROGRESS_COL_ID, ID.unique(), {
+        await addDoc(progressRef, {
             userId,
             videoId: startedId,
             watchedAt: new Date().toISOString(),
@@ -159,17 +166,20 @@ export const claimDailyLoginXp = async (userId) => {
     try {
         const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
         const loginId = `daily_login_${today}`;
+        const progressRef = collection(db, PROGRESS_COL_ID);
 
         // Check if already claimed today
-        const existing = await databases.listDocuments(DB_ID, PROGRESS_COL_ID, [
-            Query.equal('userId', userId),
-            Query.equal('videoId', loginId),
-            Query.limit(1)
-        ]);
+        const q = query(
+            progressRef,
+            where('userId', '==', userId),
+            where('videoId', '==', loginId),
+            limit(1)
+        );
 
-        if (existing.documents.length > 0) return { awarded: false, xp: 0 };
+        const existing = await getDocs(q);
+        if (!existing.empty) return { awarded: false, xp: 0 };
 
-        await databases.createDocument(DB_ID, PROGRESS_COL_ID, ID.unique(), {
+        await addDoc(progressRef, {
             userId,
             videoId: loginId,
             watchedAt: new Date().toISOString(),
@@ -192,14 +202,17 @@ export const markVideoWatched = async (videoId, userId) => {
     }
 
     try {
+        const progressRef = collection(db, PROGRESS_COL_ID);
         // Check if already watched (completed)
-        const existing = await databases.listDocuments(DB_ID, PROGRESS_COL_ID, [
-            Query.equal('userId', userId),
-            Query.equal('videoId', videoId),
-            Query.limit(1)
-        ]);
+        const q = query(
+            progressRef,
+            where('userId', '==', userId),
+            where('videoId', '==', videoId),
+            limit(1)
+        );
 
-        if (existing.documents.length > 0) {
+        const existing = await getDocs(q);
+        if (!existing.empty) {
             const progress = await getProgress(userId);
             return { progress, xpAwarded: 0, streakBonus: 0, leveledUp: false };
         }
@@ -211,7 +224,7 @@ export const markVideoWatched = async (videoId, userId) => {
         const xpEarned = 100 + streakBonus;
 
         // Create new watch record
-        await databases.createDocument(DB_ID, PROGRESS_COL_ID, ID.unique(), {
+        await addDoc(progressRef, {
             userId,
             videoId,
             watchedAt: new Date().toISOString(),

@@ -1,39 +1,33 @@
-import { databases, users } from "@/lib/server/appwrite";
-import { Query } from "node-appwrite";
+import { adminDb, adminAuth } from "@/lib/server/firebase";
 import { NextResponse } from "next/server";
 
 export const dynamic = 'force-dynamic';
 
 export async function GET() {
     try {
-        const DB_ID = process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID;
-        const PROGRESS_COL_ID = process.env.NEXT_PUBLIC_APPWRITE_PROGRESS_COLLECTION_ID;
+        const PROGRESS_COL_ID = "user_progress";
 
-        // Fetch all progress records (admin access bypasses RLS)
+        // Fetch all progress records
         // Note: For production, we should implement pagination or aggregation queries
-        const response = await databases.listDocuments(DB_ID, PROGRESS_COL_ID, [
-            Query.limit(5000) // Increase limit to capture more history
-        ]);
-
-
+        const snapshot = await adminDb.collection(PROGRESS_COL_ID).limit(5000).get();
 
         // Aggregate XP per user
         const userXpMap = {};
         const userLastActiveMap = {};
 
-        for (const doc of response.documents) {
-            const userId = doc.userId;
-            userXpMap[userId] = (userXpMap[userId] || 0) + (doc.xpEarned || 100);
+        for (const doc of snapshot.docs) {
+            const data = doc.data();
+            const userId = data.userId;
+            userXpMap[userId] = (userXpMap[userId] || 0) + (data.xpEarned || 100);
 
             // Track last active
-            const docDate = new Date(doc.watchedAt || doc.$createdAt).getTime();
+            const docDate = new Date(data.watchedAt || data.createdAt).getTime();
             if (!userLastActiveMap[userId] || docDate > userLastActiveMap[userId]) {
                 userLastActiveMap[userId] = docDate;
             }
         }
 
         const userIds = Object.keys(userXpMap);
-
 
         // Convert to array and sort
         let sortedUsers = userIds
@@ -51,10 +45,10 @@ export async function GET() {
         const usersWithNames = await Promise.all(
             sortedUsers.map(async (user) => {
                 try {
-                    const userData = await users.get(user.userId);
+                    const userData = await adminAuth.getUser(user.userId);
                     return {
                         ...user,
-                        displayName: userData.name || `Dr. ${user.userId.slice(0, 6)}...`
+                        displayName: userData.displayName || `Dr. ${user.userId.slice(0, 6)}...`
                     };
                 } catch (e) {
                     return {
@@ -66,9 +60,8 @@ export async function GET() {
         );
 
         const jsonResponse = NextResponse.json(usersWithNames);
-        jsonResponse.headers.set('X-Debug-Doc-Count', response.documents?.length || 0);
-        jsonResponse.headers.set('X-Debug-User-Count', userIds.length);
-        jsonResponse.headers.set('X-Debug-Key-Status', process.env.APPWRITE_API_KEY ? 'Present' : 'Missing');
+        jsonResponse.headers.set('X-Debug-Doc-Count', snapshot.docs.length.toString());
+        jsonResponse.headers.set('X-Debug-User-Count', userIds.length.toString());
 
         return jsonResponse;
     } catch (error) {

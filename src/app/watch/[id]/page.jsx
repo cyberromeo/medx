@@ -2,7 +2,9 @@
 
 import { useEffect, useState } from "react";
 import { use } from "react";
-import { account, databases } from "@/lib/appwrite";
+import { auth, db } from "@/lib/firebase";
+import { doc, getDoc } from "firebase/firestore";
+import { onAuthStateChanged } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import Header from "@/components/Header";
 import CustomPlayer from "@/components/CustomPlayer";
@@ -23,11 +25,15 @@ export default function WatchPage({ params }) {
   const router = useRouter();
   const { openChat } = useChatX();
 
-  const DB_ID = process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID;
-  const COL_ID = process.env.NEXT_PUBLIC_APPWRITE_COLLECTION_ID;
-
   useEffect(() => {
-    checkAuth();
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+      if (currentUser) {
+        setUserId(currentUser.uid);
+        await fetchVideo(id);
+      } else {
+        router.push("/login");
+      }
+    });
 
     // Check for saved progress
     try {
@@ -41,23 +47,19 @@ export default function WatchPage({ params }) {
     } catch (e) {
       console.error("Error loading progress", e);
     }
-  }, []);
 
-  const checkAuth = async () => {
-    try {
-      const user = await account.get();
-      setUserId(user.$id);
-      await fetchVideo(id);
-    } catch {
-      router.push("/login");
-    }
-  };
+    return () => unsubscribe();
+  }, [id, router]);
 
   const fetchVideo = async (videoId) => {
-    if (!DB_ID || !COL_ID) return;
     try {
-      const doc = await databases.getDocument(DB_ID, COL_ID, videoId);
-      setVideo(doc);
+      const docRef = doc(db, "videos", videoId);
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists()) {
+        setVideo({ $id: docSnap.id, ...docSnap.data() });
+      } else {
+        setVideo(null);
+      }
     } catch (err) {
       console.error("Video not found", err);
     } finally {

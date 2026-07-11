@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { account, databases } from "@/lib/appwrite";
-import { ID, Query } from "appwrite";
+import { auth, db } from "@/lib/firebase";
+import { collection, query, orderBy, limit, getDocs, addDoc, deleteDoc, doc } from "firebase/firestore";
+import { onAuthStateChanged } from "firebase/auth";
 import { motion, AnimatePresence } from "framer-motion";
 import {
     Trash2, Plus, LogOut, Video, Lock, Users, Activity,
@@ -43,12 +44,13 @@ export default function AdminPage() {
     const [filterCategory, setFilterCategory] = useState("all");
     const [showAddForm, setShowAddForm] = useState(false);
 
-    const DB_ID = process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID;
-    const COL_ID = process.env.NEXT_PUBLIC_APPWRITE_COLLECTION_ID;
 
     useEffect(() => {
-        checkSession();
+        const unsubscribe = onAuthStateChanged(auth, () => {
+            fetchVideos();
+        });
         loadStats();
+        return () => unsubscribe();
     }, []);
 
     useEffect(() => {
@@ -60,23 +62,16 @@ export default function AdminPage() {
         setStats(data);
     };
 
-    const checkSession = async () => {
-        try {
-            await account.get();
-        } catch {
-
-        }
-        fetchVideos();
-    };
-
     const fetchVideos = async () => {
-        if (!DB_ID || !COL_ID) return;
         try {
-            const response = await databases.listDocuments(DB_ID, COL_ID, [
-                Query.orderDesc("$createdAt"),
-                Query.limit(500)
-            ]);
-            setVideos(response.documents);
+            const q = query(
+                collection(db, "videos"),
+                orderBy("createdAt", "desc"),
+                limit(500)
+            );
+            const snapshot = await getDocs(q);
+            const docs = snapshot.docs.map(doc => ({ $id: doc.id, ...doc.data() }));
+            setVideos(docs);
         } catch (err) {
             console.error(err);
         }
@@ -101,14 +96,10 @@ export default function AdminPage() {
 
     const addVideo = async (e) => {
         e.preventDefault();
-        if (!DB_ID || !COL_ID) {
-            setError("Database config missing");
-            return;
-        }
         setLoading(true);
         setError("");
         try {
-            await databases.createDocument(DB_ID, COL_ID, ID.unique(), {
+            await addDoc(collection(db, "videos"), {
                 title,
                 description,
                 videoId,
@@ -116,6 +107,7 @@ export default function AdminPage() {
                 category,
                 subCategory: subCategory || "General",
                 duration,
+                createdAt: new Date().toISOString()
             });
             fetchVideos();
             loadStats();
@@ -137,7 +129,7 @@ export default function AdminPage() {
     const deleteVideo = async (id, videoTitle) => {
         if (!confirm(`Delete "${videoTitle}"?`)) return;
         try {
-            await databases.deleteDocument(DB_ID, COL_ID, id);
+            await deleteDoc(doc(db, "videos", id));
             fetchVideos();
             loadStats();
             setSuccess("Video deleted");

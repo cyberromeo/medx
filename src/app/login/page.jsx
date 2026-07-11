@@ -1,10 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { account } from "@/lib/appwrite";
+import { auth } from "@/lib/firebase";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile, sendPasswordResetEmail } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { ID } from "appwrite";
 import { activateSingleDeviceSession } from "@/lib/session-security";
 import { motion, AnimatePresence } from "framer-motion";
 import { Mail, Lock, User, ArrowRight, AlertCircle, Loader2, Stethoscope } from "lucide-react";
@@ -15,36 +15,51 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [error, setError] = useState("");
+  const [resetMessage, setResetMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+    setResetMessage("");
     setLoading(true);
     let createdSession = null;
 
     try {
-      try {
-        await account.deleteSession("current");
-      } catch (ignore) {}
-
+      let userCredential;
       if (isLogin) {
-        createdSession = await account.createEmailPasswordSession(email, password);
+        userCredential = await signInWithEmailAndPassword(auth, email, password);
       } else {
-        await account.create(ID.unique(), email, password, name);
-        createdSession = await account.createEmailPasswordSession(email, password);
+        userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        await updateProfile(userCredential.user, { displayName: name });
       }
-      await activateSingleDeviceSession(createdSession?.$id);
+      
+      const userId = userCredential.user.uid;
+      await activateSingleDeviceSession(userId);
       router.push("/dashboard");
     } catch (err) {
-      if (createdSession?.$id) {
-        try {
-          await account.deleteSession("current");
-        } catch (ignore) {}
-      }
       console.error(err);
       setError(err.message || "Authentication failed");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleForgotPassword = async () => {
+    if (!email) {
+      setError("Please enter your email address to reset your password.");
+      return;
+    }
+    setError("");
+    setResetMessage("");
+    setLoading(true);
+    try {
+      await sendPasswordResetEmail(auth, email);
+      setResetMessage("Password reset email sent! Check your inbox.");
+    } catch (err) {
+      console.error(err);
+      setError(err.message || "Failed to send password reset email.");
     } finally {
       setLoading(false);
     }
@@ -119,6 +134,20 @@ export default function LoginPage() {
               )}
             </AnimatePresence>
 
+            <AnimatePresence>
+              {resetMessage && (
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: "auto", opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  className="bg-green-500/10 border border-green-500/30 text-green-200 text-xs p-3 rounded-xl mb-6 flex items-center gap-2"
+                >
+                  <AlertCircle size={14} />
+                  {resetMessage}
+                </motion.div>
+              )}
+            </AnimatePresence>
+
             <form onSubmit={handleSubmit} className="flex flex-col gap-4">
               <AnimatePresence mode="popLayout">
                 {!isLogin && (
@@ -159,7 +188,18 @@ export default function LoginPage() {
               </div>
 
               <div>
-                <label className="text-[10px] font-bold text-muted uppercase tracking-widest ml-1">Password</label>
+                <div className="flex justify-between items-center ml-1">
+                  <label className="text-[10px] font-bold text-muted uppercase tracking-widest">Password</label>
+                  {isLogin && (
+                    <button 
+                      type="button" 
+                      onClick={handleForgotPassword}
+                      className="text-[10px] text-primary hover:underline transition-all"
+                    >
+                      Forgot Password?
+                    </button>
+                  )}
+                </div>
                 <div className="relative mt-1">
                   <Lock size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted pointer-events-none" />
                   <input

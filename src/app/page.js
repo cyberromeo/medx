@@ -5,14 +5,18 @@ import Link from "next/link";
 import Header from "@/components/Header";
 import { motion } from "framer-motion";
 import { Play, Shield, Zap, Globe, ArrowRight, AlertTriangle } from "lucide-react";
-import { account } from "@/lib/appwrite";
+import { auth } from "@/lib/firebase";
+import { onAuthStateChanged } from "firebase/auth";
 import InstallPrompt from "@/components/InstallPrompt";
 
 export default function Home() {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    account.get().then(setUser).catch(() => setUser(null));
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+    });
+    return () => unsubscribe();
   }, []);
 
   return (

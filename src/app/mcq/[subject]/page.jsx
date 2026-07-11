@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { account } from "@/lib/appwrite";
+import { auth } from "@/lib/firebase";
+import { onAuthStateChanged } from "firebase/auth";
 import { useRouter, useParams } from "next/navigation";
 import { motion } from "framer-motion";
 import {
@@ -24,15 +25,14 @@ export default function SubcategoryTestsPage() {
   const subcategory = getSubcategoryBySlug(slug);
 
   useEffect(() => {
-    (async () => {
-      try {
-        await account.get();
-      } catch {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (!user) {
         router.push("/login");
         return;
       }
       setAuthLoading(false);
-    })();
+    });
+    return () => unsubscribe();
   }, [router]);
 
   useEffect(() => {

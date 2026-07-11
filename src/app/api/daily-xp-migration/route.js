@@ -1,5 +1,4 @@
-import { databases, users } from "@/lib/server/appwrite";
-import { Query, ID } from "node-appwrite";
+import { adminDb, adminAuth } from "@/lib/server/firebase";
 import { NextResponse } from "next/server";
 
 export const dynamic = 'force-dynamic';
@@ -7,47 +6,42 @@ export const dynamic = 'force-dynamic';
 // POST: Award 5 XP daily login bonus to all registered users (one-time migration)
 export async function POST() {
     try {
-        const DB_ID = process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID;
-        const PROGRESS_COL_ID = process.env.NEXT_PUBLIC_APPWRITE_PROGRESS_COLLECTION_ID;
+        const PROGRESS_COL_ID = "user_progress";
         const today = new Date().toISOString().split('T')[0];
         const loginId = `daily_login_${today}`;
 
-        // Get ALL registered users from Appwrite auth
+        // Get ALL registered users from Firebase Auth
         let allUsers = [];
-        let offset = 0;
-        const batchSize = 100;
-        while (true) {
-            const batch = await users.list([
-                Query.limit(batchSize),
-                Query.offset(offset)
-            ]);
-            allUsers.push(...batch.users);
-            if (batch.users.length < batchSize) break;
-            offset += batchSize;
-        }
+        let pageToken = undefined;
+        do {
+            const result = await adminAuth.listUsers(1000, pageToken);
+            allUsers.push(...result.users);
+            pageToken = result.pageToken;
+        } while (pageToken);
 
         // Check which users already have today's login bonus
-        const existingLogins = await databases.listDocuments(DB_ID, PROGRESS_COL_ID, [
-            Query.equal('videoId', loginId),
-            Query.limit(5000)
-        ]);
-        const alreadyClaimed = new Set(existingLogins.documents.map(doc => doc.userId));
+        const existingLoginsSnapshot = await adminDb.collection(PROGRESS_COL_ID)
+            .where('videoId', '==', loginId)
+            .limit(5000)
+            .get();
+            
+        const alreadyClaimed = new Set(existingLoginsSnapshot.docs.map(doc => doc.data().userId));
 
         // Award 5 XP to users who haven't claimed yet
         let awarded = 0;
         for (const user of allUsers) {
-            if (alreadyClaimed.has(user.$id)) continue;
+            if (alreadyClaimed.has(user.uid)) continue;
 
             try {
-                await databases.createDocument(DB_ID, PROGRESS_COL_ID, ID.unique(), {
-                    userId: user.$id,
+                await adminDb.collection(PROGRESS_COL_ID).add({
+                    userId: user.uid,
                     videoId: loginId,
                     watchedAt: new Date().toISOString(),
                     xpEarned: 5
                 });
                 awarded++;
             } catch (e) {
-                console.error(`Failed to award XP to ${user.$id}:`, e.message);
+                console.error(`Failed to award XP to ${user.uid}:`, e.message);
             }
         }
 

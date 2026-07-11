@@ -3,7 +3,8 @@
 import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { account } from "@/lib/appwrite";
+import { auth } from "@/lib/firebase";
+import { onAuthStateChanged, signOut } from "firebase/auth";
 import { clearProgressCache } from "@/lib/progress";
 import { Stethoscope, ChevronRight, Trophy, LogOut, MessageSquare } from "lucide-react";
 import { motion } from "framer-motion";
@@ -16,11 +17,11 @@ export default function Header() {
   const router = useRouter();
   const { openChat } = useChatX();
 
-  const firstName = useMemo(() => user?.name?.trim()?.split(" ")[0] || "Learner", [user]);
+  const firstName = useMemo(() => (user?.displayName || user?.name)?.trim()?.split(" ")[0] || "Learner", [user]);
 
   const handleLogout = async () => {
     try {
-      await account.deleteSession("current");
+      await signOut(auth);
       clearProgressCache();
       setUser(null);
       router.push("/");
@@ -30,7 +31,10 @@ export default function Header() {
   };
 
   useEffect(() => {
-    account.get().then(setUser).catch(() => setUser(null));
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+    });
+    return () => unsubscribe();
   }, []);
 
   useEffect(() => {

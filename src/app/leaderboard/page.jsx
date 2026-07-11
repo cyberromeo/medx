@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { account } from "@/lib/appwrite";
+import { auth } from "@/lib/firebase";
+import { onAuthStateChanged } from "firebase/auth";
 import Header from "@/components/Header";
 import { motion } from "framer-motion";
 import { Trophy, Medal, Crown, Star, ArrowLeft, User } from "lucide-react";
@@ -16,21 +17,29 @@ export default function LeaderboardPage() {
   const [currentUserRank, setCurrentUserRank] = useState(null);
 
   useEffect(() => {
-    fetchLeaderboard();
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        setCurrentUserId(user.uid);
+        await fetchLeaderboard(user.uid);
+      } else {
+        await fetchLeaderboard(null);
+      }
+    });
+    return () => unsubscribe();
   }, []);
 
-  const fetchLeaderboard = async () => {
+  const fetchLeaderboard = async (userId) => {
     try {
-      const user = await account.get();
-      setCurrentUserId(user.$id);
-
       const response = await fetch("/api/leaderboard");
       if (!response.ok) throw new Error("Failed to fetch leaderboard");
 
       const sortedUsers = await response.json();
-      const userRankIndex = sortedUsers.findIndex(u => u.userId === user.$id);
-      if (userRankIndex !== -1) {
-        setCurrentUserRank(userRankIndex + 1);
+      
+      if (userId) {
+        const userRankIndex = sortedUsers.findIndex(u => u.userId === userId);
+        if (userRankIndex !== -1) {
+          setCurrentUserRank(userRankIndex + 1);
+        }
       }
 
       setLeaderboard(sortedUsers);

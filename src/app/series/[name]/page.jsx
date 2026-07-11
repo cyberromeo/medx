@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { databases, account } from "@/lib/appwrite";
-import { Query } from "appwrite";
+import { auth, db } from "@/lib/firebase";
+import { collection, query, where, limit, getDocs } from "firebase/firestore";
+import { onAuthStateChanged } from "firebase/auth";
 import { useParams, useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, Play, Clock, LayoutList, CheckCircle, Star } from "lucide-react";
@@ -23,32 +24,29 @@ export default function SeriesPlayerPage() {
   const [earnedXp, setEarnedXp] = useState(0);
   const [userId, setUserId] = useState(null);
 
-  const DB_ID = process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID;
-  const COL_ID = process.env.NEXT_PUBLIC_APPWRITE_COLLECTION_ID;
-
   useEffect(() => {
-    const init = async () => {
-      try {
-        const user = await account.get();
-        setUserId(user.$id);
-        const progress = await getProgress(user.$id);
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        setUserId(user.uid);
+        const progress = await getProgress(user.uid);
         setWatchedIds(progress.watched);
-      } catch (err) {
-        console.error("Auth error:", err);
       }
-    };
-    init();
+    });
+    return () => unsubscribe();
   }, []);
 
   useEffect(() => {
     const fetchSeriesVideos = async () => {
       try {
-        const response = await databases.listDocuments(DB_ID, COL_ID, [
-          Query.equal("subCategory", seriesName),
-          Query.limit(100)
-        ]);
+        const q = query(
+          collection(db, "videos"),
+          where("subCategory", "==", seriesName),
+          limit(100)
+        );
+        const snapshot = await getDocs(q);
+        const docs = snapshot.docs.map(doc => ({ $id: doc.id, ...doc.data() }));
 
-        const sortedDocs = response.documents.sort((a, b) => {
+        const sortedDocs = docs.sort((a, b) => {
           return a.title.localeCompare(b.title, undefined, { numeric: true, sensitivity: "base" });
         });
 
@@ -64,7 +62,7 @@ export default function SeriesPlayerPage() {
     };
 
     fetchSeriesVideos();
-  }, [seriesName, DB_ID, COL_ID]);
+  }, [seriesName]);
 
   // Award 10 XP when a video starts playing
   const handleVideoStart = () => {

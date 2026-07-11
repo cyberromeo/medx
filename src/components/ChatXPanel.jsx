@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { client, databases, account } from "@/lib/appwrite";
-import { ID, Query } from "appwrite";
+import { auth, db } from "@/lib/firebase";
+import { collection, query, orderBy, limit, onSnapshot, addDoc, getDocs, deleteDoc, doc } from "firebase/firestore";
+import { onAuthStateChanged } from "firebase/auth";
 import { motion, AnimatePresence } from "framer-motion";
 import { Send, MessageCircle, Loader2, Sparkles, ArrowDown, X } from "lucide-react";
 
@@ -18,8 +19,7 @@ export default function DiscussPanel({ onClose, className = "" }) {
   const messagesEndRef = useRef(null);
   const scrollContainerRef = useRef(null);
 
-  const DB_ID = process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID;
-  const CHAT_COL_ID = process.env.NEXT_PUBLIC_APPWRITE_CHAT_COLLECTION_ID;
+  const CHAT_COL_ID = "chat_messages";
 
   const scrollToBottom = (smooth = true) => {
     messagesEndRef.current?.scrollIntoView({ behavior: smooth ? "smooth" : "auto" });
@@ -37,50 +37,30 @@ export default function DiscussPanel({ onClose, className = "" }) {
   }, [messages]);
 
   useEffect(() => {
-    const checkSession = async () => {
-      try {
-        const current = await account.get();
-        setUser(current);
-      } catch {
-        // Read-only for unauthenticated users
-      }
+    const unsubscribeAuth = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+    });
+
+    const messagesRef = collection(db, CHAT_COL_ID);
+    const q = query(messagesRef, orderBy("createdAt", "desc"), limit(MAX_MESSAGES));
+    
+    const unsubscribeMessages = onSnapshot(q, (snapshot) => {
+      const msgs = snapshot.docs.map(docSnap => ({
+        $id: docSnap.id,
+        ...docSnap.data()
+      }));
+      setMessages(msgs.reverse());
+      setLoading(false);
+    }, (error) => {
+      console.error("Error fetching messages:", error);
+      setLoading(false);
+    });
+
+    return () => {
+      unsubscribeAuth();
+      unsubscribeMessages();
     };
-
-    const fetchMessages = async () => {
-      try {
-        const response = await databases.listDocuments(DB_ID, CHAT_COL_ID, [
-          Query.orderDesc("$createdAt"),
-          Query.limit(MAX_MESSAGES)
-        ]);
-        setMessages(response.documents.reverse());
-      } catch (error) {
-        console.error("Error fetching messages:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    checkSession();
-    fetchMessages();
-
-    const unsubscribe = client.subscribe(
-      `databases.${DB_ID}.collections.${CHAT_COL_ID}.documents`,
-      (response) => {
-        if (response.events.includes("databases.*.collections.*.documents.create")) {
-          setMessages((prev) => {
-            if (prev.some(m => m.$id === response.payload.$id)) return prev;
-            const updated = [...prev, response.payload];
-            return updated.slice(-MAX_MESSAGES);
-          });
-        }
-        if (response.events.includes("databases.*.collections.*.documents.delete")) {
-          setMessages((prev) => prev.filter(m => m.$id !== response.payload.$id));
-        }
-      }
-    );
-
-    return () => unsubscribe();
-  }, [DB_ID, CHAT_COL_ID]);
+  }, []);
 
   const sendMessage = async (e) => {
     e.preventDefault();
@@ -88,16 +68,16 @@ export default function DiscussPanel({ onClose, className = "" }) {
 
     setSending(true);
     try {
-      const response = await databases.createDocument(DB_ID, CHAT_COL_ID, ID.unique(), {
+      const messagesRef = collection(db, CHAT_COL_ID);
+      await addDoc(messagesRef, {
         content: newMessage,
-        userId: user.$id,
-        userName: user.name,
-        userAvatar: ""
+        userId: user.uid,
+        userName: user.displayName || user.email?.split("@")[0] || "User",
+        userAvatar: "",
+        createdAt: new Date().toISOString()
       });
 
-      setMessages((prev) => [...prev, response]);
       setNewMessage("");
-
       await cleanupOldMessages();
     } catch (error) {
       console.error("Error sending message:", error);
@@ -108,15 +88,14 @@ export default function DiscussPanel({ onClose, className = "" }) {
 
   const cleanupOldMessages = async () => {
     try {
-      const response = await databases.listDocuments(DB_ID, CHAT_COL_ID, [
-        Query.orderAsc("$createdAt"),
-        Query.limit(200)
-      ]);
+      const messagesRef = collection(db, CHAT_COL_ID);
+      const q = query(messagesRef, orderBy("createdAt", "asc"), limit(200));
+      const snapshot = await getDocs(q);
 
-      if (response.documents.length > MAX_MESSAGES) {
-        const toDelete = response.documents.slice(0, response.documents.length - MAX_MESSAGES);
-        for (const doc of toDelete) {
-          await databases.deleteDocument(DB_ID, CHAT_COL_ID, doc.$id);
+      if (snapshot.docs.length > MAX_MESSAGES) {
+        const toDelete = snapshot.docs.slice(0, snapshot.docs.length - MAX_MESSAGES);
+        for (const docSnap of toDelete) {
+          await deleteDoc(doc(db, CHAT_COL_ID, docSnap.id));
         }
       }
     } catch (error) {
@@ -125,6 +104,7 @@ export default function DiscussPanel({ onClose, className = "" }) {
   };
 
   const getAvatarColor = (name) => {
+    if (!name) return "from-violet-500 to-purple-600";
     const colors = [
       "from-violet-500 to-purple-600",
       "from-fuchsia-500 to-violet-600",
@@ -157,7 +137,7 @@ export default function DiscussPanel({ onClose, className = "" }) {
           {user && (
             <div className="text-right">
               <p className="text-[10px] text-muted truncate max-w-[100px]">
-                {user.name}
+                {user.displayName || user.email?.split("@")[0] || "User"}
               </p>
             </div>
           )}
@@ -193,7 +173,7 @@ export default function DiscussPanel({ onClose, className = "" }) {
         {!loading && (
           <AnimatePresence initial={false}>
             {messages.map((msg, index) => {
-              const isMe = user && msg.userId === user.$id;
+              const isMe = user && msg.userId === user.uid;
               const isSequence = index > 0 && messages[index - 1].userId === msg.userId;
               const showTime = !isSequence || index === messages.length - 1;
 
@@ -207,10 +187,10 @@ export default function DiscussPanel({ onClose, className = "" }) {
                 >
                   {!isSequence ? (
                     <div className={`w-7 h-7 rounded-full flex items-center justify-center shrink-0 text-[10px] font-bold bg-gradient-to-br ${getAvatarColor(msg.userName)} text-white shadow-md`}>
-                      {msg.userName.charAt(0).toUpperCase()}
+                      {msg.userName?.charAt(0).toUpperCase() || "U"}
                     </div>
                   ) : (
-                    <div className="w-7" />
+                     <div className="w-7" />
                   )}
 
                   <div className={`max-w-[75%] ${isMe ? "items-end" : "items-start"} flex flex-col`}>
@@ -223,9 +203,9 @@ export default function DiscussPanel({ onClose, className = "" }) {
                       }`}>
                       {msg.content}
                     </div>
-                    {showTime && (
+                    {showTime && msg.createdAt && (
                       <p className={`text-[9px] text-muted mt-1 ${isMe ? "mr-1" : "ml-1"}`}>
-                        {new Date(msg.$createdAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                        {new Date(msg.createdAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
                       </p>
                     )}
                   </div>

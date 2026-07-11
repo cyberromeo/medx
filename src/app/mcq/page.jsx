@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { account } from "@/lib/appwrite";
+import { auth } from "@/lib/firebase";
+import { onAuthStateChanged } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import {
@@ -18,10 +19,8 @@ export default function McqPage() {
   const router = useRouter();
 
   useEffect(() => {
-    (async () => {
-      try {
-        await account.get();
-      } catch {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (!user) {
         router.push("/login");
         return;
       }
@@ -34,7 +33,8 @@ export default function McqPage() {
       }
       setTestCounts(counts);
       setLoading(false);
-    })();
+    });
+    return () => unsubscribe();
   }, [router]);
 
   if (loading) {

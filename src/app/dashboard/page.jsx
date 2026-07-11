@@ -2,8 +2,9 @@
 
 import { useEffect, useState, useRef } from "react";
 import { ClipboardList } from "lucide-react";
-import { account, databases } from "@/lib/appwrite";
-import { Query } from "appwrite";
+import { auth, db } from "@/lib/firebase";
+import { collection, query, orderBy, limit, getDocs } from "firebase/firestore";
+import { onAuthStateChanged } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Header from "@/components/Header";
@@ -112,9 +113,6 @@ export default function Dashboard() {
   const [progress, setProgress] = useState({ watched: [], xp: 0, streak: 0, lastWatch: null, todayXp: 0 });
   const router = useRouter();
 
-  const DB_ID = process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID;
-  const COL_ID = process.env.NEXT_PUBLIC_APPWRITE_COLLECTION_ID;
-
   const MIST_SUBJECTS = [
     "Anatomy", "Physiology", "Biochemistry", "Pathology",
     "Microbiology", "Pharmacology", "Forensic medicine",
@@ -125,33 +123,31 @@ export default function Dashboard() {
   ];
 
   useEffect(() => {
-    checkAuth();
-  }, []);
-
-  const checkAuth = async () => {
-    try {
-      const current = await account.get();
-      setUser(current);
-      await fetchVideos();
-      // Claim daily login XP (5 XP, once per day)
-      await claimDailyLoginXp(current.$id);
-      const userProgress = await getProgress(current.$id);
-      setProgress(userProgress);
-    } catch {
-      router.push("/login");
-    } finally {
-      setLoading(false);
-    }
-  };
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+      if (currentUser) {
+        setUser(currentUser);
+        await fetchVideos();
+        await claimDailyLoginXp(currentUser.uid);
+        const userProgress = await getProgress(currentUser.uid);
+        setProgress(userProgress);
+        setLoading(false);
+      } else {
+        router.push("/login");
+      }
+    });
+    return () => unsubscribe();
+  }, [router]);
 
   const fetchVideos = async () => {
-    if (!DB_ID || !COL_ID) return;
     try {
-      const response = await databases.listDocuments(DB_ID, COL_ID, [
-        Query.orderDesc("$createdAt"),
-        Query.limit(1000),
-      ]);
-      setVideos(response.documents);
+      const q = query(
+        collection(db, "videos"),
+        orderBy("createdAt", "desc"),
+        limit(1000)
+      );
+      const snapshot = await getDocs(q);
+      const docs = snapshot.docs.map(doc => ({ $id: doc.id, ...doc.data() }));
+      setVideos(docs);
     } catch (err) {
       console.error(err);
     }
@@ -285,8 +281,6 @@ export default function Dashboard() {
     );
   };
 
-
-
   return (
     <main className="min-h-screen pb-32">
       <Header />
@@ -303,7 +297,7 @@ export default function Dashboard() {
             <div className="panel card-hover-lift rounded-3xl p-6 lg:col-span-2">
               <div className="flex items-start justify-between mb-1">
                 <h1 className="font-display text-2xl sm:text-3xl font-bold">
-                  Welcome, <span className="text-gradient">Dr. {user?.name?.split(" ")[0]}</span>
+                  Welcome, <span className="text-gradient">Dr. {user?.displayName?.split(" ")[0] || "Learner"}</span>
                 </h1>
                 <div className="level-badge">
                   <Award size={12} />
@@ -504,4 +498,3 @@ export default function Dashboard() {
     </main>
   );
 }
-

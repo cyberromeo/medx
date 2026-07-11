@@ -2,7 +2,9 @@
 
 import { useEffect, useRef } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { account } from "@/lib/appwrite";
+import { auth, db } from "@/lib/firebase";
+import { doc, getDoc } from "firebase/firestore";
+import { signOut, onAuthStateChanged } from "firebase/auth";
 import { clearProgressCache } from "@/lib/progress";
 
 const CHECK_INTERVAL_MS = 5000;
@@ -39,15 +41,11 @@ export default function SessionGuard() {
     }
 
     const forceLogout = () => {
-      if (redirectingRef.current) {
-        return;
-      }
-
+      if (redirectingRef.current) return;
       redirectingRef.current = true;
       clearProgressCache();
-
-      void account
-        .deleteSession("current")
+      
+      signOut(auth)
         .catch(() => {})
         .finally(() => {
           router.replace("/login");
@@ -55,39 +53,46 @@ export default function SessionGuard() {
     };
 
     const validateSession = () => {
-      if (checkingRef.current) {
-        return;
-      }
-
+      if (checkingRef.current || !auth.currentUser) return;
+      
       checkingRef.current = true;
-      void Promise.all([account.getSession("current"), account.getPrefs()])
-        .then(([currentSession, prefs]) => {
-          const activeSessionId = prefs?.activeSessionId;
-          if (activeSessionId && currentSession?.$id !== activeSessionId) {
-            forceLogout();
+      const localSessionId = localStorage.getItem("sessionId");
+
+      const userRef = doc(db, "users", auth.currentUser.uid);
+      getDoc(userRef)
+        .then((docSnap) => {
+          if (docSnap.exists()) {
+            const activeSessionId = docSnap.data().activeSessionId;
+            if (activeSessionId && localSessionId !== activeSessionId) {
+              forceLogout();
+            }
           }
         })
-        .catch(() => {
-          forceLogout();
-        })
+        .catch(() => {})
         .finally(() => {
           checkingRef.current = false;
         });
     };
 
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        validateSession();
+      } else {
+        forceLogout();
+      }
+    });
+
+    const intervalId = window.setInterval(validateSession, CHECK_INTERVAL_MS);
     const onVisibilityChange = () => {
       if (document.visibilityState === "visible") {
         validateSession();
       }
     };
-
-    validateSession();
-
-    const intervalId = window.setInterval(validateSession, CHECK_INTERVAL_MS);
     window.addEventListener("focus", validateSession);
     document.addEventListener("visibilitychange", onVisibilityChange);
 
     return () => {
+      unsubscribe();
       window.clearInterval(intervalId);
       window.removeEventListener("focus", validateSession);
       document.removeEventListener("visibilitychange", onVisibilityChange);

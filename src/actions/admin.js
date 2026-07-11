@@ -1,29 +1,30 @@
 "use server";
 
-import { users, databases } from "@/lib/server/appwrite";
-import { Query } from "node-appwrite";
+import { adminDb, adminAuth } from "@/lib/server/firebase";
 
 export async function getAdminStats() {
     try {
-        // 1. Total Users
-        const usersList = await users.list();
-        const totalUsers = usersList.total;
+        let totalUsers = 0;
+        let activeUsers = 0;
+        let pageToken = undefined;
+        
+        const fifteenMinutesAgo = Date.now() - 15 * 60 * 1000;
+        
+        do {
+            const listUsersResult = await adminAuth.listUsers(1000, pageToken);
+            totalUsers += listUsersResult.users.length;
+            
+            listUsersResult.users.forEach(userRecord => {
+                const lastSignInTime = new Date(userRecord.metadata.lastSignInTime).getTime();
+                if (lastSignInTime > fifteenMinutesAgo) {
+                    activeUsers++;
+                }
+            });
+            pageToken = listUsersResult.pageToken;
+        } while (pageToken);
 
-        // 2. Active Users (Accessed in last 15 mins)
-        // Note: 'accessedAt' format is ISO 8601. 
-        const fifteenMinutesAgo = new Date(Date.now() - 15 * 60 * 1000).toISOString();
-        const activeUsersList = await users.list([
-            Query.greaterThan("accessedAt", fifteenMinutesAgo)
-        ]);
-        const activeUsers = activeUsersList.total;
-
-        // 3. Total Videos
-        const videosList = await databases.listDocuments(
-            process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID,
-            process.env.NEXT_PUBLIC_APPWRITE_COLLECTION_ID,
-            [Query.limit(1)] // Optimization: we only care about total
-        );
-        const totalVideos = videosList.total;
+        const videosSnapshot = await adminDb.collection('videos').count().get();
+        const totalVideos = videosSnapshot.data().count;
 
         return {
             totalUsers,
