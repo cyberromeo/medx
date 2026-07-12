@@ -40,6 +40,27 @@ export default function LoginPage() {
       router.push("/dashboard");
     } catch (err) {
       console.error(err);
+      if (isLogin && (err.code === "auth/invalid-credential" || err.code === "auth/wrong-password")) {
+        try {
+          const res = await fetch("/api/auth/check-password", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email }),
+          });
+          if (res.ok) {
+            const data = await res.json();
+            if (!data.hasPassword && !data.notFound) {
+              await sendPasswordResetEmail(auth, email);
+              setError("");
+              setResetMessage("Your account requires a password reset due to a system update. We have sent a reset link to your email.");
+              setLoading(false);
+              return;
+            }
+          }
+        } catch (checkErr) {
+          console.error("Failed to check password status:", checkErr);
+        }
+      }
       setError(err.message || "Authentication failed");
     } finally {
       setLoading(false);
