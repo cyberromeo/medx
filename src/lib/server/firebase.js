@@ -7,7 +7,7 @@ if (!getApps().length) {
   try {
     let privateKey = process.env.FIREBASE_PRIVATE_KEY;
     if (privateKey) {
-      privateKey = privateKey.replace(/\\n/g, '\n');
+      privateKey = privateKey.replace(/^"|"$/g, '').replace(/\\n/g, '\n');
     }
     
     app = initializeApp({
