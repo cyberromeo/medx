@@ -1,10 +1,14 @@
-import { adminDb, adminAuth } from "@/lib/server/firebase";
+import { adminDb, adminAuth, initError } from "@/lib/server/firebase";
 import { NextResponse } from "next/server";
 
 export const dynamic = 'force-dynamic';
 
 export async function GET() {
     try {
+        if (initError || !adminDb) {
+            return NextResponse.json({ error: "Firebase Admin Initialization Failed", details: initError }, { status: 500 });
+        }
+
         const PROGRESS_COL_ID = "user_progress";
 
         // Fetch all progress records
@@ -66,6 +70,15 @@ export async function GET() {
         return jsonResponse;
     } catch (error) {
         console.error("Leaderboard API Error:", error);
-        return NextResponse.json({ error: "Failed to fetch leaderboard" }, { status: 500 });
+        return NextResponse.json({ 
+            error: "Failed to fetch leaderboard",
+            details: error.message,
+            stack: error.stack,
+            envCheck: {
+                projectId: !!process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+                clientEmail: !!process.env.FIREBASE_CLIENT_EMAIL,
+                privateKey: !!process.env.FIREBASE_PRIVATE_KEY
+            }
+        }, { status: 500 });
     }
 }
