@@ -42,7 +42,7 @@ function useAnimatedCounter(target, duration = 1200) {
 
 // FMGE Countdown Widget
 function FmgeCountdown() {
-  const TARGET = new Date("2026-06-28T09:00:00+05:30").getTime();
+  const TARGET = new Date("2027-01-09T09:00:00+05:30").getTime();
   const [timeLeft, setTimeLeft] = useState(null);
 
   useEffect(() => {
@@ -79,9 +79,9 @@ function FmgeCountdown() {
         <div className="relative z-10">
           <div className="text-center mb-5">
             <h2 className="text-xl sm:text-2xl font-black font-display tracking-wide text-gradient">
-              FMGE JUNE 2026
+              FMGE JAN 2027
             </h2>
-            <p className="text-[11px] text-gray-500 mt-1 tracking-widest uppercase">June 28 - 9:00 AM IST</p>
+            <p className="text-[11px] text-gray-500 mt-1 tracking-widest uppercase">Jan 9 - 9:00 AM IST</p>
           </div>
 
           <div className="flex items-center justify-center gap-2 sm:gap-3">
