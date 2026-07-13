@@ -113,9 +113,7 @@ export default function WatchPage({ params }) {
 
   if (loading)
     return (
-      <div className="min-h-screen">
-        <div className="halo-bg" />
-        <div className="grid-bg" />
+      <div className="min-h-screen bg-[#f0f0f0]">
         <div className="container mx-auto px-6 pt-32">
           <div className="mb-8 h-5 w-32 animate-pulse rounded bg-gray-200" />
           <div className="grid grid-cols-1 gap-10 lg:grid-cols-3">
@@ -148,10 +146,7 @@ export default function WatchPage({ params }) {
     );
 
   return (
-    <div className="p-6 sm:p-10 relative h-full">
-      <div className="halo-bg" />
-      <div className="grid-bg" />
-
+    <div className="p-6 sm:p-10 relative h-full bg-[#f0f0f0]">
       <div className="container mx-auto">
         <Link
           href="/dashboard"

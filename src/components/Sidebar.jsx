@@ -4,16 +4,13 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
-  Menu,
   LayoutGrid,
   Video,
   ClipboardList,
   Activity,
-  Hexagon,
-  LogOut,
-  Bell,
   Trophy,
-  MessageSquare
+  MessageSquare,
+  LogOut,
 } from "lucide-react";
 import Image from "next/image";
 import { auth } from "@/lib/firebase";
@@ -34,7 +31,7 @@ export default function Sidebar() {
     return () => unsubscribe();
   }, []);
 
-  if (pathname === "/" || pathname === "/login") {
+  if (pathname === "/" || pathname === "/login" || pathname === "/syllabus") {
     return null;
   }
 
@@ -49,79 +46,96 @@ export default function Sidebar() {
     }
   };
 
-  // Avatar URL logic: use photoURL if set (from settings), otherwise deterministic random glyphs based on UID
-  const avatarUrl = user?.photoURL || `https://api.dicebear.com/10.x/glyphs/svg?seed=${user?.uid || 'guest'}`;
+  const avatarUrl =
+    user?.photoURL ||
+    `https://api.dicebear.com/10.x/glyphs/svg?seed=${user?.uid || "guest"}`;
+
+  const navItems = [
+    { href: "/dashboard", icon: LayoutGrid, label: "Dashboard" },
+    { href: "/series", icon: Video, label: "Library" },
+    { href: "/mcq", icon: ClipboardList, label: "MCQs" },
+    { href: "/tracker", icon: Activity, label: "Tracker" },
+    { href: "/leaderboard", icon: Trophy, label: "Ranks" },
+    { action: openChat, icon: MessageSquare, id: "chat", label: "Discuss" },
+  ];
 
   return (
-    <aside className="hidden md:flex flex-col items-center w-[110px] h-screen bg-[#f0f0f0] py-4 pl-4 sticky top-0 shrink-0">
-      {/* Outer White Container holding the Sidebar */}
-      <div className="flex flex-col items-center w-full h-full bg-white rounded-[2rem] py-4 shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-gray-100 relative overflow-visible">
-        
-        {/* Top Logo Circle */}
-        <div className="w-[60px] h-[60px] rounded-full bg-white flex items-center justify-center mb-4 flex-shrink-0 relative overflow-hidden shadow-sm border border-gray-100">
-          <Image 
-            src="/logo/logo black.PNG" 
-            alt="Logo" 
-            fill 
+    <aside className="sticky top-0 hidden h-screen w-[88px] shrink-0 flex-col items-center bg-[#f0f0f0] py-4 pl-4 md:flex">
+      <div className="flex h-full w-full flex-col items-center rounded-[2rem] border border-[rgba(30,50,90,0.05)] bg-white py-6 shadow-[0_4px_24px_rgba(0,0,0,0.04)]">
+        {/* Logo */}
+        <div className="relative mb-8 h-12 w-12 shrink-0 overflow-hidden rounded-2xl border border-[rgba(30,50,90,0.05)] shadow-sm">
+          <Image
+            src="/logo/logo black.PNG"
+            alt="Logo"
+            fill
             className="object-cover scale-110"
-            onError={(e) => { e.currentTarget.style.display = 'none'; }}
+            onError={(e) => {
+              e.currentTarget.style.display = "none";
+            }}
           />
         </div>
 
-        {/* Main Dark Capsule */}
-        <div className="w-[60px] flex-1 bg-[#1c1d29] rounded-[2rem] flex flex-col items-center py-8 relative shadow-lg">
-          
-          <button className="text-gray-400 hover:text-white transition-colors mb-10 z-10 relative">
-            <Menu size={20} />
+        {/* Nav */}
+        <nav className="flex w-full flex-1 flex-col items-center gap-1.5 px-2">
+          {navItems.map((item) => {
+            const isActive = item.href ? pathname.startsWith(item.href) : false;
+
+            const inner = (
+              <div
+                className={`relative flex h-11 w-11 items-center justify-center rounded-xl transition-all duration-200 ${
+                  isActive
+                    ? "bg-blue-50 text-blue-600"
+                    : "text-gray-400 hover:bg-gray-50 hover:text-gray-700"
+                }`}
+              >
+                <item.icon
+                  size={20}
+                  strokeWidth={isActive ? 2.5 : 2}
+                  className="transition-transform duration-200"
+                />
+              </div>
+            );
+
+            return (
+              <div key={item.href || item.id} className="relative w-full">
+                {item.href ? (
+                  <Link
+                    href={item.href}
+                    className="flex w-full justify-center"
+                    title={item.label}
+                  >
+                    {inner}
+                  </Link>
+                ) : (
+                  <button
+                    onClick={item.action}
+                    className="flex w-full justify-center"
+                    title={item.label}
+                  >
+                    {inner}
+                  </button>
+                )}
+              </div>
+            );
+          })}
+        </nav>
+
+        {/* Bottom: Avatar + Logout */}
+        <div className="mt-auto flex flex-col items-center gap-3 px-2">
+          <div className="h-8 w-8 overflow-hidden rounded-full border border-[rgba(30,50,90,0.08)] shadow-sm">
+            <img
+              src={avatarUrl}
+              alt="Avatar"
+              className="h-full w-full object-cover"
+            />
+          </div>
+          <button
+            onClick={handleLogout}
+            className="flex h-11 w-11 items-center justify-center rounded-xl text-gray-400 transition-colors hover:bg-red-50 hover:text-red-500"
+            title="Logout"
+          >
+            <LogOut size={20} />
           </button>
-
-          {/* Navigation Links */}
-          <div className="flex flex-col items-center gap-2 w-full z-10">
-            {[
-              { href: "/dashboard", icon: LayoutGrid },
-              { href: "/series", icon: Video },
-              { href: "/mcq", icon: ClipboardList },
-              { href: "/tracker", icon: Activity },
-              { href: "/leaderboard", icon: Trophy },
-              { action: openChat, icon: MessageSquare, id: "chat" },
-              { href: "/settings", icon: Hexagon },
-            ].map((item) => {
-              const isActive = item.href ? pathname.startsWith(item.href) : false;
-              
-              return (
-                <div key={item.href || item.id} className="relative w-full h-14 flex items-center justify-center">
-                  {isActive ? (
-                    <div className="absolute -right-[14px] w-[48px] h-[48px] bg-white rounded-full flex items-center justify-center z-10">
-                      <Link href={item.href} className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white shadow-sm">
-                        <item.icon size={20} strokeWidth={2.5} />
-                      </Link>
-                    </div>
-                  ) : item.href ? (
-                    <Link href={item.href} className="text-gray-400 hover:text-white transition-colors flex items-center justify-center w-10 h-10">
-                      <item.icon size={20} />
-                    </Link>
-                  ) : (
-                    <button onClick={item.action} className="text-gray-400 hover:text-white transition-colors flex items-center justify-center w-10 h-10">
-                      <item.icon size={20} />
-                    </button>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-
-          <div className="mt-auto flex flex-col items-center gap-6 z-10 relative">
-            {/* Avatar */}
-            <div className="w-9 h-9 rounded-full bg-pink-100 overflow-hidden border border-[#1c1d29] shadow-sm cursor-pointer hover:ring-2 hover:ring-[#1c1d29]/50 transition-all">
-               <img src={avatarUrl} alt="User Avatar" className="w-full h-full object-cover" />
-            </div>
-
-            {/* Logout */}
-            <button onClick={handleLogout} className="text-gray-400 hover:text-white transition-colors mb-2">
-              <LogOut size={20} />
-            </button>
-          </div>
-
         </div>
       </div>
     </aside>
