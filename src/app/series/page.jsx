@@ -92,61 +92,69 @@ export default function SeriesPage() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay }}
-        className={`bg-white/60 backdrop-blur-md border border-[#898989]/20 rounded-[1.5rem] p-6 shadow-sm relative overflow-hidden transition-all duration-300 ${isComingSoon ? "opacity-70" : "hover:shadow-xl hover:scale-[1.02] hover:bg-white hover:border-blue-300 cursor-pointer group"}`}
+        className={`group relative overflow-hidden rounded-3xl p-6 transition-all duration-300 ${
+          isComingSoon
+            ? "opacity-60 cursor-not-allowed bg-white/40 border border-[#898989]/10 grayscale"
+            : "bg-white/80 backdrop-blur-2xl border border-white hover:border-blue-200 shadow-lg hover:shadow-xl hover:-translate-y-1 cursor-pointer"
+        }`}
         onClick={() => !isComingSoon && setSelectedCategory(name)}
       >
-        <div className="absolute -top-16 -right-16 w-40 h-40 rounded-full blur-3xl pointer-events-none" style={{ background: tone.soft }} />
+        {!isComingSoon && (
+          <div className="absolute -inset-2 bg-gradient-to-br from-blue-400/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-[2.5rem] blur-xl pointer-events-none" />
+        )}
 
-        <div className="flex items-center gap-4 mb-6 relative z-10">
-          <div
-            className="w-14 h-14 rounded-2xl flex items-center justify-center text-2xl font-bold text-white shadow-sm"
-            style={{ background: `linear-gradient(135deg, ${tone.accent}, #3b82f6)` }}
-          >
-            {name.charAt(0)}
-          </div>
-          <div className="flex-1">
-            <div className="flex items-center gap-2">
-              <h2 className="text-2xl font-bold text-[#303030]">{name}</h2>
-              {isComingSoon && (
-                <span className="bg-[#898989]/10 text-[#898989] text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full font-bold">Soon</span>
-              )}
+        <div className="flex items-start justify-between mb-8 relative z-10">
+          <div className="flex items-center gap-4">
+            <div
+              className="w-16 h-16 rounded-2xl flex items-center justify-center text-3xl font-extrabold text-white shadow-md relative overflow-hidden"
+              style={{ background: `linear-gradient(135deg, ${tone.accent}, #3b82f6)` }}
+            >
+              <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity" />
+              {name.charAt(0)}
             </div>
-            <p className="text-sm text-[#898989] font-medium">
-              {isComingSoon ? "Archive coming soon" : `${watched}/${total} videos - 19 subjects`}
-            </p>
+            <div>
+              <div className="flex items-center gap-2">
+                <h2 className="text-3xl font-bold text-[#303030] tracking-tight group-hover:text-blue-600 transition-colors">{name}</h2>
+                {isComingSoon && (
+                  <span className="bg-[#898989]/10 text-[#898989] text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full font-bold">Soon</span>
+                )}
+              </div>
+              <p className="text-sm text-[#898989] font-medium mt-0.5">
+                {isComingSoon ? "Archive coming soon" : `${watched}/${total} videos • 19 subjects`}
+              </p>
+            </div>
           </div>
+          {!isComingSoon && (
+            <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-blue-600 opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300 border border-blue-100 shadow-sm">
+              <ArrowRight size={20} strokeWidth={2.5} />
+            </div>
+          )}
         </div>
 
         {!isComingSoon && (
-          <div className="mb-6 relative z-10">
-            <div className="flex justify-between items-end mb-2">
+          <div className="relative z-10 bg-white rounded-2xl p-4 border border-[#898989]/10 shadow-sm">
+            <div className="flex justify-between items-end mb-3">
               <span className="text-xs font-bold text-[#898989] uppercase tracking-wider">Course Progress</span>
-              <span className="text-xs font-bold text-[#303030]">{categoryProgress}%</span>
+              <span className="text-sm font-extrabold text-blue-600">{categoryProgress}%</span>
             </div>
-            <div className="w-full h-1.5 bg-[#898989]/10 rounded-full overflow-hidden">
+            <div className="w-full h-2 bg-[#898989]/10 rounded-full overflow-hidden">
               <motion.div
                 initial={{ width: 0 }}
                 animate={{ width: `${categoryProgress}%` }}
-                transition={{ duration: 0.8, delay: 0.2 }}
-                className="h-full bg-blue-500 rounded-full"
-              />
+                transition={{ duration: 1, delay: 0.2, ease: "easeOut" }}
+                className="h-full bg-gradient-to-r from-blue-400 to-blue-600 rounded-full relative"
+              >
+                <div className="absolute inset-0 bg-white/20 animate-pulse" />
+              </motion.div>
             </div>
           </div>
         )}
 
         {isComingSoon && (
-          <div className="mb-6 h-10 flex items-center">
+          <div className="mt-4 flex items-center bg-[#f9f9f9] rounded-xl p-3 border border-[#898989]/10">
             <p className="text-xs text-[#898989] italic font-medium">Previous year questions vault unlocking soon...</p>
           </div>
         )}
-
-        <button
-          disabled={isComingSoon}
-          className={`w-full py-3.5 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-all duration-300 active:scale-[0.98] ${isComingSoon ? "bg-[#898989]/10 text-[#898989] cursor-not-allowed" : "bg-[#303030] text-white group-hover:bg-blue-600 group-hover:shadow-[0_4px_20px_rgba(37,99,235,0.4)] shadow-md"}`}
-        >
-          <span>{isComingSoon ? "Notify Me" : `Open ${name}`}</span>
-          {!isComingSoon && <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />}
-        </button>
       </motion.div>
     );
   };

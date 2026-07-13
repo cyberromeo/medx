@@ -1,0 +1,168 @@
+
+> starter-for-nextjs@0.1.0 dev
+> next dev
+
+   ▲ Next.js 15.4.8
+   - Local:        http://localhost:3007
+   - Network:      http://192.168.0.10:3007
+   - Environments: .env.local
+
+ ✓ Starting...
+ ✓ Ready in 1924ms
+ ○ Compiling / ...
+ ✓ Compiled / in 3.9s (1730 modules)
+ GET / 200 in 4434ms
+ ✓ Compiled /login in 429ms (1753 modules)
+ GET /login 200 in 729ms
+ ✓ Compiled /dashboard in 366ms (1828 modules)
+ GET /dashboard 200 in 667ms
+ ✓ Compiled /series in 261ms (1839 modules)
+ GET /series 200 in 544ms
+ ✓ Compiled /mcq in 287ms (1850 modules)
+ GET /mcq 200 in 578ms
+ ✓ Compiled /tracker in 351ms (1867 modules)
+ GET /tracker 200 in 639ms
+ ✓ Compiled /leaderboard in 304ms (1884 modules)
+ GET /leaderboard 200 in 580ms
+ ✓ Compiled /discuss in 394ms (1891 modules)
+ GET /discuss 200 in 727ms
+ ✓ Compiled in 2.3s (795 modules)
+ ✓ Compiled in 360ms (795 modules)
+ ✓ Compiled in 416ms (792 modules)
+ ✓ Compiled in 219ms (792 modules)
+ ✓ Compiled in 174ms (792 modules)
+ ✓ Compiled in 405ms (792 modules)
+ ✓ Compiled in 409ms (792 modules)
+ ✓ Compiled in 432ms (792 modules)
+ ✓ Compiled in 492ms (792 modules)
+ ✓ Compiled in 352ms (792 modules)
+ ✓ Compiled in 375ms (792 modules)
+ ⨯ ./src/app/dashboard/page.jsx
+Error:   [31mx[0m Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+     ,-[[36;1;4mC:\Users\psrih\Downloads\medx\medx\src\app\dashboard\page.jsx[0m:313:1]
+ [2m310[0m | 
+ [2m311[0m |     </div>
+ [2m312[0m |   );
+ [2m313[0m | }
+     : [35;1m^[0m
+     `----
+  [31mx[0m Unexpected eof
+     ,-[[36;1;4mC:\Users\psrih\Downloads\medx\medx\src\app\dashboard\page.jsx[0m:313:4]
+ [2m311[0m |     </div>
+ [2m312[0m |   );
+ [2m313[0m | }
+     `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./src/app/dashboard/page.jsx
+ ⨯ ./src/app/dashboard/page.jsx
+Error:   [31mx[0m Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+     ,-[[36;1;4mC:\Users\psrih\Downloads\medx\medx\src\app\dashboard\page.jsx[0m:313:1]
+ [2m310[0m | 
+ [2m311[0m |     </div>
+ [2m312[0m |   );
+ [2m313[0m | }
+     : [35;1m^[0m
+     `----
+  [31mx[0m Unexpected eof
+     ,-[[36;1;4mC:\Users\psrih\Downloads\medx\medx\src\app\dashboard\page.jsx[0m:313:4]
+ [2m311[0m |     </div>
+ [2m312[0m |   );
+ [2m313[0m | }
+     `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./src/app/dashboard/page.jsx
+ ⨯ ./src/app/dashboard/page.jsx
+Error:   [31mx[0m Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+     ,-[[36;1;4mC:\Users\psrih\Downloads\medx\medx\src\app\dashboard\page.jsx[0m:313:1]
+ [2m310[0m | 
+ [2m311[0m |     </div>
+ [2m312[0m |   );
+ [2m313[0m | }
+     : [35;1m^[0m
+     `----
+  [31mx[0m Unexpected eof
+     ,-[[36;1;4mC:\Users\psrih\Downloads\medx\medx\src\app\dashboard\page.jsx[0m:313:4]
+ [2m311[0m |     </div>
+ [2m312[0m |   );
+ [2m313[0m | }
+     `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./src/app/dashboard/page.jsx
+ ⨯ ./src/app/dashboard/page.jsx
+Error:   [31mx[0m Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+     ,-[[36;1;4mC:\Users\psrih\Downloads\medx\medx\src\app\dashboard\page.jsx[0m:313:1]
+ [2m310[0m | 
+ [2m311[0m |     </div>
+ [2m312[0m |   );
+ [2m313[0m | }
+     : [35;1m^[0m
+     `----
+  [31mx[0m Unexpected eof
+     ,-[[36;1;4mC:\Users\psrih\Downloads\medx\medx\src\app\dashboard\page.jsx[0m:313:4]
+ [2m311[0m |     </div>
+ [2m312[0m |   );
+ [2m313[0m | }
+     `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./src/app/dashboard/page.jsx
+ ⨯ ./src/app/dashboard/page.jsx
+Error:   [31mx[0m Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+     ,-[[36;1;4mC:\Users\psrih\Downloads\medx\medx\src\app\dashboard\page.jsx[0m:313:1]
+ [2m310[0m | 
+ [2m311[0m |     </div>
+ [2m312[0m |   );
+ [2m313[0m | }
+     : [35;1m^[0m
+     `----
+  [31mx[0m Unexpected eof
+     ,-[[36;1;4mC:\Users\psrih\Downloads\medx\medx\src\app\dashboard\page.jsx[0m:313:4]
+ [2m311[0m |     </div>
+ [2m312[0m |   );
+ [2m313[0m | }
+     `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./src/app/dashboard/page.jsx
+ ✓ Compiled in 474ms (792 modules)
+ ⨯ ./src/app/dashboard/page.jsx
+Error:   [31mx[0m Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+     ,-[[36;1;4mC:\Users\psrih\Downloads\medx\medx\src\app\dashboard\page.jsx[0m:313:1]
+ [2m310[0m | 
+ [2m311[0m |     </div>
+ [2m312[0m |   );
+ [2m313[0m | }
+     : [35;1m^[0m
+     `----
+  [31mx[0m Unexpected eof
+     ,-[[36;1;4mC:\Users\psrih\Downloads\medx\medx\src\app\dashboard\page.jsx[0m:313:4]
+ [2m311[0m |     </div>
+ [2m312[0m |   );
+ [2m313[0m | }
+     `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./src/app/dashboard/page.jsx
+ ✓ Compiled in 417ms (792 modules)
+ ✓ Compiled in 527ms (792 modules)

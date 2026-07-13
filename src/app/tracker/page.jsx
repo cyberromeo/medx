@@ -102,33 +102,42 @@ export default function TrackerPage() {
           <motion.div 
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-white/80 backdrop-blur-xl border border-[#898989]/20 shadow-lg rounded-3xl p-6"
+            className="bg-white/80 backdrop-blur-xl border border-[#898989]/20 shadow-lg rounded-2xl sm:rounded-3xl p-4 sm:p-6"
           >
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
-              <div>
-                <h1 className="text-2xl font-bold text-[#303030] tracking-tight flex items-center gap-2">
-                  <Target className="text-blue-600" />
-                  FMGE Syllabus Tracker
+            <div className="flex items-center justify-between gap-2 sm:gap-4 mb-3 sm:mb-4">
+              <div className="flex-1 min-w-0">
+                <h1 className="text-lg sm:text-2xl font-bold text-[#303030] tracking-tight flex items-center gap-2 truncate">
+                  <Target className="text-blue-600 shrink-0" size={20} />
+                  <span className="truncate">FMGE Tracker</span>
                 </h1>
-                <p className="text-[#898989] text-sm font-medium mt-1">
+                <p className="text-[#898989] text-[10px] sm:text-sm font-medium mt-0.5 sm:mt-1 truncate hidden sm:block">
                   Track your revisions, PYQs, Qbanks, and GTs.
                 </p>
+                <p className="text-[#898989] text-[10px] sm:text-sm font-medium mt-0.5 sm:mt-1 truncate sm:hidden">
+                  {completedCount} / {TOTAL_ITEMS} completed
+                </p>
               </div>
-              <div className="text-right">
-                <span className="text-4xl font-extrabold text-blue-600">{progressPercentage}%</span>
-                <span className="text-sm font-bold text-[#898989] ml-2 uppercase tracking-wider">Completed</span>
-                <p className="text-xs font-semibold text-[#898989]">{completedCount} of {TOTAL_ITEMS} items done</p>
+              <div className="text-right shrink-0">
+                <div className="flex items-baseline justify-end gap-1 sm:gap-2">
+                  <span className="text-2xl sm:text-4xl font-extrabold text-blue-600 leading-none">{progressPercentage}%</span>
+                  <span className="text-[10px] sm:text-sm font-bold text-[#898989] uppercase tracking-wider hidden sm:inline">Completed</span>
+                </div>
+                <p className="text-xs font-semibold text-[#898989] hidden sm:block mt-1">
+                  {completedCount} of {TOTAL_ITEMS} items done
+                </p>
               </div>
             </div>
             
             {/* Progress Bar */}
-            <div className="w-full h-3 bg-[#898989]/10 rounded-full overflow-hidden">
+            <div className="w-full h-2 sm:h-3 bg-[#898989]/10 rounded-full overflow-hidden">
               <motion.div
                 initial={{ width: 0 }}
                 animate={{ width: `${progressPercentage}%` }}
                 transition={{ duration: 1, ease: "easeOut" }}
-                className="h-full bg-gradient-to-r from-blue-500 to-teal-400 rounded-full"
-              />
+                className="h-full bg-gradient-to-r from-blue-500 to-teal-400 rounded-full relative"
+              >
+                <div className="absolute inset-0 bg-white/20 animate-pulse" />
+              </motion.div>
             </div>
           </motion.div>
         </div>

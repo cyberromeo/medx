@@ -247,7 +247,7 @@ export default function LeaderboardPage() {
             initial={{ opacity: 0, y: 100 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 100 }}
-            className="fixed bottom-0 left-0 right-0 z-50 p-4 sm:p-6 pb-6 sm:pb-8 pointer-events-none"
+            className="fixed bottom-0 left-0 right-0 z-40 p-4 sm:p-6 pb-[5.5rem] md:pb-8 pointer-events-none"
           >
             <div className="container mx-auto">
               <div className="mx-auto max-w-3xl bg-white/90 backdrop-blur-xl border border-blue-200 shadow-[0_-10px_40px_rgba(37,99,235,0.15)] rounded-[2rem] p-4 sm:p-5 pointer-events-auto flex items-center justify-between">

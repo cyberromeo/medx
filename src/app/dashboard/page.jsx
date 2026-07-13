@@ -73,32 +73,31 @@ function FmgeCountdown() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.15 }}
-      className="max-w-md mb-6"
+      className="max-w-md mb-6 group cursor-default"
     >
-      <div className="bg-white/60 backdrop-blur-md border border-[#898989]/20 rounded-[1.5rem] p-6 shadow-sm overflow-hidden relative">
-        <div className="absolute top-0 left-0 w-1 h-full bg-blue-500" />
-        <div className="absolute -top-24 -right-24 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-blue-600 via-blue-500 to-indigo-600 p-6 shadow-lg shadow-blue-500/20 transition-all hover:shadow-xl hover:-translate-y-1 border border-white/10">
+        <div className="absolute -top-24 -right-24 w-64 h-64 bg-white/10 rounded-full blur-3xl pointer-events-none group-hover:bg-white/20 transition-all" />
         
-        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
-          <div>
-            <h2 className="text-xl font-bold text-[#303030] tracking-tight">
-              FMGE JAN 2027
-            </h2>
-            <p className="text-xs text-[#898989] font-medium mt-1">Jan 9 - 9:00 AM IST</p>
+        <div className="relative z-10 flex flex-col gap-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-2xl font-extrabold text-white tracking-tight flex items-center gap-2">
+                <Calendar className="text-blue-200" size={24} />
+                FMGE JAN 2027
+              </h2>
+              <p className="text-sm text-blue-100 font-medium mt-1">Jan 9 • 9:00 AM IST</p>
+            </div>
           </div>
 
-          <div className="flex items-center gap-4 sm:gap-6">
+          <div className="flex items-center justify-between gap-2">
             {units.map((u, i) => (
-              <div key={u.label} className="flex flex-col items-center">
-                <div className="bg-white border border-[#898989]/10 shadow-sm rounded-xl w-12 h-14 sm:w-14 sm:h-16 flex flex-col items-center justify-center mb-1">
-                  <p className={`text-xl sm:text-2xl font-bold text-[#303030] tabular-nums ${u.label === "Sec" ? "animate-pulse" : ""}`}>
+              <div key={u.label} className="flex flex-col items-center flex-1">
+                <div className="bg-white/10 backdrop-blur-md border border-white/20 shadow-inner rounded-2xl w-full aspect-square flex flex-col items-center justify-center mb-2">
+                  <p className={`text-2xl sm:text-3xl font-black text-white tabular-nums ${u.label === "Sec" ? "animate-pulse text-blue-200" : ""}`}>
                     {String(u.value).padStart(2, "0")}
                   </p>
                 </div>
-                <div className="flex items-center gap-1 text-[#898989]">
-                  <u.icon size={10} />
-                  <p className="text-[10px] font-semibold uppercase tracking-wider">{u.label}</p>
-                </div>
+                <p className="text-[10px] sm:text-xs font-bold text-blue-200 uppercase tracking-widest">{u.label}</p>
               </div>
             ))}
           </div>
@@ -230,31 +229,36 @@ export default function Dashboard() {
           transition={{ delay: 0.05 }}
           className="max-w-md mb-6"
         >
-          <div className="bg-white/60 backdrop-blur-md border border-[#898989]/20 rounded-3xl p-6 shadow-sm relative overflow-hidden">
-            <div className="absolute top-0 left-0 w-1 h-full bg-amber-500" />
-            <div className="flex items-center justify-between mb-5">
+          <div className="group relative overflow-hidden rounded-3xl bg-white/80 backdrop-blur-2xl border border-white hover:border-amber-200 p-6 shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all cursor-default">
+            <div className="absolute -inset-2 bg-gradient-to-br from-amber-400/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-[2.5rem] blur-xl pointer-events-none" />
+            
+            <div className="flex items-center justify-between mb-6 relative z-10">
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-2xl bg-amber-50 text-amber-500 flex items-center justify-center">
-                  <Award size={24} />
+                <div className="w-16 h-16 rounded-2xl flex items-center justify-center text-amber-500 shadow-md relative overflow-hidden bg-gradient-to-br from-amber-100 to-amber-50 border border-amber-200/50">
+                  <Award size={32} strokeWidth={2.5} className="drop-shadow-sm" />
                 </div>
                 <div>
-                  <h2 className="text-xl font-bold text-[#303030]">Level {level}: {levelTitle}</h2>
-                  <p className="text-sm font-medium text-[#898989]">Current Rank Status</p>
+                  <h2 className="text-2xl font-bold text-[#303030] tracking-tight group-hover:text-amber-600 transition-colors">Level {level}</h2>
+                  <p className="text-sm font-semibold text-[#898989] mt-0.5">{levelTitle}</p>
                 </div>
               </div>
             </div>
 
-            <div className="flex items-center justify-between text-sm font-bold text-[#898989] mb-3">
-              <span className="flex items-center gap-1.5"><Star size={16} className="text-amber-500"/> Level XP</span>
-              <span className="text-[#303030]">{animatedLevelXp.toLocaleString()} / {xpProgress.needed.toLocaleString()}</span>
-            </div>
-            <div className="w-full h-3 bg-[#898989]/10 rounded-full overflow-hidden">
-              <motion.div
-                initial={{ width: 0 }}
-                animate={{ width: `${(xpProgress.current / xpProgress.needed) * 100}%` }}
-                transition={{ duration: 1, ease: "easeOut" }}
-                className="h-full bg-gradient-to-r from-amber-400 to-orange-400 rounded-full"
-              />
+            <div className="relative z-10 bg-amber-50/50 rounded-2xl p-4 border border-amber-100/50">
+              <div className="flex items-center justify-between text-xs font-bold text-[#898989] uppercase tracking-wider mb-3">
+                <span className="flex items-center gap-1.5"><Star size={14} className="text-amber-500"/> Level XP</span>
+                <span className="text-amber-600 font-extrabold text-sm">{animatedLevelXp.toLocaleString()} / {xpProgress.needed.toLocaleString()}</span>
+              </div>
+              <div className="w-full h-2 bg-amber-200/30 rounded-full overflow-hidden">
+                <motion.div
+                  initial={{ width: 0 }}
+                  animate={{ width: `${(xpProgress.current / xpProgress.needed) * 100}%` }}
+                  transition={{ duration: 1.5, ease: "easeOut" }}
+                  className="h-full bg-gradient-to-r from-amber-400 to-orange-500 rounded-full relative"
+                >
+                  <div className="absolute inset-0 bg-white/20 animate-pulse" />
+                </motion.div>
+              </div>
             </div>
           </div>
         </motion.div>
@@ -264,33 +268,40 @@ export default function Dashboard() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="max-w-md"
+          className="max-w-md mb-6"
         >
           <Link href="/tracker">
-            <div className="bg-white/60 backdrop-blur-md border border-[#898989]/20 rounded-3xl p-6 shadow-sm hover:shadow-md transition-all group relative overflow-hidden">
-              <div className="absolute top-0 left-0 w-1 h-full bg-blue-500" />
-              <div className="flex items-center justify-between mb-6">
+            <div className="group relative overflow-hidden rounded-3xl bg-white/80 backdrop-blur-2xl border border-white hover:border-teal-200 p-6 shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all cursor-pointer">
+              <div className="absolute -inset-2 bg-gradient-to-br from-teal-400/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-[2.5rem] blur-xl pointer-events-none" />
+              
+              <div className="flex items-start justify-between mb-6 relative z-10">
                 <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center">
-                    <Target size={24} />
+                  <div className="w-16 h-16 rounded-2xl flex items-center justify-center text-teal-600 shadow-md relative overflow-hidden bg-gradient-to-br from-teal-100 to-teal-50 border border-teal-200/50">
+                    <Target size={32} strokeWidth={2.5} className="drop-shadow-sm" />
                   </div>
                   <div>
-                    <h2 className="text-xl font-bold text-[#303030]">Syllabus Tracker</h2>
-                    <p className="text-sm font-medium text-[#898989]">Your FMGE progress</p>
+                    <h2 className="text-2xl font-bold text-[#303030] tracking-tight group-hover:text-teal-600 transition-colors">Syllabus Tracker</h2>
+                    <p className="text-sm font-semibold text-[#898989] mt-0.5">Your FMGE progress</p>
                   </div>
                 </div>
-                <ArrowRight className="text-[#898989] group-hover:translate-x-1 group-hover:text-blue-500 transition-all" size={24} />
+                <div className="w-10 h-10 rounded-full bg-teal-50 flex items-center justify-center text-teal-600 opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300 border border-teal-100 shadow-sm">
+                  <ArrowRight size={20} strokeWidth={2.5} />
+                </div>
               </div>
 
-              <div className="flex items-center justify-between text-sm font-bold text-[#898989] mb-3">
-                <span>Overall Completion</span>
-                <span className="text-blue-600">{trackerProgress}%</span>
-              </div>
-              <div className="w-full h-3 bg-[#898989]/10 rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-gradient-to-r from-blue-500 to-teal-400 rounded-full transition-all duration-1000 ease-out"
-                  style={{ width: `${trackerProgress}%` }}
-                />
+              <div className="relative z-10 bg-teal-50/50 rounded-2xl p-4 border border-teal-100/50">
+                <div className="flex items-center justify-between text-xs font-bold text-[#898989] uppercase tracking-wider mb-3">
+                  <span>Overall Completion</span>
+                  <span className="text-teal-600 font-extrabold text-sm">{trackerProgress}%</span>
+                </div>
+                <div className="w-full h-2 bg-teal-200/30 rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-gradient-to-r from-teal-400 to-emerald-500 rounded-full relative transition-all duration-1000 ease-out"
+                    style={{ width: `${trackerProgress}%` }}
+                  >
+                    <div className="absolute inset-0 bg-white/20 animate-pulse" />
+                  </div>
+                </div>
               </div>
             </div>
           </Link>
