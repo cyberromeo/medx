@@ -5,11 +5,7 @@ import { auth } from "@/lib/firebase";
 import { onAuthStateChanged } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import {
-  ChevronLeft,
-  ClipboardList,
-  ArrowRight,
-} from "lucide-react";
+import { ChevronLeft, ClipboardList, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { MCQ_SUBCATEGORIES, getTestsBySubcategory } from "@/lib/mcq";
 
@@ -29,7 +25,10 @@ export default function McqPage() {
       const counts = {};
       for (const sub of MCQ_SUBCATEGORIES) {
         const tests = await getTestsBySubcategory(sub.slug);
-        counts[sub.slug] = tests.reduce((sum, t) => sum + (t.questionCount || 0), 0);
+        counts[sub.slug] = tests.reduce(
+          (sum, t) => sum + (t.questionCount || 0),
+          0,
+        );
       }
       setTestCounts(counts);
       setLoading(false);
@@ -39,20 +38,15 @@ export default function McqPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="halo-bg" />
-        <div className="grid-bg" />
-        <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+      <div className="flex h-[50vh] items-center justify-center p-6 sm:p-10">
+        <div className="h-8 w-8 animate-spin rounded-full border-2 border-blue-600 border-t-transparent" />
       </div>
     );
   }
 
   return (
-    <main className="min-h-screen pb-32">
-      <div className="halo-bg" />
-      <div className="grid-bg" />
-
-      <div className="container mx-auto px-4 pt-24 max-w-lg">
+    <div className="p-6 sm:p-10">
+      <div className="container mx-auto max-w-lg">
         {/* Back + Title */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
@@ -61,20 +55,20 @@ export default function McqPage() {
         >
           <Link
             href="/dashboard"
-            className="inline-flex items-center gap-2 text-muted text-sm mb-4 hover:text-white transition-colors"
+            className="text-[#898989] mb-4 inline-flex items-center gap-2 text-sm transition-colors hover:text-[#303030]"
           >
             <ChevronLeft size={16} />
             Back to Dashboard
           </Link>
-          <div className="flex items-center gap-4 mb-2">
-            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-violet-500 to-fuchsia-600 flex items-center justify-center">
+          <div className="mb-2 flex items-center gap-4">
+            <div className="bg-blue-600 shadow-sm flex h-12 w-12 items-center justify-center rounded-2xl">
               <ClipboardList size={24} className="text-white" />
             </div>
             <div>
-              <h1 className="text-2xl sm:text-3xl font-bold font-display">
+              <h1 className="text-2xl font-bold sm:text-3xl text-[#303030] tracking-tight">
                 MCQs
               </h1>
-              <p className="text-muted text-sm">Select a question set</p>
+              <p className="text-[#898989] font-medium text-sm">Select a question set</p>
             </div>
           </div>
         </motion.div>
@@ -85,7 +79,7 @@ export default function McqPage() {
             const qCount = testCounts[sub.slug] || 0;
 
             return (
-              <motion.div
+               <motion.div
                 key={sub.slug}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -93,23 +87,27 @@ export default function McqPage() {
               >
                 <Link
                   href={`/mcq/${sub.slug}`}
-                  className="block panel rounded-3xl p-6 relative overflow-hidden transition-all active:scale-[0.98] hover:border-primary/30"
+                  className="group bg-white/60 backdrop-blur-md border border-[#898989]/20 shadow-sm hover:shadow-xl hover:scale-[1.02] hover:bg-white hover:border-blue-300 relative block overflow-hidden rounded-[1.5rem] p-6 transition-all duration-300 active:scale-[0.98]"
                 >
-                  <div className="absolute -top-12 -right-12 w-36 h-36 rounded-full blur-3xl bg-primary/10" />
-                  <div className="flex items-center gap-4 mb-3 relative z-10">
-                    <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary to-teal-600 flex items-center justify-center text-2xl shrink-0">
+                  <div className="bg-blue-100/50 absolute -top-12 -right-12 h-36 w-36 rounded-full blur-3xl transition-colors duration-500 group-hover:bg-blue-200/50" />
+                  <div className="relative z-10 mb-3 flex items-center gap-4">
+                    <div className="bg-blue-50 text-blue-600 border border-blue-100 shadow-sm flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl text-2xl">
                       {sub.icon}
                     </div>
-                    <div className="flex-1">
-                      <h2 className="text-lg font-bold text-white">{sub.title}</h2>
-                      <p className="text-xs text-muted">{sub.description}</p>
+                    <div>
+                      <h2 className="text-lg font-bold text-[#303030] sm:text-xl">
+                        {sub.title}
+                      </h2>
+                      <p className="text-[#898989] font-medium text-sm">
+                        {qCount} Questions
+                      </p>
                     </div>
-                    <ArrowRight size={20} className="text-muted shrink-0" />
                   </div>
-                  <div className="relative z-10 mt-2">
-                    <p className="text-sm text-muted">
-                      {qCount > 0 ? `${qCount} questions available` : "Tests available — tap to view"}
-                    </p>
+                  <div className="text-[#5E6470] relative z-10 text-sm">
+                    {sub.description}
+                  </div>
+                  <div className="text-blue-600 relative z-10 mt-4 flex items-center gap-2 text-sm font-bold uppercase tracking-wider transition-colors group-hover:text-blue-700">
+                    View Tests <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
                   </div>
                 </Link>
               </motion.div>
@@ -117,6 +115,6 @@ export default function McqPage() {
           })}
         </div>
       </div>
-    </main>
+    </div>
   );
 }

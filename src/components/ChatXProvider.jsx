@@ -8,12 +8,15 @@ const ChatXContext = createContext(null);
 export function ChatXProvider({ children }) {
   const [open, setOpen] = useState(false);
 
-  const value = useMemo(() => ({
-    open,
-    openChat: () => setOpen(true),
-    closeChat: () => setOpen(false),
-    toggleChat: () => setOpen((prev) => !prev),
-  }), [open]);
+  const value = useMemo(
+    () => ({
+      open,
+      openChat: () => setOpen(true),
+      closeChat: () => setOpen(false),
+      toggleChat: () => setOpen((prev) => !prev),
+    }),
+    [open],
+  );
 
   return (
     <ChatXContext.Provider value={value}>

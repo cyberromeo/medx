@@ -8,14 +8,14 @@ if (!getApps().length) {
   try {
     let privateKey = process.env.FIREBASE_PRIVATE_KEY;
     if (privateKey) {
-      privateKey = privateKey.replace(/^"|"$/g, '').replace(/\\n/g, '\n');
+      privateKey = privateKey.replace(/^"|"$/g, "").replace(/\\n/g, "\n");
     }
-    
+
     let projectId = process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID;
-    if (projectId) projectId = projectId.replace(/^"|"$/g, '');
+    if (projectId) projectId = projectId.replace(/^"|"$/g, "");
 
     let clientEmail = process.env.FIREBASE_CLIENT_EMAIL;
-    if (clientEmail) clientEmail = clientEmail.replace(/^"|"$/g, '');
+    if (clientEmail) clientEmail = clientEmail.replace(/^"|"$/g, "");
 
     app = initializeApp({
       credential: cert({

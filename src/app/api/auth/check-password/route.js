@@ -14,13 +14,16 @@ export async function POST(req) {
       const hasPassword = !!user.passwordHash;
       return NextResponse.json({ hasPassword });
     } catch (error) {
-      if (error.code === 'auth/user-not-found') {
+      if (error.code === "auth/user-not-found") {
         return NextResponse.json({ hasPassword: false, notFound: true });
       }
       throw error;
     }
   } catch (error) {
     console.error("Error in check-password:", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 },
+    );
   }
 }

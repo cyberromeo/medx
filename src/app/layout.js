@@ -1,21 +1,16 @@
 import "./app.css";
-import { Sora, Manrope, JetBrains_Mono } from "next/font/google";
+import "./defi-landing.css";
 import MobileNav from "@/components/MobileNav";
+import AppLayoutWrapper from "@/components/AppLayoutWrapper";
 import { ChatXProvider } from "@/components/ChatXProvider";
 import SessionGuard from "@/components/SessionGuard";
 import { Analytics } from "@vercel/analytics/next";
-
-const sora = Sora({ subsets: ["latin"], variable: "--font-display" });
-
-
-const manrope = Manrope({ subsets: ["latin"], variable: "--font-sans" });
-const jetbrains = JetBrains_Mono({ subsets: ["latin"], variable: "--font-mono" });
 
 export const metadata = {
   title: "MedX - Medical Video Platform",
   description: "Premium FMGE preparation platform",
   manifest: "/manifest.json",
-  themeColor: "#020617",
+  themeColor: "#f0f0f0",
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
@@ -31,17 +26,21 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" className="dark">
+    <html lang="en" className="light">
       <head>
-        <meta name="theme-color" content="#020617" />
+        <meta name="theme-color" content="#f0f0f0" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-        <meta name="color-scheme" content="dark" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+        <meta name="color-scheme" content="light" />
       </head>
-      <body className={`${manrope.variable} ${sora.variable} ${jetbrains.variable} antialiased`}>
+      <body className="font-sans antialiased bg-[#f0f0f0] defi-landing">
         <ChatXProvider>
           <SessionGuard />
-          {children}
+          
+          <AppLayoutWrapper>
+            {children}
+          </AppLayoutWrapper>
+
           <MobileNav />
           <Analytics />
         </ChatXProvider>

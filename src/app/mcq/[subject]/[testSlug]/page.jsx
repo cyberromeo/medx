@@ -101,7 +101,8 @@ export default function McqTestPage() {
 
   // ─── Revision Timer ─────────────────────────────────
   useEffect(() => {
-    if (mode !== "revision" || !started || showResult || revisionRevealed) return;
+    if (mode !== "revision" || !started || showResult || revisionRevealed)
+      return;
     setQuestionTimer(60);
     setTimeExpired(false);
     questionIntervalRef.current = setInterval(() => {
@@ -132,7 +133,7 @@ export default function McqTestPage() {
         setGlobalTimer(questions.length * 60);
       }
     },
-    [questions.length]
+    [questions.length],
   );
 
   const selectOption = useCallback(
@@ -145,7 +146,7 @@ export default function McqTestPage() {
         setRevisionRevealed(true);
       }
     },
-    [mode, currentQ, revisionRevealed]
+    [mode, currentQ, revisionRevealed],
   );
 
   const goToQuestion = useCallback(
@@ -154,7 +155,7 @@ export default function McqTestPage() {
         setCurrentQ(index);
       }
     },
-    [mode]
+    [mode],
   );
 
   const nextQuestion = useCallback(() => {
@@ -197,29 +198,25 @@ export default function McqTestPage() {
   // ─── Score calc ─────────────────────────────────────
   const score = questions.reduce(
     (acc, q, i) => (answers[i] === q.correct ? acc + 1 : acc),
-    0
+    0,
   );
   const attempted = Object.keys(answers).length;
 
   // ─── Loading / Not Found ────────────────────────────
   if (authLoading || dataLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="halo-bg" />
-        <div className="grid-bg" />
-        <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+      <div className="flex min-h-screen items-center justify-center bg-[#f0f0f0]">
+        <div className="h-8 w-8 animate-spin rounded-full border-2 border-blue-600 border-t-transparent" />
       </div>
     );
   }
 
   if (!test) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center p-6">
-        <div className="halo-bg" />
-        <div className="grid-bg" />
-        <AlertCircle size={48} className="text-muted mb-4" />
-        <h1 className="text-xl font-bold mb-2">Test Not Found</h1>
-        <Link href={`/mcq/${subcategorySlug}`} className="text-primary text-sm">
+      <div className="flex min-h-screen flex-col items-center justify-center p-6 bg-[#f0f0f0]">
+        <AlertCircle size={48} className="text-[#898989] mb-4" />
+        <h1 className="mb-2 text-xl font-bold text-[#303030]">Test Not Found</h1>
+        <Link href={`/mcq/${subcategorySlug}`} className="text-blue-600 text-sm">
           ← Back to Tests
         </Link>
       </div>
@@ -228,19 +225,17 @@ export default function McqTestPage() {
 
   if (questions.length === 0) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center p-6 text-center">
-        <div className="halo-bg" />
-        <div className="grid-bg" />
-        <div className="w-20 h-20 rounded-3xl bg-white/5 flex items-center justify-center mb-6">
-          <BookOpen size={36} className="text-muted" />
+      <div className="flex min-h-screen flex-col items-center justify-center p-6 text-center bg-[#f0f0f0]">
+        <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-3xl bg-[#898989]/10">
+          <BookOpen size={36} className="text-[#898989]" />
         </div>
-        <h1 className="text-2xl font-bold font-display mb-2">{test.title}</h1>
-        <p className="text-muted mb-6 max-w-xs">
+        <h1 className="mb-2 text-2xl font-bold text-[#303030]">{test.title}</h1>
+        <p className="text-[#898989] mb-6 max-w-xs">
           Questions for this test are coming soon. Check back later!
         </p>
         <Link
           href={`/mcq/${subcategorySlug}`}
-          className="inline-flex items-center gap-2 btn-outline px-6 py-3 rounded-xl text-sm font-semibold"
+          className="bg-white border border-[#898989]/20 shadow-sm inline-flex items-center gap-2 rounded-xl px-6 py-3 text-sm font-semibold text-[#303030]"
         >
           <ChevronLeft size={16} />
           Back to Tests
@@ -254,14 +249,11 @@ export default function McqTestPage() {
   // ═══════════════════════════════════════════════════
   if (!started) {
     return (
-      <main className="min-h-screen pb-20">
-        <div className="halo-bg" />
-        <div className="grid-bg" />
-
-        <div className="container mx-auto px-4 pt-16 max-w-lg">
+      <main className="min-h-screen bg-[#f0f0f0] pb-20">
+        <div className="container mx-auto max-w-lg px-4 pt-16">
           <Link
             href={`/mcq/${subcategorySlug}`}
-            className="inline-flex items-center gap-2 text-muted text-sm mb-6 hover:text-white transition-colors"
+            className="text-[#898989] mb-6 inline-flex items-center gap-2 text-sm transition-colors hover:text-[#303030]"
           >
             <ChevronLeft size={16} />
             Back
@@ -270,14 +262,12 @@ export default function McqTestPage() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-center mb-8"
+            className="mb-8 text-center"
           >
-            <h1 className="text-2xl font-bold font-display mb-1">
+            <h1 className="mb-1 text-2xl font-bold text-[#303030]">
               {test.title}
             </h1>
-            <p className="text-muted text-sm">
-              {questions.length} questions
-            </p>
+            <p className="text-[#898989] text-sm font-medium">{questions.length} questions</p>
           </motion.div>
 
           <div className="space-y-4">
@@ -287,25 +277,30 @@ export default function McqTestPage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
               onClick={() => startQuiz("exam")}
-              className="w-full text-left panel rounded-3xl p-6 relative overflow-hidden transition-all active:scale-[0.98] hover:border-primary/30"
+              className="bg-white/60 backdrop-blur-md border border-[#898989]/20 shadow-sm hover:shadow-md hover:border-blue-300 relative w-full overflow-hidden rounded-[1.5rem] p-6 text-left transition-all active:scale-[0.98]"
             >
-              <div className="absolute -top-10 -right-10 w-32 h-32 rounded-full blur-3xl bg-primary/10" />
-              <div className="flex items-center gap-4 mb-3 relative z-10">
-                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary to-teal-600 flex items-center justify-center shrink-0">
+              <div className="bg-blue-100 absolute -top-10 -right-10 h-32 w-32 rounded-full blur-3xl pointer-events-none" />
+              <div className="relative z-10 mb-3 flex items-center gap-4">
+                <div className="bg-blue-600 shadow-sm flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl">
                   <Timer size={24} className="text-white" />
                 </div>
                 <div>
-                  <h2 className="text-lg font-bold text-white">Exam Mode</h2>
-                  <p className="text-xs text-muted">Simulate real exam conditions</p>
+                  <h2 className="text-lg font-bold text-[#303030]">Exam Mode</h2>
+                  <p className="text-[#898989] font-medium text-xs">
+                    Simulate real exam conditions
+                  </p>
                 </div>
               </div>
-              <div className="space-y-2 text-sm text-muted relative z-10">
+              <div className="text-[#5E6470] relative z-10 space-y-2 text-sm">
                 <div className="flex items-center gap-2">
-                  <Clock size={14} className="text-primary shrink-0" />
-                  <span>Timer: {questions.length} min for {questions.length} questions</span>
+                  <Clock size={14} className="text-blue-600 shrink-0" />
+                  <span>
+                    Timer: {questions.length} min for {questions.length}{" "}
+                    questions
+                  </span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Target size={14} className="text-primary shrink-0" />
+                  <Target size={14} className="text-blue-600 shrink-0" />
                   <span>Results & explanations shown after completion</span>
                 </div>
               </div>
@@ -317,25 +312,27 @@ export default function McqTestPage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
               onClick={() => startQuiz("revision")}
-              className="w-full text-left panel rounded-3xl p-6 relative overflow-hidden transition-all active:scale-[0.98] hover:border-secondary/30"
+              className="bg-white/60 backdrop-blur-md border border-[#898989]/20 shadow-sm hover:shadow-md hover:border-blue-300 relative w-full overflow-hidden rounded-[1.5rem] p-6 text-left transition-all active:scale-[0.98]"
             >
-              <div className="absolute -top-10 -right-10 w-32 h-32 rounded-full blur-3xl bg-secondary/10" />
-              <div className="flex items-center gap-4 mb-3 relative z-10">
-                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-secondary to-blue-600 flex items-center justify-center shrink-0">
+              <div className="bg-emerald-100 absolute -top-10 -right-10 h-32 w-32 rounded-full blur-3xl pointer-events-none" />
+              <div className="relative z-10 mb-3 flex items-center gap-4">
+                <div className="bg-emerald-500 shadow-sm flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl">
                   <BookOpen size={24} className="text-white" />
                 </div>
                 <div>
-                  <h2 className="text-lg font-bold text-white">Revision Mode</h2>
-                  <p className="text-xs text-muted">Learn at your own pace</p>
+                  <h2 className="text-lg font-bold text-[#303030]">
+                    Revision Mode
+                  </h2>
+                  <p className="text-[#898989] font-medium text-xs">Learn at your own pace</p>
                 </div>
               </div>
-              <div className="space-y-2 text-sm text-muted relative z-10">
+              <div className="text-[#5E6470] relative z-10 space-y-2 text-sm">
                 <div className="flex items-center gap-2">
-                  <Clock size={14} className="text-secondary shrink-0" />
+                  <Clock size={14} className="text-emerald-500 shrink-0" />
                   <span>1 minute per question</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <CheckCircle size={14} className="text-secondary shrink-0" />
+                  <CheckCircle size={14} className="text-emerald-500 shrink-0" />
                   <span>Instant answer & explanation after each question</span>
                 </div>
               </div>
@@ -350,28 +347,35 @@ export default function McqTestPage() {
   // RESULTS SCREEN
   // ═══════════════════════════════════════════════════
   if (showResult) {
-    const percentage = questions.length > 0 ? Math.round((score / questions.length) * 100) : 0;
-    const timeUsed = mode === "exam" ? questions.length * 60 - globalTimer : null;
+    const percentage =
+      questions.length > 0 ? Math.round((score / questions.length) * 100) : 0;
+    const timeUsed =
+      mode === "exam" ? questions.length * 60 - globalTimer : null;
 
     return (
-      <main className="min-h-screen pb-20">
-        <div className="halo-bg" />
-        <div className="grid-bg" />
-
-        <div className="container mx-auto px-4 pt-12 max-w-2xl">
+      <main className="min-h-screen bg-[#f0f0f0] pb-20">
+        <div className="container mx-auto max-w-2xl px-4 pt-12">
           {/* Score Header */}
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="text-center mb-8"
+            className="mb-8 text-center"
           >
-            <div className="w-24 h-24 rounded-full mx-auto mb-4 flex items-center justify-center bg-gradient-to-br from-primary/20 to-secondary/20 border border-primary/30">
-              <Trophy size={40} className={percentage >= 60 ? "text-primary" : "text-muted"} />
+            <div className={`mx-auto mb-4 flex h-24 w-24 items-center justify-center rounded-full border shadow-sm ${percentage >= 60 ? "bg-amber-50 border-amber-200 text-amber-500" : "bg-white border-[#898989]/20 text-[#898989]"}`}>
+              <Trophy size={40} />
             </div>
-            <h1 className="text-3xl font-bold font-display mb-1">
-              {percentage >= 80 ? "Excellent! 🎉" : percentage >= 60 ? "Good Job! 👏" : percentage >= 40 ? "Keep Trying! 💪" : "Don't Give Up! 📚"}
+            <h1 className="mb-1 text-3xl font-bold text-[#303030]">
+              {percentage >= 80
+                ? "Excellent! 🎉"
+                : percentage >= 60
+                  ? "Good Job! 👏"
+                  : percentage >= 40
+                    ? "Keep Trying! 💪"
+                    : "Don't Give Up! 📚"}
             </h1>
-            <p className="text-muted">{test.title} — {mode === "exam" ? "Exam" : "Revision"} Mode</p>
+            <p className="text-[#5E6470] font-medium">
+              {test.title} — {mode === "exam" ? "Exam" : "Revision"} Mode
+            </p>
           </motion.div>
 
           {/* Stats */}
@@ -379,21 +383,29 @@ export default function McqTestPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="grid grid-cols-3 gap-3 mb-8"
+            className="mb-8 grid grid-cols-3 gap-3"
           >
-            <div className="stat-card text-center p-4">
-              <p className="text-2xl font-bold text-primary font-mono">{score}/{questions.length}</p>
-              <p className="text-xs text-muted mt-1">Correct</p>
-            </div>
-            <div className="stat-card text-center p-4">
-              <p className="text-2xl font-bold text-white font-mono">{percentage}%</p>
-              <p className="text-xs text-muted mt-1">Score</p>
-            </div>
-            <div className="stat-card text-center p-4">
-              <p className="text-2xl font-bold text-secondary font-mono">
-                {timeUsed !== null ? formatTime(timeUsed) : `${attempted}/${questions.length}`}
+            <div className="bg-white/60 backdrop-blur-md border border-[#898989]/20 shadow-sm rounded-2xl p-4 text-center">
+              <p className="text-blue-600 font-mono text-2xl font-bold">
+                {score}/{questions.length}
               </p>
-              <p className="text-xs text-muted mt-1">{timeUsed !== null ? "Time" : "Attempted"}</p>
+              <p className="text-[#898989] font-bold uppercase tracking-wider mt-1 text-[10px]">Correct</p>
+            </div>
+            <div className="bg-white/60 backdrop-blur-md border border-[#898989]/20 shadow-sm rounded-2xl p-4 text-center">
+              <p className="font-mono text-2xl font-bold text-[#303030]">
+                {percentage}%
+              </p>
+              <p className="text-[#898989] font-bold uppercase tracking-wider mt-1 text-[10px]">Score</p>
+            </div>
+            <div className="bg-white/60 backdrop-blur-md border border-[#898989]/20 shadow-sm rounded-2xl p-4 text-center">
+              <p className="text-emerald-500 font-mono text-2xl font-bold">
+                {timeUsed !== null
+                  ? formatTime(timeUsed)
+                  : `${attempted}/${questions.length}`}
+              </p>
+              <p className="text-[#898989] font-bold uppercase tracking-wider mt-1 text-[10px]">
+                {timeUsed !== null ? "Time" : "Attempted"}
+              </p>
             </div>
           </motion.div>
 
@@ -402,48 +414,68 @@ export default function McqTestPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="space-y-3 mb-8"
+            className="mb-8 space-y-3"
           >
-            <h2 className="text-lg font-bold mb-4">Question Breakdown</h2>
+            <h2 className="mb-4 text-lg font-bold text-[#303030]">Question Breakdown</h2>
             {questions.map((q, i) => {
               const userAnswer = answers[i];
               const isCorrect = userAnswer === q.correct;
               const isUnanswered = userAnswer === undefined;
 
               return (
-                <div key={i} className="panel rounded-2xl p-4 overflow-hidden">
-                  <div className="flex items-start gap-3 mb-3">
-                    <span className={`w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold shrink-0 ${isUnanswered ? "bg-white/10 text-muted" : isCorrect ? "bg-emerald-500/20 text-emerald-400" : "bg-red-500/20 text-red-400"}`}>
+                <div key={i} className="bg-white/60 backdrop-blur-md border border-[#898989]/20 shadow-sm overflow-hidden rounded-[1.5rem] p-5">
+                  <div className="mb-3 flex items-start gap-3">
+                    <span
+                      className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-xs font-bold ${isUnanswered ? "text-[#898989] bg-[#898989]/10" : isCorrect ? "bg-emerald-50 text-emerald-600 border border-emerald-200" : "bg-red-50 text-red-600 border border-red-200"}`}
+                    >
                       {i + 1}
                     </span>
-                    <p className="text-sm text-white flex-1">{q.question}</p>
+                    <p className="flex-1 text-sm text-[#303030] font-medium">{q.question}</p>
                   </div>
 
                   {q.image && (
-                    <img src={q.image} alt={`Question ${i + 1}`} className="w-full max-h-48 object-contain rounded-xl bg-black/30 mb-3" />
+                    <img
+                      src={q.image}
+                      alt={`Question ${i + 1}`}
+                      className="mb-3 max-h-48 w-full rounded-xl border border-[#898989]/10 bg-gray-50 object-contain p-2"
+                    />
                   )}
 
-                  <div className="grid grid-cols-1 gap-2 mb-3">
+                  <div className="mb-3 grid grid-cols-1 gap-2">
                     {q.options.map((opt, j) => {
-                      let optClass = "mcq-option-result";
-                      if (j === q.correct) optClass += " mcq-option-correct";
-                      else if (j === userAnswer && !isCorrect) optClass += " mcq-option-wrong";
+                      let optClass = "flex items-center gap-3 p-3 rounded-xl border text-sm font-medium transition-all ";
+                      let icon = null;
+                      
+                      if (j === q.correct) {
+                        optClass += "bg-emerald-50 border-emerald-200 text-[#303030]";
+                        icon = <CheckCircle size={16} className="shrink-0 text-emerald-500" />;
+                      } else if (j === userAnswer && !isCorrect) {
+                        optClass += "bg-red-50 border-red-200 text-[#303030]";
+                        icon = <XCircle size={16} className="shrink-0 text-red-500" />;
+                      } else {
+                        optClass += "bg-white border-[#898989]/10 text-[#5E6470]";
+                      }
 
                       return (
                         <div key={j} className={optClass}>
-                          <span className="mcq-option-label">{OPTION_LABELS[j]}</span>
+                          <span className={`w-6 h-6 flex items-center justify-center rounded-md text-[10px] font-bold ${j === q.correct ? 'bg-emerald-200 text-emerald-800' : (j === userAnswer && !isCorrect ? 'bg-red-200 text-red-800' : 'bg-[#898989]/10 text-[#898989]')}`}>
+                            {OPTION_LABELS[j]}
+                          </span>
                           <span className="flex-1 text-sm">{opt}</span>
-                          {j === q.correct && <CheckCircle size={16} className="text-emerald-400 shrink-0" />}
-                          {j === userAnswer && !isCorrect && <XCircle size={16} className="text-red-400 shrink-0" />}
+                          {icon}
                         </div>
                       );
                     })}
                   </div>
 
                   {q.explanation && (
-                    <div className="mcq-explanation">
-                      <p className="text-xs font-semibold text-primary mb-1">Explanation</p>
-                      <p className="text-sm text-muted leading-relaxed">{q.explanation}</p>
+                    <div className="bg-blue-50 border border-blue-100 p-4 rounded-xl mt-4">
+                      <p className="text-blue-600 mb-1.5 text-xs font-bold uppercase tracking-wider flex items-center gap-1.5">
+                        <BookOpen size={14} /> Explanation
+                      </p>
+                      <p className="text-[#5E6470] text-sm leading-relaxed font-medium">
+                        {q.explanation}
+                      </p>
                     </div>
                   )}
                 </div>
@@ -453,10 +485,16 @@ export default function McqTestPage() {
 
           {/* Actions */}
           <div className="flex gap-3 pb-8">
-            <button onClick={resetQuiz} className="flex-1 btn-outline flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-semibold">
+            <button
+              onClick={resetQuiz}
+              className="bg-white border border-[#898989]/20 shadow-sm flex flex-1 items-center justify-center gap-2 rounded-xl py-3 text-sm font-semibold text-[#303030] hover:bg-gray-50"
+            >
               <RotateCcw size={16} /> Retry
             </button>
-            <Link href={`/mcq/${subcategorySlug}`} className="flex-1 btn-primary flex items-center justify-center gap-2 py-3 rounded-xl text-sm">
+            <Link
+              href={`/mcq/${subcategorySlug}`}
+              className="bg-blue-600 shadow-sm text-white flex flex-1 items-center justify-center gap-2 rounded-xl py-3 text-sm font-bold hover:bg-blue-700 transition-colors"
+            >
               All Tests <ArrowRight size={16} />
             </Link>
           </div>
@@ -474,41 +512,47 @@ export default function McqTestPage() {
   const isRevisionAnswered = mode === "revision" && revisionRevealed;
 
   return (
-    <main className="min-h-screen flex flex-col">
-      <div className="halo-bg" />
-      <div className="grid-bg" />
+    <main className="flex min-h-screen flex-col bg-[#f0f0f0]">
 
       {/* ─── Top Bar ─── */}
-      <div className="sticky top-0 z-30 bg-black/80 backdrop-blur-xl border-b border-white/5">
+      <div className="sticky top-0 z-30 border-b border-[#898989]/10 bg-white/80 backdrop-blur-xl shadow-sm">
         <div className="container mx-auto px-4 py-3">
           <div className="flex items-center justify-between gap-3">
             <button
               onClick={resetQuiz}
-              className="w-9 h-9 rounded-xl bg-white/5 flex items-center justify-center hover:bg-white/10 transition-colors shrink-0"
+              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#898989]/10 transition-colors hover:bg-[#898989]/20 text-[#303030]"
             >
               <ChevronLeft size={18} />
             </button>
 
-            <div className="flex-1 min-w-0">
-              <p className="text-xs text-muted truncate">{test.title}</p>
-              <p className="text-xs font-semibold">Q {currentQ + 1}/{questions.length}</p>
+            <div className="min-w-0 flex-1">
+              <p className="text-[#898989] font-medium truncate text-xs">{test.title}</p>
+              <p className="text-xs font-bold text-[#303030]">
+                Q {currentQ + 1}/{questions.length}
+              </p>
             </div>
 
             {/* Timer */}
-            <div className={`mcq-timer-pill ${(mode === "exam" && globalTimer < 60) || (mode === "revision" && questionTimer <= 10) ? "mcq-timer-danger" : ""}`}>
+            <div
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-sm font-bold shadow-sm ${(mode === "exam" && globalTimer < 60) || (mode === "revision" && questionTimer <= 10) ? "bg-red-50 border-red-200 text-red-600 animate-pulse" : "bg-white border-[#898989]/20 text-[#303030]"}`}
+            >
               <Clock size={14} />
-              <span className="font-mono font-bold text-sm">
-                {mode === "exam" ? formatTime(globalTimer) : formatTime(questionTimer)}
+              <span className="font-mono">
+                {mode === "exam"
+                  ? formatTime(globalTimer)
+                  : formatTime(questionTimer)}
               </span>
             </div>
           </div>
 
           {/* Progress Bar */}
-          <div className="mt-2 progress-track h-1">
+          <div className="bg-[#898989]/10 mt-3 h-1.5 rounded-full overflow-hidden">
             <motion.div
-              className="progress-fill h-full"
+              className="bg-blue-600 h-full rounded-full"
               initial={false}
-              animate={{ width: `${((currentQ + 1) / questions.length) * 100}%` }}
+              animate={{
+                width: `${((currentQ + 1) / questions.length) * 100}%`,
+              }}
               transition={{ duration: 0.3 }}
             />
           </div>
@@ -516,14 +560,19 @@ export default function McqTestPage() {
 
         {/* Question Navigation Pills (Exam Mode Only) */}
         {mode === "exam" && (
-          <div className="border-t border-white/5 overflow-x-auto scrollbar-hide">
-            <div className="flex gap-1.5 px-4 py-2 min-w-max">
+          <div className="scrollbar-hide overflow-x-auto border-t border-[#898989]/10 bg-[#f9f9f9]">
+            <div className="flex min-w-max gap-1.5 px-4 py-2">
               {questions.map((_, i) => {
-                let pillClass = "mcq-nav-pill";
-                if (i === currentQ) pillClass += " mcq-nav-active";
-                else if (answers[i] !== undefined) pillClass += " mcq-nav-answered";
+                let pillClass = "w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold shrink-0 transition-all border ";
+                if (i === currentQ) pillClass += "bg-blue-600 text-white border-blue-600 shadow-sm";
+                else if (answers[i] !== undefined) pillClass += "bg-blue-50 text-blue-600 border-blue-200";
+                else pillClass += "bg-white text-[#898989] border-[#898989]/20 hover:bg-gray-50";
                 return (
-                  <button key={i} onClick={() => goToQuestion(i)} className={pillClass}>
+                  <button
+                    key={i}
+                    onClick={() => goToQuestion(i)}
+                    className={pillClass}
+                  >
                     {i + 1}
                   </button>
                 );
@@ -534,7 +583,7 @@ export default function McqTestPage() {
       </div>
 
       {/* ─── Question Body ─── */}
-      <div className="flex-1 container mx-auto px-4 py-6 pb-24 max-w-2xl">
+      <div className="container mx-auto max-w-2xl flex-1 px-4 py-6 pb-24">
         <AnimatePresence mode="wait">
           <motion.div
             key={currentQ}
@@ -544,32 +593,60 @@ export default function McqTestPage() {
             transition={{ duration: 0.2 }}
           >
             {/* Question Text */}
-            <div className="mb-6">
-              <p className="text-white text-base sm:text-lg leading-relaxed font-medium">{q.question}</p>
+            <div className="mb-6 bg-white/80 backdrop-blur-xl border border-white shadow-xl shadow-blue-900/5 p-6 sm:p-8 rounded-[2rem]">
+              <p className="text-lg leading-relaxed font-bold text-[#303030] sm:text-xl">
+                {q.question}
+              </p>
             </div>
 
             {/* Question Image */}
             {q.image && (
               <div className="mb-6">
-                <img src={q.image} alt={`Question ${currentQ + 1}`} className="w-full max-h-60 object-contain rounded-2xl bg-black/30 border border-white/5" />
+                <img
+                  src={q.image}
+                  alt={`Question ${currentQ + 1}`}
+                  className="max-h-60 w-full rounded-[1.5rem] border border-[#898989]/20 bg-white object-contain shadow-sm p-2"
+                />
               </div>
             )}
 
             {/* Options */}
-            <div className="space-y-3 mb-6">
+            <div className="mb-6 space-y-3">
               {q.options.map((opt, j) => {
-                let optClass = "mcq-option";
+                let optClass = "w-full text-left flex items-center gap-4 p-4 rounded-[1.25rem] border transition-all duration-300 shadow-sm hover:shadow-md active:scale-[0.98] ";
+                let labelClass = "w-8 h-8 flex items-center justify-center rounded-xl text-xs font-bold shrink-0 transition-all duration-300 ";
                 const isSelected = answers[currentQ] === j;
 
                 if (mode === "exam") {
-                  if (isSelected) optClass += " mcq-option-selected";
+                  if (isSelected) {
+                    optClass += "bg-blue-50 border-blue-300 ring-2 ring-blue-500/20";
+                    labelClass += "bg-blue-600 text-white";
+                  } else {
+                    optClass += "bg-white border-[#898989]/20 hover:border-blue-300 hover:bg-gray-50 text-[#303030]";
+                    labelClass += "bg-[#898989]/10 text-[#898989]";
+                  }
                 } else if (mode === "revision") {
                   if (revisionRevealed) {
-                    if (j === q.correct) optClass += " mcq-option-correct";
-                    else if (isSelected && j !== q.correct) optClass += " mcq-option-wrong";
-                    else optClass += " mcq-option-disabled";
+                    if (j === q.correct) {
+                      optClass += "bg-emerald-50 border-emerald-300 ring-2 ring-emerald-500/20";
+                      labelClass += "bg-emerald-500 text-white";
+                    }
+                    else if (isSelected && j !== q.correct) {
+                      optClass += "bg-red-50 border-red-300 ring-2 ring-red-500/20";
+                      labelClass += "bg-red-500 text-white";
+                    }
+                    else {
+                      optClass += "bg-white border-[#898989]/20 opacity-50";
+                      labelClass += "bg-[#898989]/10 text-[#898989]";
+                    }
                   } else {
-                    if (isSelected) optClass += " mcq-option-selected";
+                    if (isSelected) {
+                      optClass += "bg-blue-50 border-blue-300 ring-2 ring-blue-500/20";
+                      labelClass += "bg-blue-600 text-white";
+                    } else {
+                      optClass += "bg-white border-[#898989]/20 hover:border-blue-300 hover:bg-gray-50 text-[#303030]";
+                      labelClass += "bg-[#898989]/10 text-[#898989]";
+                    }
                   }
                 }
 
@@ -581,10 +658,19 @@ export default function McqTestPage() {
                     disabled={isRevisionAnswered}
                     className={optClass}
                   >
-                    <span className="mcq-option-label">{OPTION_LABELS[j]}</span>
-                    <span className="flex-1 text-left text-sm sm:text-base">{opt}</span>
-                    {isRevisionAnswered && j === q.correct && <CheckCircle size={18} className="text-emerald-400 shrink-0" />}
-                    {isRevisionAnswered && isSelected && j !== q.correct && <XCircle size={18} className="text-red-400 shrink-0" />}
+                    <span className={labelClass}>{OPTION_LABELS[j]}</span>
+                    <span className="flex-1 text-left text-sm font-medium sm:text-base text-[#303030]">
+                      {opt}
+                    </span>
+                    {isRevisionAnswered && j === q.correct && (
+                      <CheckCircle
+                        size={20}
+                        className="shrink-0 text-emerald-500"
+                      />
+                    )}
+                    {isRevisionAnswered && isSelected && j !== q.correct && (
+                      <XCircle size={20} className="shrink-0 text-red-500" />
+                    )}
                   </motion.button>
                 );
               })}
@@ -592,34 +678,54 @@ export default function McqTestPage() {
 
             {/* Revision: Show explanation after reveal */}
             {mode === "revision" && revisionRevealed && (
-              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-6">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="mb-6"
+              >
                 {timeExpired && answers[currentQ] === undefined && (
-                  <div className="flex items-center gap-2 px-4 py-3 rounded-xl bg-amber-500/10 border border-amber-500/30 mb-3">
-                    <AlertCircle size={16} className="text-amber-400 shrink-0" />
-                    <p className="text-sm text-amber-300">Time&apos;s up! This question is marked as unanswered.</p>
+                  <div className="mb-3 flex items-center gap-2 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 shadow-sm">
+                    <AlertCircle
+                      size={18}
+                      className="shrink-0 text-amber-500"
+                    />
+                    <p className="text-sm font-medium text-amber-700">
+                      Time&apos;s up! This question is marked as unanswered.
+                    </p>
                   </div>
                 )}
 
                 {answers[currentQ] !== undefined && (
-                  <div className={`flex items-center gap-2 px-4 py-3 rounded-xl mb-3 ${answers[currentQ] === q.correct ? "bg-emerald-500/10 border border-emerald-500/30" : "bg-red-500/10 border border-red-500/30"}`}>
+                  <div
+                    className={`mb-3 flex items-center gap-2 rounded-xl px-4 py-3 border shadow-sm ${answers[currentQ] === q.correct ? "border-emerald-200 bg-emerald-50" : "border-red-200 bg-red-50"}`}
+                  >
                     {answers[currentQ] === q.correct ? (
                       <>
-                        <CheckCircle size={16} className="text-emerald-400" />
-                        <p className="text-sm text-emerald-300">Correct! Well done.</p>
+                        <CheckCircle size={18} className="text-emerald-500" />
+                        <p className="text-sm font-bold text-emerald-700">
+                          Correct! Well done.
+                        </p>
                       </>
                     ) : (
                       <>
-                        <XCircle size={16} className="text-red-400" />
-                        <p className="text-sm text-red-300">Incorrect. The right answer is <strong>{OPTION_LABELS[q.correct]}</strong>.</p>
+                        <XCircle size={18} className="text-red-500" />
+                        <p className="text-sm font-medium text-red-700">
+                          Incorrect. The right answer is{" "}
+                          <strong className="font-bold">{OPTION_LABELS[q.correct]}</strong>.
+                        </p>
                       </>
                     )}
                   </div>
                 )}
 
                 {q.explanation && (
-                  <div className="mcq-explanation">
-                    <p className="text-xs font-semibold text-primary mb-1.5">💡 Explanation</p>
-                    <p className="text-sm text-muted leading-relaxed">{q.explanation}</p>
+                  <div className="bg-white border border-[#898989]/20 shadow-sm p-5 rounded-[1.5rem]">
+                    <p className="text-blue-600 mb-2 text-xs font-bold uppercase tracking-wider flex items-center gap-1.5">
+                      <BookOpen size={14} /> Explanation
+                    </p>
+                    <p className="text-[#5E6470] text-sm font-medium leading-relaxed">
+                      {q.explanation}
+                    </p>
                   </div>
                 )}
               </motion.div>
@@ -629,17 +735,28 @@ export default function McqTestPage() {
       </div>
 
       {/* ─── Bottom Bar ─── */}
-      <div className="fixed bottom-0 left-0 right-0 z-30 bg-black/80 backdrop-blur-xl border-t border-white/5">
-        <div className="container mx-auto px-4 py-3 max-w-2xl">
+      <div className="fixed right-0 bottom-0 left-0 z-30 border-t border-[#898989]/10 bg-white/80 backdrop-blur-xl shadow-[0_-4px_24px_rgba(0,0,0,0.02)]">
+        <div className="container mx-auto max-w-2xl px-4 py-4">
           {mode === "exam" ? (
             <div className="flex gap-3">
-              <button onClick={prevQuestion} disabled={currentQ === 0} className="px-4 py-3 rounded-xl bg-white/5 text-sm font-semibold disabled:opacity-30 transition-opacity">
+              <button
+                onClick={prevQuestion}
+                disabled={currentQ === 0}
+                className="rounded-xl bg-white border border-[#898989]/20 text-[#303030] px-4 py-3 text-sm font-bold shadow-sm transition-opacity disabled:opacity-50 hover:bg-gray-50"
+              >
                 Prev
               </button>
-              <button onClick={nextQuestion} disabled={currentQ === questions.length - 1} className="flex-1 py-3 rounded-xl bg-white/5 text-sm font-semibold flex items-center justify-center gap-2 disabled:opacity-30 transition-opacity">
+              <button
+                onClick={nextQuestion}
+                disabled={currentQ === questions.length - 1}
+                className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-white border border-[#898989]/20 text-[#303030] py-3 text-sm font-bold shadow-sm transition-opacity disabled:opacity-50 hover:bg-gray-50"
+              >
                 Next <ChevronRight size={16} />
               </button>
-              <button onClick={submitExam} className="px-6 py-3 rounded-xl bg-gradient-to-r from-primary to-secondary text-black text-sm font-bold transition-all hover:shadow-lg hover:shadow-primary/25">
+              <button
+                onClick={submitExam}
+                className="bg-blue-600 shadow-md rounded-xl px-6 py-3 text-sm font-bold text-white transition-all hover:bg-blue-700 active:scale-95"
+              >
                 Submit
               </button>
             </div>
@@ -647,12 +764,16 @@ export default function McqTestPage() {
             <button
               onClick={nextQuestion}
               disabled={!revisionRevealed}
-              className={`w-full py-3.5 rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition-all ${revisionRevealed ? "bg-gradient-to-r from-primary to-secondary text-white" : "bg-white/10 text-gray-400 cursor-not-allowed"}`}
+              className={`flex w-full items-center justify-center gap-2 rounded-xl py-3.5 text-sm font-bold transition-all shadow-sm ${revisionRevealed ? "bg-blue-600 text-white hover:bg-blue-700 active:scale-[0.98]" : "cursor-not-allowed bg-gray-100 text-[#898989]"}`}
             >
               {currentQ === questions.length - 1 ? (
-                <>Finish & View Results <Trophy size={16} /></>
+                <>
+                  Finish & View Results <Trophy size={16} />
+                </>
               ) : (
-                <>Next Question <ChevronRight size={16} /></>
+                <>
+                  Next Question <ChevronRight size={16} />
+                </>
               )}
             </button>
           )}

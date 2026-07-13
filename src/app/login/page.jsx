@@ -2,12 +2,25 @@
 
 import { useState } from "react";
 import { auth } from "@/lib/firebase";
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile, sendPasswordResetEmail } from "firebase/auth";
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  updateProfile,
+  sendPasswordResetEmail,
+} from "firebase/auth";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { activateSingleDeviceSession } from "@/lib/session-security";
 import { motion, AnimatePresence } from "framer-motion";
-import { Mail, Lock, User, ArrowRight, AlertCircle, Loader2, Stethoscope } from "lucide-react";
+import {
+  Mail,
+  Lock,
+  User,
+  ArrowRight,
+  AlertCircle,
+  Loader2,
+  Stethoscope,
+} from "lucide-react";
 
 export default function LoginPage() {
   const [isLogin, setIsLogin] = useState(true);
@@ -29,18 +42,30 @@ export default function LoginPage() {
     try {
       let userCredential;
       if (isLogin) {
-        userCredential = await signInWithEmailAndPassword(auth, email, password);
+        userCredential = await signInWithEmailAndPassword(
+          auth,
+          email,
+          password,
+        );
       } else {
-        userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        userCredential = await createUserWithEmailAndPassword(
+          auth,
+          email,
+          password,
+        );
         await updateProfile(userCredential.user, { displayName: name });
       }
-      
+
       const userId = userCredential.user.uid;
       await activateSingleDeviceSession(userId);
       router.push("/dashboard");
     } catch (err) {
       console.error(err);
-      if (isLogin && (err.code === "auth/invalid-credential" || err.code === "auth/wrong-password")) {
+      if (
+        isLogin &&
+        (err.code === "auth/invalid-credential" ||
+          err.code === "auth/wrong-password")
+      ) {
         try {
           const res = await fetch("/api/auth/check-password", {
             method: "POST",
@@ -52,7 +77,9 @@ export default function LoginPage() {
             if (!data.hasPassword && !data.notFound) {
               await sendPasswordResetEmail(auth, email);
               setError("");
-              setResetMessage("Your account requires a password reset due to a system update. We have sent a reset link to your email.");
+              setResetMessage(
+                "Your account requires a password reset due to a system update. We have sent a reset link to your email.",
+              );
               setLoading(false);
               return;
             }
@@ -87,39 +114,41 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen relative overflow-hidden">
+    <div className="relative min-h-screen overflow-hidden">
       <div className="halo-bg" />
       <div className="grid-bg" />
 
-      <div className="container mx-auto px-4 sm:px-6 min-h-screen flex items-center justify-center">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-5xl w-full">
+      <div className="container mx-auto flex min-h-screen items-center justify-center px-4 sm:px-6">
+        <div className="grid w-full max-w-5xl grid-cols-1 gap-8 lg:grid-cols-2">
           {/* Brand Panel */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="panel-glow rounded-3xl p-8 lg:p-10 hidden lg:flex flex-col justify-between"
+            className="panel-glow hidden flex-col justify-between rounded-3xl p-8 lg:flex lg:p-10"
           >
             <div>
-              <div className="w-14 h-14 rounded-2xl grad-primary flex items-center justify-center mb-6">
+              <div className="grad-primary mb-6 flex h-14 w-14 items-center justify-center rounded-2xl">
                 <Stethoscope size={28} className="text-white" />
               </div>
-              <h1 className="font-display text-3xl font-bold mb-3">Welcome to MedX</h1>
+              <h1 className="font-display mb-3 text-3xl font-bold">
+                Welcome to MedX
+              </h1>
               <p className="text-muted mb-6">
-                Focused, cinematic medical learning for FMGE preparation. Track your progress, stay consistent,
-                and build mastery.
+                Focused, cinematic medical learning for FMGE preparation. Track
+                your progress, stay consistent, and build mastery.
               </p>
               <div className="space-y-3">
                 <div className="surface-elev rounded-2xl p-4">
-                  <p className="text-xs text-muted">Feature</p>
+                  <p className="text-muted text-xs">Feature</p>
                   <p className="font-semibold">Smart Progress Tracking</p>
                 </div>
                 <div className="surface-elev rounded-2xl p-4">
-                  <p className="text-xs text-muted">Community</p>
+                  <p className="text-muted text-xs">Community</p>
                   <p className="font-semibold">Live Discuss support</p>
                 </div>
               </div>
             </div>
-            <p className="text-xs text-muted">(c) 2026 MedX</p>
+            <p className="text-muted text-xs">(c) 2026 MedX</p>
           </motion.div>
 
           {/* Auth Panel */}
@@ -129,15 +158,17 @@ export default function LoginPage() {
             transition={{ duration: 0.5 }}
             className="panel rounded-3xl p-8 lg:p-10"
           >
-            <div className="text-center mb-8">
-              <div className="w-14 h-14 mx-auto mb-4 rounded-2xl bg-white/5 flex items-center justify-center">
+            <div className="mb-8 text-center">
+              <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gray-100 shadow-sm">
                 <Lock size={24} className="text-primary" />
               </div>
-              <h2 className="text-2xl font-bold mb-2">
+              <h2 className="mb-2 text-2xl font-bold text-gray-900">
                 {isLogin ? "Welcome back" : "Create account"}
               </h2>
-              <p className="text-sm text-muted">
-                {isLogin ? "Enter your details to access your library" : "Start your medical journey today"}
+              <p className="text-muted text-sm">
+                {isLogin
+                  ? "Enter your details to access your library"
+                  : "Start your medical journey today"}
               </p>
             </div>
 
@@ -147,7 +178,7 @@ export default function LoginPage() {
                   initial={{ height: 0, opacity: 0 }}
                   animate={{ height: "auto", opacity: 1 }}
                   exit={{ height: 0, opacity: 0 }}
-                  className="bg-red-500/10 border border-red-500/30 text-red-200 text-xs p-3 rounded-xl mb-6 flex items-center gap-2"
+                  className="mb-6 flex items-center gap-2 rounded-xl border border-red-500/30 bg-red-500/10 p-3 text-xs text-red-200"
                 >
                   <AlertCircle size={14} />
                   {error}
@@ -161,7 +192,7 @@ export default function LoginPage() {
                   initial={{ height: 0, opacity: 0 }}
                   animate={{ height: "auto", opacity: 1 }}
                   exit={{ height: 0, opacity: 0 }}
-                  className="bg-green-500/10 border border-green-500/30 text-green-200 text-xs p-3 rounded-xl mb-6 flex items-center gap-2"
+                  className="mb-6 flex items-center gap-2 rounded-xl border border-green-500/30 bg-green-500/10 p-3 text-xs text-green-200"
                 >
                   <AlertCircle size={14} />
                   {resetMessage}
@@ -177,9 +208,14 @@ export default function LoginPage() {
                     animate={{ height: "auto", opacity: 1 }}
                     exit={{ height: 0, opacity: 0 }}
                   >
-                    <label className="text-[10px] font-bold text-muted uppercase tracking-widest ml-1">Full Name</label>
+                    <label className="text-muted ml-1 text-[10px] font-bold tracking-widest uppercase">
+                      Full Name
+                    </label>
                     <div className="relative mt-1">
-                      <User size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted pointer-events-none" />
+                      <User
+                        size={16}
+                        className="text-muted pointer-events-none absolute top-1/2 left-4 -translate-y-1/2"
+                      />
                       <input
                         type="text"
                         placeholder="John Doe"
@@ -194,9 +230,14 @@ export default function LoginPage() {
               </AnimatePresence>
 
               <div>
-                <label className="text-[10px] font-bold text-muted uppercase tracking-widest ml-1">Email</label>
+                <label className="text-muted ml-1 text-[10px] font-bold tracking-widest uppercase">
+                  Email
+                </label>
                 <div className="relative mt-1">
-                  <Mail size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted pointer-events-none" />
+                  <Mail
+                    size={16}
+                    className="text-muted pointer-events-none absolute top-1/2 left-4 -translate-y-1/2"
+                  />
                   <input
                     type="email"
                     placeholder="name@example.com"
@@ -209,20 +250,25 @@ export default function LoginPage() {
               </div>
 
               <div>
-                <div className="flex justify-between items-center ml-1">
-                  <label className="text-[10px] font-bold text-muted uppercase tracking-widest">Password</label>
+                <div className="ml-1 flex items-center justify-between">
+                  <label className="text-muted text-[10px] font-bold tracking-widest uppercase">
+                    Password
+                  </label>
                   {isLogin && (
-                    <button 
-                      type="button" 
+                    <button
+                      type="button"
                       onClick={handleForgotPassword}
-                      className="text-[10px] text-primary hover:underline transition-all"
+                      className="text-primary text-[10px] transition-all hover:underline"
                     >
                       Forgot Password?
                     </button>
                   )}
                 </div>
                 <div className="relative mt-1">
-                  <Lock size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted pointer-events-none" />
+                  <Lock
+                    size={16}
+                    className="text-muted pointer-events-none absolute top-1/2 left-4 -translate-y-1/2"
+                  />
                   <input
                     type="password"
                     placeholder="********"
@@ -237,9 +283,13 @@ export default function LoginPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="btn-primary w-full mt-2 flex items-center justify-center gap-2 text-sm disabled:opacity-50"
+                className="btn-primary mt-2 flex w-full items-center justify-center gap-2 text-sm disabled:opacity-50"
               >
-                {loading ? <Loader2 size={18} className="animate-spin" /> : <span>{isLogin ? "Sign In" : "Create Account"}</span>}
+                {loading ? (
+                  <Loader2 size={18} className="animate-spin" />
+                ) : (
+                  <span>{isLogin ? "Sign In" : "Create Account"}</span>
+                )}
                 {!loading && <ArrowRight size={16} />}
               </button>
             </form>
@@ -247,15 +297,22 @@ export default function LoginPage() {
             <div className="mt-6 text-center">
               <button
                 onClick={() => setIsLogin(!isLogin)}
-                className="text-xs text-muted hover:text-white transition-colors"
+                className="text-muted text-xs transition-colors hover:text-gray-900"
               >
-                {isLogin ? "Don't have an account? " : "Already have an account? "}
-                <span className="text-primary font-medium underline underline-offset-4">{isLogin ? "Sign up" : "Sign in"}</span>
+                {isLogin
+                  ? "Don't have an account? "
+                  : "Already have an account? "}
+                <span className="text-primary font-medium underline underline-offset-4">
+                  {isLogin ? "Sign up" : "Sign in"}
+                </span>
               </button>
             </div>
 
-            <div className="mt-8 text-center border-t border-white/5 pt-4">
-              <Link href="/" className="text-[10px] font-medium text-muted hover:text-white transition-colors uppercase tracking-widest">
+            <div className="mt-8 border-t border-gray-200 pt-4 text-center">
+              <Link
+                href="/"
+                className="text-muted text-[10px] font-medium tracking-widest uppercase transition-colors hover:text-gray-900"
+              >
                 Back to Home
               </Link>
             </div>

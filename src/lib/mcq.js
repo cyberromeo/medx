@@ -2,7 +2,14 @@
  * MCQ Data Library — fetches from Firebase
  */
 import { db } from "./firebase";
-import { collection, query, where, orderBy, limit, getDocs } from "firebase/firestore";
+import {
+  collection,
+  query,
+  where,
+  orderBy,
+  limit,
+  getDocs,
+} from "firebase/firestore";
 
 const TESTS_COL = "mcq_tests";
 const QUESTIONS_COL = "mcq_questions";
@@ -15,6 +22,12 @@ export const MCQ_SUBCATEGORIES = [
     description: "Topic-wise MCQs for MIST 2026 preparation",
     icon: "🎯",
   },
+  {
+    slug: "pyqs",
+    title: "Previous Year Questions (PYQs)",
+    description: "Practice PYQs with Exam & Revision modes",
+    icon: "📜",
+  }
 ];
 
 export function getSubcategoryBySlug(slug) {
@@ -29,11 +42,10 @@ export async function getTestsBySubcategory(subcategorySlug) {
     const q = query(
       collection(db, TESTS_COL),
       where("subcategory", "==", subcategorySlug),
-      orderBy("createdAt", "desc"),
-      limit(100)
+      limit(100),
     );
     const snapshot = await getDocs(q);
-    return snapshot.docs.map((docSnap) => {
+    const tests = snapshot.docs.map((docSnap) => {
       const doc = docSnap.data();
       return {
         id: docSnap.id,
@@ -42,8 +54,10 @@ export async function getTestsBySubcategory(subcategorySlug) {
         description: doc.description || "",
         icon: doc.icon || "📝",
         questionCount: doc.questionCount || 0,
+        createdAt: doc.createdAt || 0,
       };
     });
+    return tests.sort((a, b) => b.createdAt - a.createdAt);
   } catch (error) {
     console.error("Error fetching tests:", error);
     return [];
@@ -58,11 +72,11 @@ export async function getTestBySlug(testSlug) {
     const q = query(
       collection(db, TESTS_COL),
       where("slug", "==", testSlug),
-      limit(1)
+      limit(1),
     );
     const snapshot = await getDocs(q);
     if (snapshot.empty) return null;
-    
+
     const docSnap = snapshot.docs[0];
     const doc = docSnap.data();
     return {
@@ -87,12 +101,11 @@ export async function getQuestionsByTestId(testId) {
   try {
     const q = query(
       collection(db, QUESTIONS_COL),
-      where("testId", "==", testId),
-      orderBy("order", "asc")
+      where("testId", "==", testId)
     );
     const snapshot = await getDocs(q);
-    
-    return snapshot.docs.map((docSnap) => {
+
+    const questions = snapshot.docs.map((docSnap) => {
       const doc = docSnap.data();
       return {
         id: doc.order,
@@ -101,8 +114,10 @@ export async function getQuestionsByTestId(testId) {
         correct: doc.correct,
         explanation: doc.explanation || "",
         image: doc.image || null,
+        order: doc.order || 0,
       };
     });
+    return questions.sort((a, b) => a.order - b.order);
   } catch (error) {
     console.error("Error fetching questions:", error);
     return [];

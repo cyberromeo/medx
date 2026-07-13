@@ -1,0 +1,32 @@
+@font-face {
+  font-family: "Helvetica";
+  src: url("https://db.onlinewebfonts.com/t/a64ff11d2c24584c767f6257e880dc65.eot");
+  src:
+    url("https://db.onlinewebfonts.com/t/a64ff11d2c24584c767f6257e880dc65.eot?#iefix")
+      format("embedded-opentype"),
+    url("https://db.onlinewebfonts.com/t/a64ff11d2c24584c767f6257e880dc65.woff2")
+      format("woff2"),
+    url("https://db.onlinewebfonts.com/t/a64ff11d2c24584c767f6257e880dc65.woff")
+      format("woff"),
+    url("https://db.onlinewebfonts.com/t/a64ff11d2c24584c767f6257e880dc65.ttf")
+      format("truetype"),
+    url("https://db.onlinewebfonts.com/t/a64ff11d2c24584c767f6257e880dc65.svg#Helvetica")
+      format("svg");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@theme {
+  --font-helvetica: "Helvetica", ui-sans-serif, system-ui, sans-serif;
+}
+
+.defi-landing {
+  font-family: var(--font-helvetica);
+  background-color: #f0f0f0;
+  color: #000;
+}
+
+.defi-landing * {
+  border-color: rgba(30, 50, 90, 0.1);
+}

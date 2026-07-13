@@ -26,22 +26,13 @@ const isIPhone = () => {
 };
 
 // Memoized Video Container to prevent re-renders of the iframe wrapper
-const VideoContainer = memo(({ validId, status }) => {
+const VideoContainer = memo(({ validId }) => {
     return (
         <div
-            className="absolute inset-0 z-10 overflow-hidden"
-            style={{ opacity: status === 'idle' ? 0 : 1, pointerEvents: status === 'idle' ? 'none' : 'auto' }}
-        >
-            {/* Scale up iframe slightly to crop out bottom YouTube branding */}
-            <div
-                id={`medx-player-${validId}`}
-                className="absolute top-0 left-0 w-full h-full"
-                style={{
-                    transform: 'scale(1.01)',
-                    transformOrigin: 'center center',
-                }}
-            />
-        </div>
+            id={`medx-player-${validId}`}
+            className="absolute top-0 left-0 w-full h-full"
+            style={{ transform: "scale(1.01)", transformOrigin: "center center" }}
+        />
     );
 });
 
@@ -78,6 +69,23 @@ const CustomPlayer = ({ videoId, thumbnail, onEnded, onPlay, title, initialTime 
     const [isIPhoneDevice, setIsIPhoneDevice] = useState(false); // iPhone only (not iPad)
     const [showUnmutePrompt, setShowUnmutePrompt] = useState(false);
     const [showActionOverlay, setShowActionOverlay] = useState(false); // Temporary overlay during seek/resume on iOS
+
+    const hideTimeoutRef = useRef(null);
+
+    const handleMouseMove = () => {
+        setIsHovering(true);
+        if (hideTimeoutRef.current) clearTimeout(hideTimeoutRef.current);
+        hideTimeoutRef.current = setTimeout(() => {
+            setIsHovering(false);
+        }, 5000);
+    };
+
+    const handleMouseLeave = () => {
+        if (hideTimeoutRef.current) clearTimeout(hideTimeoutRef.current);
+        hideTimeoutRef.current = setTimeout(() => {
+            setIsHovering(false);
+        }, 5000);
+    };
 
     // 1. Load YouTube IFrame API
     useEffect(() => {
@@ -174,9 +182,9 @@ const CustomPlayer = ({ videoId, thumbnail, onEnded, onPlay, title, initialTime 
         };
     }, []);
 
-    // 2. Initialize Player ON MOUNT (Pre-load)
+    // 2. Initialize Player ONLY when user clicks Play
     useEffect(() => {
-        if (validId) {
+        if (validId && status !== "idle") {
             const iphoneDevice = isIPhone(); // Only iPhones need native fullscreen
             const initPlayer = () => {
                 // Double check if the element exists in the DOM yet
@@ -191,10 +199,13 @@ const CustomPlayer = ({ videoId, thumbnail, onEnded, onPlay, title, initialTime 
 
                 if (window.YT && window.YT.Player) {
                     requestAnimationFrame(() => {
+                        // If player already exists, don't recreate
+                        if (playerRef.current) return;
+                        
                         playerRef.current = new window.YT.Player(elementId, {
                             videoId: validId,
                             playerVars: {
-                                autoplay: 0, // Manual play
+                                autoplay: 1, // Auto play since user already clicked!
                                 mute: 0,
                                 controls: 0,
                                 disablekb: 1,
@@ -222,16 +233,10 @@ const CustomPlayer = ({ videoId, thumbnail, onEnded, onPlay, title, initialTime 
                                         // duration might be 0 yet, handle safely
                                         const d = event.target.getDuration();
                                         if (d > 0) setProgress((initialTime / d) * 100);
-
-                                        // If resuming, usually we play automatically
-                                        // But browser policies might block unmuted autoplay
-                                        shouldPlayRef.current = true;
                                     }
 
-                                    // If user already clicked play or we are resuming
-                                    if (shouldPlayRef.current) {
-                                        event.target.playVideo();
-                                    }
+                                    // Ensure it plays
+                                    event.target.playVideo();
                                 },
                                 onStateChange: (event) => {
                                     if (event.data === window.YT.PlayerState.PLAYING) {
@@ -257,7 +262,7 @@ const CustomPlayer = ({ videoId, thumbnail, onEnded, onPlay, title, initialTime 
 
             setTimeout(initPlayer, 0);
         }
-    }, [validId, initialTime]);
+    }, [validId, initialTime, status]);
 
     // 3. Progress Loop
     useEffect(() => {
@@ -292,13 +297,16 @@ const CustomPlayer = ({ videoId, thumbnail, onEnded, onPlay, title, initialTime 
         }
     };
 
-    // Hide splash screen after video is playing for a bit
+    // Hide splash screen unconditionally after 2 seconds
     useEffect(() => {
         let timer;
-        if (status === "playing" && showSplash) {
+        if (showSplash) {
             timer = setTimeout(() => {
                 setShowSplash(false);
-            }, 4000); // Hide after 4 seconds of playback
+            }, 2000);
+        }
+        if (status === "playing" && showSplash) {
+            setShowSplash(false);
         }
         return () => clearTimeout(timer);
     }, [status, showSplash]);
@@ -401,8 +409,8 @@ const CustomPlayer = ({ videoId, thumbnail, onEnded, onPlay, title, initialTime 
         <div
             ref={containerRef}
             className="group relative w-full h-full bg-black overflow-hidden rounded-2xl shadow-2xl border border-white/10 select-none"
-            onMouseEnter={() => setIsHovering(true)}
-            onMouseLeave={() => setIsHovering(false)}
+            onMouseMove={handleMouseMove}
+            onMouseLeave={handleMouseLeave}
         >
             {/* ===== SPLASH SCREEN - Covers YouTube branding during initial load ===== */}
             {showSplash && (
@@ -416,20 +424,18 @@ const CustomPlayer = ({ videoId, thumbnail, onEnded, onPlay, title, initialTime 
             )}
 
             {/* ===== YOUTUBE IFRAME CONTAINER ===== */}
-            <VideoContainer validId={validId} status={status} />
+            <div className="absolute inset-0 z-10 overflow-hidden">
+                <VideoContainer validId={validId} />
+            </div>
 
             {/* ===== INTERACTION SHIELD ===== */}
             {/* Blocks all mouse/touch events on YouTube iframe and hides branding */}
-            {status !== "idle" && (
+            {(status === "playing" || status === "paused") && (
                 <div
-                    className="absolute inset-0 z-30 cursor-pointer touch-none"
+                    className="absolute inset-0 z-30 touch-none cursor-pointer"
                     onClick={togglePlay}
-                    style={{ WebkitTapHighlightColor: 'transparent' }}
-                >
-                    {/* Gradient overlays - fade with controls */}
-                    <div className={`absolute top-0 left-0 right-0 h-24 bg-gradient-to-b from-black via-black/40 to-transparent pointer-events-none transition-opacity duration-300 ${isHovering || status === "paused" ? "opacity-100" : "opacity-0"}`} />
-                    <div className={`absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-black via-black/40 to-transparent pointer-events-none transition-opacity duration-300 ${isHovering || status === "paused" ? "opacity-100" : "opacity-0"}`} />
-                </div>
+                    style={{ WebkitTapHighlightColor: "transparent" }}
+                />
             )}
 
             {/* ===== iOS ACTION OVERLAY - shows during seek/resume to hide YouTube elements ===== */}
@@ -476,95 +482,108 @@ const CustomPlayer = ({ videoId, thumbnail, onEnded, onPlay, title, initialTime 
 
             {/* ===== LOADING SPINNER ===== */}
             {status === "loading" && (
-                <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/90">
-                    <Loader2 className="w-12 h-12 text-primary animate-spin" />
+                <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/40 pointer-events-none">
+                    <Loader2 className="w-12 h-12 text-primary animate-spin drop-shadow-xl" />
                 </div>
             )}
 
             {/* ===== CUSTOM CONTROLS ===== */}
             {(status === "playing" || status === "paused") && (
-                <div
-                    className={`absolute inset-x-0 bottom-0 z-50 p-4 transition-opacity duration-300 ${isHovering || status === "paused" ? "opacity-100" : "opacity-0"}`}
-                >
-                    {/* Progress Bar */}
-                    <input
-                        type="range"
-                        min="0"
-                        max="100"
-                        value={progress || 0}
-                        onChange={handleSeek}
-                        className="w-full h-1 bg-white/20 rounded-lg appearance-none cursor-pointer mb-3
-                            [&::-webkit-slider-thumb]:appearance-none 
-                            [&::-webkit-slider-thumb]:w-3 
-                            [&::-webkit-slider-thumb]:h-3 
-                            [&::-webkit-slider-thumb]:bg-[var(--primary)] 
-                            [&::-webkit-slider-thumb]:rounded-full 
-                            [&::-webkit-slider-thumb]:shadow-lg
-                            hover:[&::-webkit-slider-thumb]:scale-125 
-                            transition-all"
-                        style={{
-                            background: `linear-gradient(to right, var(--primary) ${progress}%, rgba(255,255,255,0.2) ${progress}%)`
-                        }}
-                    />
-
-                    <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-4">
-                            {/* Play/Pause */}
-                            <button onClick={togglePlay} className="text-white hover:text-primary transition-colors">
-                                {status === "playing" ? <Pause size={24} fill="currentColor" /> : <Play size={24} fill="currentColor" />}
-                            </button>
-
-                            {/* Time */}
-                            <span className="text-xs font-mono text-gray-400">
-                                {formatTime(currentTime)} / {formatTime(duration)}
+                <>
+                    {/* Top White Bar to hide YouTube Title */}
+                    <div
+                        className={`absolute inset-x-0 top-0 z-50 flex h-16 items-center px-6 bg-white/95 backdrop-blur-md shadow-sm border-b border-gray-200 transition-opacity duration-300 pointer-events-none ${isHovering || status === "paused" ? "opacity-100" : "opacity-0"}`}
+                    >
+                        <span className="font-semibold text-gray-900 truncate pr-4">{title}</span>
+                        <div className="ml-auto flex items-center">
+                            <span className="px-2 py-1 bg-gray-100 text-gray-600 rounded-lg text-[10px] font-bold tracking-widest uppercase">
+                                MedX
                             </span>
                         </div>
+                    </div>
 
-                        {/* Branding + Controls */}
-                        <div className="flex items-center gap-3">
-                            {/* Volume Slider */}
-                            <div className="flex items-center gap-2 group/vol">
-                                <button onClick={toggleMute} className="text-gray-300 hover:text-white transition-colors">
-                                    {isMuted || volume === 0 ? <VolumeX size={18} /> : <Volume2 size={18} />}
+                    {/* Bottom White Bar Controls */}
+                    <div
+                        className={`absolute inset-x-0 bottom-0 z-50 px-6 py-4 bg-white/95 backdrop-blur-md shadow-lg border-t border-gray-200 transition-opacity duration-300 ${isHovering || status === "paused" ? "opacity-100" : "opacity-0"}`}
+                    >
+                        {/* Progress Bar */}
+                        <input
+                            type="range"
+                            min="0"
+                            max="100"
+                            value={progress || 0}
+                            onChange={handleSeek}
+                            className="w-full h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer mb-3
+                                [&::-webkit-slider-thumb]:appearance-none 
+                                [&::-webkit-slider-thumb]:w-4 
+                                [&::-webkit-slider-thumb]:h-4 
+                                [&::-webkit-slider-thumb]:bg-blue-600 
+                                [&::-webkit-slider-thumb]:rounded-full 
+                                [&::-webkit-slider-thumb]:shadow-md
+                                hover:[&::-webkit-slider-thumb]:scale-110 
+                                transition-all"
+                            style={{
+                                background: `linear-gradient(to right, #2563eb ${progress}%, #e5e7eb ${progress}%)`
+                            }}
+                        />
+
+                        <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-5">
+                                {/* Play/Pause */}
+                                <button onClick={togglePlay} className="text-gray-900 hover:text-blue-600 transition-colors drop-shadow-sm">
+                                    {status === "playing" ? <Pause size={22} fill="currentColor" /> : <Play size={22} fill="currentColor" />}
                                 </button>
-                                <input
-                                    type="range"
-                                    min="0"
-                                    max="100"
-                                    value={volume}
-                                    onChange={handleVolume}
-                                    className="w-16 h-1 bg-white/20 rounded-lg appearance-none cursor-pointer
-                                        [&::-webkit-slider-thumb]:appearance-none 
-                                        [&::-webkit-slider-thumb]:w-2 
-                                        [&::-webkit-slider-thumb]:h-2 
-                                        [&::-webkit-slider-thumb]:bg-white 
-                                        [&::-webkit-slider-thumb]:rounded-full"
-                                />
+
+                                {/* Time */}
+                                <span className="text-xs font-semibold font-mono text-gray-600">
+                                    {formatTime(currentTime)} / {formatTime(duration)}
+                                </span>
                             </div>
 
-                            {/* Playback Speed */}
-                            <button
-                                onClick={cycleSpeed}
-                                className="text-gray-300 hover:text-white transition-colors text-xs font-mono font-bold min-w-[40px] text-center px-1.5 py-0.5 rounded border border-white/10 hover:border-white/30 bg-white/5"
-                                title="Playback Speed"
-                            >
-                                {playbackSpeed}x
-                            </button>
+                            {/* Controls */}
+                            <div className="flex items-center gap-4">
+                                {/* Volume Slider */}
+                                <div className="flex items-center gap-2 group/vol">
+                                    <button onClick={toggleMute} className="text-gray-600 hover:text-gray-900 transition-colors">
+                                        {isMuted || volume === 0 ? <VolumeX size={18} /> : <Volume2 size={18} />}
+                                    </button>
+                                    <input
+                                        type="range"
+                                        min="0"
+                                        max="100"
+                                        value={volume}
+                                        onChange={handleVolume}
+                                        className="w-16 h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer
+                                            [&::-webkit-slider-thumb]:appearance-none 
+                                            [&::-webkit-slider-thumb]:w-3 
+                                            [&::-webkit-slider-thumb]:h-3 
+                                            [&::-webkit-slider-thumb]:bg-gray-600 
+                                            [&::-webkit-slider-thumb]:rounded-full"
+                                        style={{
+                                            background: `linear-gradient(to right, #4b5563 ${volume}%, #e5e7eb ${volume}%)`
+                                        }}
+                                    />
+                                </div>
 
-                            {/* Fullscreen - hidden on iPhone only, iPads support it */}
-                            {!isIPhoneDevice && (
-                                <button onClick={toggleFullscreen} className="text-gray-300 hover:text-white transition-colors">
-                                    <Maximize size={18} />
+                                {/* Playback Speed */}
+                                <button
+                                    onClick={cycleSpeed}
+                                    className="text-gray-700 hover:text-blue-600 transition-colors text-xs font-mono font-bold min-w-[40px] text-center px-1.5 py-1 rounded-md border border-gray-200 hover:border-blue-200 bg-gray-50"
+                                    title="Playback Speed"
+                                >
+                                    {playbackSpeed}x
                                 </button>
-                            )}
 
-                            {/* Branding */}
-                            <div className="px-2 py-0.5 rounded border border-primary-soft bg-primary-soft text-[10px] text-primary uppercase font-bold tracking-widest ml-2">
-                                MedX
+                                {/* Fullscreen - hidden on iPhone only, iPads support it */}
+                                {!isIPhoneDevice && (
+                                    <button onClick={toggleFullscreen} className="text-gray-600 hover:text-gray-900 transition-colors">
+                                        <Maximize size={18} />
+                                    </button>
+                                )}
                             </div>
                         </div>
                     </div>
-                </div>
+                </>
             )}
         </div>
     );

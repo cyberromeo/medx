@@ -34,19 +34,19 @@ export default function ChatXOverlay({ open, onClose }) {
         >
           <button
             onClick={onClose}
-            className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+            className="absolute inset-0 bg-gray-900/20 backdrop-blur-sm"
             aria-label="Close discuss overlay"
           />
           <motion.div
-            initial={{ y: 30, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: 30, opacity: 0 }}
+            initial={{ x: -50, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            exit={{ x: -50, opacity: 0 }}
             transition={{ type: "spring", stiffness: 240, damping: 26 }}
-            className="absolute left-3 right-3 bottom-3 md:left-auto md:right-6 md:bottom-auto md:top-20"
+            className="absolute bottom-3 left-3 right-3 md:bottom-6 md:left-[130px] md:right-auto md:top-auto"
           >
             <ChatXPanel
               onClose={onClose}
-              className="h-[72vh] md:h-[70vh] w-full md:w-[420px] rounded-3xl"
+              className="h-[72vh] w-full rounded-3xl md:h-[80vh] md:w-[420px]"
             />
           </motion.div>
         </motion.div>

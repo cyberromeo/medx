@@ -1,0 +1,26 @@
+@import url("https://db.onlinewebfonts.com/c/060e116a70e3096c52db16f61aaab194?family=Sofia+Pro+Regular");
+
+.talvex-dashboard * {
+  font-family: "Sofia Pro Medium", "Sofia Pro Regular", sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Custom scrollbars specific to Talvex */
+.talvex-dashboard {
+  scrollbar-width: thin;
+  scrollbar-color: #e5e5e5 transparent;
+}
+
+.talvex-dashboard::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.talvex-dashboard::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.talvex-dashboard::-webkit-scrollbar-thumb {
+  background: #e5e5e5;
+  border-radius: 10px;
+}

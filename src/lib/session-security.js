@@ -7,10 +7,14 @@ export const activateSingleDeviceSession = async (userId) => {
 
   try {
     const userRef = doc(db, "users", userId);
-    await setDoc(userRef, {
-      activeSessionId: sessionId,
-      activeSessionUpdatedAt: new Date().toISOString()
-    }, { merge: true });
+    await setDoc(
+      userRef,
+      {
+        activeSessionId: sessionId,
+        activeSessionUpdatedAt: new Date().toISOString(),
+      },
+      { merge: true },
+    );
   } catch (error) {
     console.warn("Failed to set active session:", error);
   }

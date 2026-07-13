@@ -44,7 +44,7 @@ export default function SessionGuard() {
       if (redirectingRef.current) return;
       redirectingRef.current = true;
       clearProgressCache();
-      
+
       signOut(auth)
         .catch(() => {})
         .finally(() => {
@@ -54,7 +54,7 @@ export default function SessionGuard() {
 
     const validateSession = () => {
       if (checkingRef.current || !auth.currentUser) return;
-      
+
       checkingRef.current = true;
       const localSessionId = localStorage.getItem("sessionId");
 

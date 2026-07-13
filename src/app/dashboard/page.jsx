@@ -9,9 +9,10 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Header from "@/components/Header";
 import { motion, AnimatePresence } from "framer-motion";
-import { Trophy, Flame, Target, Star, Zap, ArrowRight, X, ChevronLeft, Award } from "lucide-react";
+import { Trophy, Flame, Target, Star, Zap, ArrowRight, X, ChevronLeft, Award, Calendar, Clock, Timer } from "lucide-react";
 import SeriesCard from "@/components/SeriesCard";
 import { getProgress, calculateLevel, getXpToNextLevel, getLevelTitle, claimDailyLoginXp } from "@/lib/progress";
+import { getTrackerData, SUBJECTS_LIST } from "@/lib/tracker";
 
 // Animated number counter hook
 function useAnimatedCounter(target, duration = 1200) {
@@ -29,7 +30,6 @@ function useAnimatedCounter(target, duration = 1200) {
     const step = (now) => {
       const elapsed = now - startTime;
       const progress = Math.min(elapsed / duration, 1);
-      // ease-out cubic
       const eased = 1 - Math.pow(1 - progress, 3);
       setCount(Math.round(start + diff * eased));
       if (progress < 1) requestAnimationFrame(step);
@@ -40,7 +40,7 @@ function useAnimatedCounter(target, duration = 1200) {
   return count;
 }
 
-// FMGE Countdown Widget
+// Light theme FMGE Countdown Widget
 function FmgeCountdown() {
   const TARGET = new Date("2027-01-09T09:00:00+05:30").getTime();
   const [timeLeft, setTimeLeft] = useState(null);
@@ -62,10 +62,10 @@ function FmgeCountdown() {
   if (!timeLeft) return null;
 
   const units = [
-    { label: "Days", value: timeLeft.d },
-    { label: "Hrs", value: timeLeft.h },
-    { label: "Min", value: timeLeft.m },
-    { label: "Sec", value: timeLeft.s },
+    { label: "Days", value: timeLeft.d, icon: Calendar },
+    { label: "Hrs", value: timeLeft.h, icon: Clock },
+    { label: "Min", value: timeLeft.m, icon: Timer },
+    { label: "Sec", value: timeLeft.s, icon: Zap },
   ];
 
   return (
@@ -73,29 +73,32 @@ function FmgeCountdown() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.15 }}
-      className="mb-8 sm:mb-10"
+      className="max-w-md mb-6"
     >
-      <div className="countdown-shell p-5 sm:p-6">
-        <div className="relative z-10">
-          <div className="text-center mb-5">
-            <h2 className="text-xl sm:text-2xl font-black font-display tracking-wide text-gradient">
+      <div className="bg-white/60 backdrop-blur-md border border-[#898989]/20 rounded-[1.5rem] p-6 shadow-sm overflow-hidden relative">
+        <div className="absolute top-0 left-0 w-1 h-full bg-blue-500" />
+        <div className="absolute -top-24 -right-24 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
+        
+        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div>
+            <h2 className="text-xl font-bold text-[#303030] tracking-tight">
               FMGE JAN 2027
             </h2>
-            <p className="text-[11px] text-gray-500 mt-1 tracking-widest uppercase">Jan 9 - 9:00 AM IST</p>
+            <p className="text-xs text-[#898989] font-medium mt-1">Jan 9 - 9:00 AM IST</p>
           </div>
 
-          <div className="flex items-center justify-center gap-2 sm:gap-3">
+          <div className="flex items-center gap-4 sm:gap-6">
             {units.map((u, i) => (
-              <div key={u.label} className="flex items-center gap-2 sm:gap-3">
-                <div className="text-center">
-                  <div className="countdown-unit">
-                    <p className={`countdown-value tabular-nums ${u.label === "Sec" ? "animate-pulse" : ""}`}>
-                      {String(u.value).padStart(2, "0")}
-                    </p>
-                  </div>
-                  <p className="countdown-label">{u.label}</p>
+              <div key={u.label} className="flex flex-col items-center">
+                <div className="bg-white border border-[#898989]/10 shadow-sm rounded-xl w-12 h-14 sm:w-14 sm:h-16 flex flex-col items-center justify-center mb-1">
+                  <p className={`text-xl sm:text-2xl font-bold text-[#303030] tabular-nums ${u.label === "Sec" ? "animate-pulse" : ""}`}>
+                    {String(u.value).padStart(2, "0")}
+                  </p>
                 </div>
-                {i < units.length - 1 && <span className="text-xl sm:text-2xl font-bold -mt-4 sm:-mt-5 text-primary/40">:</span>}
+                <div className="flex items-center gap-1 text-[#898989]">
+                  <u.icon size={10} />
+                  <p className="text-[10px] font-semibold uppercase tracking-wider">{u.label}</p>
+                </div>
               </div>
             ))}
           </div>
@@ -104,23 +107,14 @@ function FmgeCountdown() {
     </motion.div>
   );
 }
-
 export default function Dashboard() {
   const [user, setUser] = useState(null);
   const [videos, setVideos] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [selectedCategory, setSelectedCategory] = useState(null);
   const [progress, setProgress] = useState({ watched: [], xp: 0, streak: 0, lastWatch: null, todayXp: 0 });
+  const [trackerProgress, setTrackerProgress] = useState(0);
   const router = useRouter();
 
-  const MIST_SUBJECTS = [
-    "Anatomy", "Physiology", "Biochemistry", "Pathology",
-    "Microbiology", "Pharmacology", "Forensic medicine",
-    "Community Medicine (PSM)", "General Medicine", "General Surgery",
-    "Obstetrics & Gynecology (OBG)", "Pediatrics", "Ophthalmology",
-    "Otorhinolaryngology (ENT)", "Orthopedics", "Anesthesiology",
-    "Dermatology & Venereology", "Psychiatry", "Radiodiagnosis (Radiology)"
-  ];
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
@@ -130,6 +124,22 @@ export default function Dashboard() {
         await claimDailyLoginXp(currentUser.uid);
         const userProgress = await getProgress(currentUser.uid);
         setProgress(userProgress);
+
+        const trackerData = await getTrackerData(currentUser.uid);
+        let count = 0;
+        SUBJECTS_LIST.forEach(sub => {
+          if (trackerData.subjects[sub]?.Videos) count++;
+          if (trackerData.subjects[sub]?.R1) count++;
+          if (trackerData.subjects[sub]?.R2) count++;
+          if (trackerData.subjects[sub]?.PYQs) count++;
+          if (trackerData.subjects[sub]?.RevisionVideos) count++;
+          if (trackerData.subjects[sub]?.Qbank) count++;
+        });
+        Object.keys(trackerData.gts).forEach(gt => {
+          if (trackerData.gts[gt]) count++;
+        });
+        setTrackerProgress(Math.round((count / 121) * 100) || 0);
+
         setLoading(false);
       } else {
         router.push("/login");
@@ -170,331 +180,127 @@ export default function Dashboard() {
 
   // Animated counters
   const animatedXp = useAnimatedCounter(progress.xp);
+  const animatedLevelXp = useAnimatedCounter(xpProgress.current);
   const animatedTodayXp = useAnimatedCounter(progress.todayXp);
   const animatedWatched = useAnimatedCounter(totalWatched);
   const animatedStreak = useAnimatedCounter(progress.streak);
 
   if (loading) {
     return (
-      <div className="min-h-screen">
-        <Header />
-        <div className="halo-bg" />
-        <div className="grid-bg" />
+      <div className="min-h-screen bg-[#f0f0f0]">
         <div className="container mx-auto px-6 pt-32">
           <div className="mb-12 space-y-3">
-            <div className="h-8 w-48 bg-white/5 rounded-lg animate-pulse" />
-            <div className="h-4 w-64 bg-white/5 rounded animate-pulse" />
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
-            <div className="h-44 bg-white/5 rounded-3xl animate-pulse" />
-            <div className="h-44 bg-white/5 rounded-3xl animate-pulse" />
+            <div className="h-8 w-48 bg-[#898989]/20 rounded-lg animate-pulse" />
+            <div className="h-4 w-64 bg-[#898989]/10 rounded animate-pulse" />
           </div>
         </div>
       </div>
     );
   }
 
-  const container = {
-    hidden: { opacity: 0 },
-    show: { opacity: 1, transition: { staggerChildren: 0.03 } }
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return "Good Morning";
+    if (hour < 18) return "Good Afternoon";
+    return "Good Evening";
   };
 
-  const item = {
-    hidden: { opacity: 0, y: 15 },
-    show: { opacity: 1, y: 0 }
-  };
-
-  const tones = {
-    MIST: { accent: "#2dd4bf", soft: "rgba(45, 212, 191, 0.2)" },
-    PYQs: { accent: "#f0f9ff", soft: "rgba(240, 249, 255, 0.16)" },
-    MCQs: { accent: "#60a5fa", soft: "rgba(96, 165, 250, 0.2)" },
-  };
-
-  const renderCategoryCard = (name, delay = 0, isComingSoon = false) => {
-    const categoryProgress = getCategoryProgress(name);
-    const watched = countWatched(name);
-    const total = countVideos(name);
-    const tone = tones[name] || tones.MIST;
-
-    return (
-      <motion.div
-        key={name}
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay }}
-        className={`panel card-hover-lift rounded-3xl p-6 relative overflow-hidden ${isComingSoon ? "opacity-80" : ""}`}
-      >
-        <div className="absolute -top-16 -right-16 w-40 h-40 rounded-full blur-3xl" style={{ background: tone.soft }} />
-
-        <div className="flex items-center gap-4 mb-6 relative z-10">
-          <div
-            className="w-14 h-14 rounded-2xl flex items-center justify-center text-2xl font-display font-bold text-white"
-            style={{ background: `linear-gradient(135deg, ${tone.accent}, #020617)` }}
-          >
-            {name.charAt(0)}
-          </div>
-          <div className="flex-1">
-            <div className="flex items-center gap-2">
-              <h2 className="text-2xl font-bold font-display">{name}</h2>
-              {isComingSoon && (
-                <span className="chip">Soon</span>
-              )}
-            </div>
-            <p className="text-sm text-muted">
-              {isComingSoon ? "Archive coming soon" : `${watched}/${total} videos - 19 subjects`}
-            </p>
-          </div>
-        </div>
-
-        {!isComingSoon && (
-          <div className="mb-6 relative z-10">
-            <div className="flex justify-between items-end mb-2">
-              <span className="text-xs font-bold text-muted uppercase tracking-wider">Course Progress</span>
-              <span className="text-xs font-bold text-white">{categoryProgress}%</span>
-            </div>
-            <div className="progress-track">
-              <motion.div
-                initial={{ width: 0 }}
-                animate={{ width: `${categoryProgress}%` }}
-                transition={{ duration: 0.8, delay: 0.2 }}
-                className="progress-fill"
-              />
-            </div>
-          </div>
-        )}
-
-        {isComingSoon && (
-          <div className="mb-6 h-10 flex items-center">
-            <p className="text-xs text-muted italic">Previous year questions vault unlocking soon...</p>
-          </div>
-        )}
-
-        <button
-          onClick={() => !isComingSoon && setSelectedCategory(name)}
-          disabled={isComingSoon}
-          className={`w-full py-3.5 rounded-xl font-semibold text-sm flex items-center justify-center gap-2 transition-all active:scale-[0.98] ${isComingSoon ? "btn-ghost cursor-not-allowed opacity-60" : "btn-outline"}`}
-        >
-          <span>{isComingSoon ? "Notify Me" : `Open ${name}`}</span>
-          {!isComingSoon && <ArrowRight size={16} />}
-        </button>
-      </motion.div>
-    );
-  };
 
   return (
-    <main className="min-h-screen pb-32">
-      <Header />
-      <div className="halo-bg" />
-      <div className="grid-bg" />
-
-      <div className="container mx-auto px-4 sm:px-6 pt-24 sm:pt-32">
+    <div className="p-6 sm:p-10">
+      <div className="container mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           className="mb-8"
         >
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-            <div className="panel card-hover-lift rounded-3xl p-6 lg:col-span-2">
-              <div className="flex items-start justify-between mb-1">
-                <h1 className="font-display text-2xl sm:text-3xl font-bold">
-                  Welcome, <span className="text-gradient">Dr. {user?.displayName?.split(" ")[0] || "Learner"}</span>
-                </h1>
-                <div className="level-badge">
-                  <Award size={12} />
-                  {levelTitle}
-                </div>
-              </div>
-              <p className="text-muted text-sm mt-1">Continue your medical journey</p>
-              <div className="kpi-pill mt-3">{overallProgress}% overall completion</div>
+          <div className="max-w-4xl">
+            <h1 className="text-4xl sm:text-5xl font-extrabold text-[#303030] tracking-tight mb-2">
+              {getGreeting()},{" "}
+              <span className="text-blue-600">Dr. {user?.displayName?.split(" ")[0] || "Learner"}</span>
+            </h1>
+            <p className="text-[#898989] text-lg font-medium">Continue your FMGE journey</p>
+          </div>
+        </motion.div>
 
-              <div className="mt-5">
-                <div className="flex items-center justify-between text-xs text-muted mb-2">
-                  <span className="flex items-center gap-1.5">
-                    Level {level}
-                    <span className="text-primary/60">-</span>
-                    <span className="text-primary/80">{levelTitle}</span>
-                  </span>
-                  <span>{xpProgress.current}/{xpProgress.needed} XP</span>
+        {/* Level and XP Widget */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.05 }}
+          className="max-w-md mb-6"
+        >
+          <div className="bg-white/60 backdrop-blur-md border border-[#898989]/20 rounded-3xl p-6 shadow-sm relative overflow-hidden">
+            <div className="absolute top-0 left-0 w-1 h-full bg-amber-500" />
+            <div className="flex items-center justify-between mb-5">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-2xl bg-amber-50 text-amber-500 flex items-center justify-center">
+                  <Award size={24} />
                 </div>
-                <div className="progress-track">
-                  <motion.div
-                    initial={{ width: 0 }}
-                    animate={{ width: `${(xpProgress.current / xpProgress.needed) * 100}%` }}
-                    className="progress-fill"
-                  />
+                <div>
+                  <h2 className="text-xl font-bold text-[#303030]">Level {level}: {levelTitle}</h2>
+                  <p className="text-sm font-medium text-[#898989]">Current Rank Status</p>
                 </div>
               </div>
             </div>
 
-            <Link href="/leaderboard" className="panel card-hover-lift rounded-3xl p-6 flex items-center gap-4">
-              <div className="w-12 h-12 rounded-2xl bg-secondary-soft flex items-center justify-center">
-                <Trophy className="text-secondary" size={24} />
-              </div>
-              <div className="flex-1">
-                <p className="text-sm text-muted">Leaderboard</p>
-                <p className="text-lg font-bold">View ranking</p>
-              </div>
-              <ArrowRight className="text-muted" size={18} />
-            </Link>
+            <div className="flex items-center justify-between text-sm font-bold text-[#898989] mb-3">
+              <span className="flex items-center gap-1.5"><Star size={16} className="text-amber-500"/> Level XP</span>
+              <span className="text-[#303030]">{animatedLevelXp.toLocaleString()} / {xpProgress.needed.toLocaleString()}</span>
+            </div>
+            <div className="w-full h-3 bg-[#898989]/10 rounded-full overflow-hidden">
+              <motion.div
+                initial={{ width: 0 }}
+                animate={{ width: `${(xpProgress.current / xpProgress.needed) * 100}%` }}
+                transition={{ duration: 1, ease: "easeOut" }}
+                className="h-full bg-gradient-to-r from-amber-400 to-orange-400 rounded-full"
+              />
+            </div>
           </div>
         </motion.div>
 
-        {/* FMGE Countdown Widget */}
-        <FmgeCountdown />
-
+        {/* Tracker Widget */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="grid grid-cols-2 gap-3 sm:grid-cols-2 lg:grid-cols-4 sm:gap-4 mb-8 sm:mb-10"
+          className="max-w-md"
         >
-          <div className="stat-card xp-glow">
-            <div className="flex items-center gap-3 mb-2">
-              <div className="w-8 h-8 rounded-lg bg-secondary-soft flex items-center justify-center">
-                <Star className="text-secondary" size={16} />
+          <Link href="/tracker">
+            <div className="bg-white/60 backdrop-blur-md border border-[#898989]/20 rounded-3xl p-6 shadow-sm hover:shadow-md transition-all group relative overflow-hidden">
+              <div className="absolute top-0 left-0 w-1 h-full bg-blue-500" />
+              <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center">
+                    <Target size={24} />
+                  </div>
+                  <div>
+                    <h2 className="text-xl font-bold text-[#303030]">Syllabus Tracker</h2>
+                    <p className="text-sm font-medium text-[#898989]">Your FMGE progress</p>
+                  </div>
+                </div>
+                <ArrowRight className="text-[#898989] group-hover:translate-x-1 group-hover:text-blue-500 transition-all" size={24} />
               </div>
-              <span className="text-xs text-muted uppercase tracking-wider">Total XP</span>
-            </div>
-            <p className="text-2xl font-bold text-white metric-value">{animatedXp.toLocaleString()}</p>
-          </div>
 
-          <div className="stat-card">
-            <div className="flex items-center gap-3 mb-2">
-              <div className="w-8 h-8 rounded-lg bg-primary-soft flex items-center justify-center">
-                <Target className="text-primary" size={16} />
+              <div className="flex items-center justify-between text-sm font-bold text-[#898989] mb-3">
+                <span>Overall Completion</span>
+                <span className="text-blue-600">{trackerProgress}%</span>
               </div>
-              <span className="text-xs text-muted uppercase tracking-wider">Watched</span>
-            </div>
-            <div className="flex items-end gap-2">
-              <p className="text-2xl font-bold text-white metric-value">{animatedWatched}</p>
-              <span className="text-sm text-muted mb-1">/{totalVideos}</span>
-            </div>
-          </div>
-
-          <div className="stat-card">
-            <div className="flex items-center gap-3 mb-2">
-              <div className="w-8 h-8 rounded-lg bg-accent-soft flex items-center justify-center">
-                <Flame className="text-accent" size={16} />
+              <div className="w-full h-3 bg-[#898989]/10 rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-gradient-to-r from-blue-500 to-teal-400 rounded-full transition-all duration-1000 ease-out"
+                  style={{ width: `${trackerProgress}%` }}
+                />
               </div>
-              <span className="text-xs text-muted uppercase tracking-wider">Streak</span>
             </div>
-            <div className="flex items-end gap-2">
-              <p className="text-2xl font-bold text-white metric-value">{animatedStreak}</p>
-              <span className="text-sm text-muted mb-1">days</span>
-            </div>
-          </div>
-
-          <div className="stat-card">
-            <div className="flex items-center gap-3 mb-2">
-              <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center">
-                <Zap className="text-primary" size={16} />
-              </div>
-              <span className="text-xs text-muted uppercase tracking-wider">Today</span>
-            </div>
-            <div className="flex items-end gap-2">
-              <p className="text-2xl font-bold text-white metric-value today-xp-pulse">{animatedTodayXp}</p>
-              <span className="text-sm text-muted mb-1">XP</span>
-            </div>
-          </div>
+          </Link>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 max-w-5xl mx-auto mb-12">
-          {renderCategoryCard("MIST", 0.2)}
-
-          {/* MCQs Card */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-            className="panel card-hover-lift rounded-3xl p-6 relative overflow-hidden"
-          >
-            <div className="absolute -top-16 -right-16 w-40 h-40 rounded-full blur-3xl" style={{ background: "rgba(96, 165, 250, 0.2)" }} />
-            <div className="flex items-center gap-4 mb-6 relative z-10">
-              <div
-                className="w-14 h-14 rounded-2xl flex items-center justify-center text-white"
-                style={{ background: "linear-gradient(135deg, #60a5fa, #2dd4bf)" }}
-              >
-                <ClipboardList size={26} />
-              </div>
-              <div className="flex-1">
-                <h2 className="text-2xl font-bold font-display">MCQs</h2>
-                <p className="text-sm text-muted">MCQ Archive</p>
-              </div>
-            </div>
-            <div className="mb-6 h-10 flex items-center">
-              <p className="text-xs text-muted">Practice MCQs with Exam & Revision modes</p>
-            </div>
-            <Link
-              href="/mcq"
-              className="w-full py-3.5 rounded-xl font-semibold text-sm flex items-center justify-center gap-2 transition-all active:scale-[0.98] btn-outline"
-            >
-              <span>Open MCQs</span>
-              <ArrowRight size={16} />
-            </Link>
-          </motion.div>
-
-          {renderCategoryCard("PYQs", 0.4, true)}
-        </div>
+        {/* FMGE Countdown Widget */}
+        <FmgeCountdown />
       </div>
 
-      <AnimatePresence>
-        {selectedCategory && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 bg-black/95 backdrop-blur-2xl overflow-y-auto"
-          >
-            <div className="sticky top-0 z-10 bg-black/80 backdrop-blur-xl border-b border-white/5">
-              <div className="container mx-auto px-4 py-4 flex items-center gap-4">
-                <button
-                  onClick={() => setSelectedCategory(null)}
-                  className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center hover:bg-white/10 transition-colors"
-                >
-                  <ChevronLeft size={20} className="text-white" />
-                </button>
-                <div className="flex-1">
-                  <h1 className="text-lg font-bold text-white">{selectedCategory} Subjects</h1>
-                  <p className="text-xs text-muted">19 subjects - {countVideos(selectedCategory)} videos</p>
-                </div>
-                <button
-                  onClick={() => setSelectedCategory(null)}
-                  className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center hover:bg-white/10 transition-colors md:hidden"
-                >
-                  <X size={20} className="text-white" />
-                </button>
-              </div>
-            </div>
 
-            <div className="container mx-auto px-4 pt-6 pb-32">
-              <motion.div
-                variants={container}
-                initial="hidden"
-                animate="show"
-                className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 md:gap-4"
-              >
-                {MIST_SUBJECTS.map((subCategory) => {
-                  const subVideos = videos.filter(v =>
-                    v.category === selectedCategory &&
-                    v.subCategory?.toLowerCase() === subCategory.toLowerCase()
-                  );
-
-                  return (
-                    <motion.div key={subCategory} variants={item}>
-                      <SeriesCard
-                        title={subCategory}
-                        videos={subVideos}
-                        itemVariants={item}
-                        watchedIds={progress.watched}
-                      />
-                    </motion.div>
-                  );
-                })}
-              </motion.div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </main>
+    </div>
   );
 }

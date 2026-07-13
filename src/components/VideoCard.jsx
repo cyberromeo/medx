@@ -7,21 +7,21 @@ import { Play } from "lucide-react";
 export default function VideoCard({ video, itemVariants }) {
   return (
     <motion.div variants={itemVariants}>
-      <Link href={`/watch/${video.$id}`} className="group block relative">
-        <article className="panel card-hover-lift rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-1">
-          <div className="aspect-video relative overflow-hidden">
+      <Link href={`/watch/${video.$id}`} className="group relative block">
+        <article className="panel card-hover-lift overflow-hidden rounded-2xl transition-all duration-300 hover:-translate-y-1">
+          <div className="relative aspect-video overflow-hidden">
             <img
               src={video.thumbnailUrl}
               alt={video.title}
-              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+              className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-            <div className="absolute top-2 right-2 bg-black/70 text-white/90 text-[10px] font-bold px-2 py-1 rounded border border-white/10">
+            <div className="bg-primary absolute inset-0" />
+            <div className="absolute top-2 right-2 rounded border border-white/10 bg-black/70 px-2 py-1 text-[10px] font-bold text-white/90">
               {video.duration}
             </div>
 
-            <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-              <div className="w-12 h-12 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center border border-white/20">
+            <div className="absolute inset-0 flex items-center justify-center opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+              <div className="flex h-12 w-12 items-center justify-center rounded-full border border-white/20 bg-white/10 backdrop-blur-md">
                 <Play size={20} fill="white" className="ml-1" />
               </div>
             </div>
@@ -29,10 +29,10 @@ export default function VideoCard({ video, itemVariants }) {
 
           <div className="p-5">
             <span className="tag">{video.category}</span>
-            <h3 className="text-lg font-bold mt-3 mb-2 leading-tight text-white group-hover:text-primary transition-colors">
+            <h3 className="group-hover:text-primary mt-3 mb-2 text-lg leading-tight font-bold text-gray-900 transition-colors">
               {video.title}
             </h3>
-            <p className="text-xs text-muted line-clamp-2 leading-relaxed">
+            <p className="text-muted line-clamp-2 text-xs leading-relaxed">
               {video.description}
             </p>
           </div>
@@ -41,4 +41,3 @@ export default function VideoCard({ video, itemVariants }) {
     </motion.div>
   );
 }
-
