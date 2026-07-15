@@ -55,6 +55,15 @@ const MIST_SUBJECTS = [
   "Radiodiagnosis (Radiology)",
 ];
 
+const MIST_2026_SUBJECTS = [
+  "ANATOMY", "ANATOMY REVISION", "PATHOLOGY", "PHYSIOLOGY", "ANESTHESIA", 
+  "OPHTHALMOLOGY", "FORENSIC MEDICINE", "OPTHA REVISION", "ENT", "PSYCHIATRY", 
+  "MEDICINE - DR. KUNAL", "OB GYNE", "PAEDIATRICS", "RADIOLOGY", "BIOCHEMISTRY", 
+  "ORTHOPAEDIC", "DERMATOLOGY", "PHARMACOLOGY", "MICROBIOLOGY", "MEDICINE BY DR.SINGARAM", 
+  "PSM", "SURGERY", "Adult Surgical Problems", "Endocrine Surgery", "Concept Of Oncosurgery", 
+  "Oncosurgery", "Surgical Trauma", "Vascular Surgery"
+];
+
 export default function AdminPage() {
   const [videos, setVideos] = useState([]);
   const [filteredVideos, setFilteredVideos] = useState([]);
@@ -375,6 +384,7 @@ export default function AdminPage() {
             >
               <option value="all">All Categories</option>
               <option value="MIST">MIST</option>
+              <option value="MIST_2026">MIST JUNE 2026</option>
             </select>
             <button
               onClick={() => setShowAddForm(true)}
@@ -516,6 +526,7 @@ export default function AdminPage() {
                       }}
                     >
                       <option value="MIST">MIST</option>
+                      <option value="MIST_2026">MIST JUNE 2026</option>
                     </select>
                   </div>
                   <div>
@@ -529,7 +540,7 @@ export default function AdminPage() {
                       onChange={(e) => setSubCategory(e.target.value)}
                     >
                       <option value="">Select Subject</option>
-                      {MIST_SUBJECTS.map((subject) => (
+                      {(category === "MIST_2026" ? MIST_2026_SUBJECTS : MIST_SUBJECTS).map((subject) => (
                         <option key={subject} value={subject}>
                           {subject}
                         </option>

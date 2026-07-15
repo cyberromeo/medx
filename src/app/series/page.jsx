@@ -27,6 +27,15 @@ export default function SeriesPage() {
     "Dermatology & Venereology", "Psychiatry", "Radiodiagnosis (Radiology)"
   ];
 
+  const MIST_2026_SUBJECTS = [
+    "ANATOMY", "ANATOMY REVISION", "PATHOLOGY", "PHYSIOLOGY", "ANESTHESIA", 
+    "OPHTHALMOLOGY", "FORENSIC MEDICINE", "OPTHA REVISION", "ENT", "PSYCHIATRY", 
+    "MEDICINE - DR. KUNAL", "OB GYNE", "PAEDIATRICS", "RADIOLOGY", "BIOCHEMISTRY", 
+    "ORTHOPAEDIC", "DERMATOLOGY", "PHARMACOLOGY", "MICROBIOLOGY", "MEDICINE BY DR.SINGARAM", 
+    "PSM", "SURGERY", "Adult Surgical Problems", "Endocrine Surgery", "Concept Of Oncosurgery", 
+    "Oncosurgery", "Surgical Trauma", "Vascular Surgery"
+  ];
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
@@ -120,8 +129,9 @@ export default function SeriesPage() {
                 </div>
                 <div>
                   <h2 className="text-2xl font-bold tracking-tight text-gray-900 transition-colors group-hover:text-blue-600 md:text-3xl">
-                    MIST
+                    MIST JUNE 2025
                   </h2>
+                  <span className="mt-1 inline-block rounded-md bg-red-100 px-2 py-0.5 text-[10px] font-bold text-red-600 uppercase tracking-wider">Archived</span>
                   <p className="mt-0.5 text-sm font-medium text-gray-500">
                     {countWatched("MIST")}/{countVideos("MIST")} videos &middot; 19 subjects
                   </p>
@@ -143,6 +153,50 @@ export default function SeriesPage() {
                   animate={{ width: `${getCategoryProgress("MIST")}%` }}
                   transition={{ duration: 1, delay: 0.2, ease: "easeOut" }}
                   className="h-full rounded-full bg-blue-600"
+                />
+              </div>
+            </div>
+          </motion.div>
+
+          {/* MIST 2026 card */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.12 }}
+            onClick={() => setSelectedCategory("MIST_2026")}
+            className="group cursor-pointer overflow-hidden rounded-[1.5rem] border border-[rgba(30,50,90,0.05)] bg-white p-6 shadow-[0_4px_24px_rgba(0,0,0,0.04)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_8px_30px_rgba(0,0,0,0.06)] md:rounded-[2rem] md:p-8"
+          >
+            <div className="mb-8 flex items-start justify-between">
+              <div className="flex items-center gap-4">
+                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500 to-emerald-700 text-xl font-bold text-white shadow-sm">
+                  M
+                </div>
+                <div>
+                  <h2 className="text-2xl font-bold tracking-tight text-gray-900 transition-colors group-hover:text-emerald-600 md:text-3xl">
+                    MIST JUNE 2026
+                  </h2>
+                  <span className="mt-1 inline-block rounded-md bg-green-100 px-2 py-0.5 text-[10px] font-bold text-green-600 uppercase tracking-wider">NEW</span>
+                  <p className="mt-0.5 text-sm font-medium text-gray-500">
+                    {countWatched("MIST_2026")}/{countVideos("MIST_2026")} videos &middot; {MIST_2026_SUBJECTS.length} subjects
+                  </p>
+                </div>
+              </div>
+              <div className="flex h-10 w-10 items-center justify-center rounded-full border border-[rgba(30,50,90,0.05)] bg-gray-50 text-gray-500 opacity-0 transition-all duration-300 group-hover:translate-x-0 group-hover:opacity-100 group-hover:text-emerald-600">
+                <ArrowRight size={20} strokeWidth={2.5} />
+              </div>
+            </div>
+
+            <div className="rounded-2xl bg-gray-50 p-4">
+              <div className="mb-3 flex items-center justify-between">
+                <span className="text-xs font-semibold tracking-wider text-gray-500 uppercase">Course Progress</span>
+                <span className="text-sm font-bold text-emerald-600">{getCategoryProgress("MIST_2026")}%</span>
+              </div>
+              <div className="h-2 overflow-hidden rounded-full bg-gray-200">
+                <motion.div
+                  initial={{ width: 0 }}
+                  animate={{ width: `${getCategoryProgress("MIST_2026")}%` }}
+                  transition={{ duration: 1, delay: 0.2, ease: "easeOut" }}
+                  className="h-full rounded-full bg-emerald-600"
                 />
               </div>
             </div>
@@ -220,6 +274,22 @@ export default function SeriesPage() {
                 className="flex-1 overflow-y-auto p-4 sm:p-6"
               >
                 <div className="grid grid-cols-1 gap-4 pb-10 lg:grid-cols-2 xl:grid-cols-3">
+                  {selectedCategory === "MIST_2026" && MIST_2026_SUBJECTS.map((subCategory) => {
+                    const subVideos = videos.filter(v =>
+                      v.category === selectedCategory &&
+                      v.subCategory?.toLowerCase() === subCategory.toLowerCase()
+                    );
+                    return (
+                      <motion.div key={subCategory} variants={item}>
+                        <SeriesCard
+                          title={subCategory}
+                          videos={subVideos}
+                          itemVariants={item}
+                          watchedIds={progress.watched}
+                        />
+                      </motion.div>
+                    );
+                  })}
                   {selectedCategory === "MIST" && MIST_SUBJECTS.map((subCategory) => {
                     const subVideos = videos.filter(v =>
                       v.category === selectedCategory &&
