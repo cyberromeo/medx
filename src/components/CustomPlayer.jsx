@@ -77,14 +77,14 @@ const CustomPlayer = ({ videoId, thumbnail, onEnded, onPlay, title, initialTime 
         if (hideTimeoutRef.current) clearTimeout(hideTimeoutRef.current);
         hideTimeoutRef.current = setTimeout(() => {
             setIsHovering(false);
-        }, 5000);
+        }, 3000);
     };
 
     const handleMouseLeave = () => {
         if (hideTimeoutRef.current) clearTimeout(hideTimeoutRef.current);
         hideTimeoutRef.current = setTimeout(() => {
             setIsHovering(false);
-        }, 5000);
+        }, 3000);
     };
 
     // 1. Load YouTube IFrame API
@@ -411,6 +411,7 @@ const CustomPlayer = ({ videoId, thumbnail, onEnded, onPlay, title, initialTime 
             className="group relative w-full h-full bg-black overflow-hidden rounded-2xl shadow-2xl border border-white/10 select-none"
             onMouseMove={handleMouseMove}
             onMouseLeave={handleMouseLeave}
+            onTouchStart={handleMouseMove}
         >
             {/* ===== SPLASH SCREEN - Covers YouTube branding during initial load ===== */}
             {showSplash && (
@@ -490,21 +491,21 @@ const CustomPlayer = ({ videoId, thumbnail, onEnded, onPlay, title, initialTime 
             {/* ===== CUSTOM CONTROLS ===== */}
             {(status === "playing" || status === "paused") && (
                 <>
-                    {/* Top White Bar to hide YouTube Title */}
+                    {/* Top Bar - compact on mobile */}
                     <div
-                        className={`absolute inset-x-0 top-0 z-50 flex h-16 items-center px-6 bg-white/95 backdrop-blur-md shadow-sm border-b border-gray-200 transition-opacity duration-300 pointer-events-none ${isHovering || status === "paused" ? "opacity-100" : "opacity-0"}`}
+                        className={`absolute inset-x-0 top-0 z-50 flex h-10 md:h-12 items-center px-3 md:px-6 bg-white/95 backdrop-blur-md shadow-sm border-b border-gray-200 transition-opacity duration-300 pointer-events-none ${isHovering || status === "paused" ? "opacity-100" : "opacity-0"}`}
                     >
-                        <span className="font-semibold text-gray-900 truncate pr-4">{title}</span>
+                        <span className="text-xs md:text-sm font-semibold text-gray-900 truncate pr-4">{title}</span>
                         <div className="ml-auto flex items-center">
-                            <span className="px-2 py-1 bg-gray-100 text-gray-600 rounded-lg text-[10px] font-bold tracking-widest uppercase">
-                                MedX
+                            <span className="px-2 py-0.5 bg-gray-100 text-gray-600 rounded-lg text-[9px] md:text-[10px] font-bold tracking-widest uppercase">
+                                MEDX
                             </span>
                         </div>
                     </div>
 
-                    {/* Bottom White Bar Controls */}
+                    {/* Bottom Controls - compact on mobile */}
                     <div
-                        className={`absolute inset-x-0 bottom-0 z-50 px-6 py-4 bg-white/95 backdrop-blur-md shadow-lg border-t border-gray-200 transition-opacity duration-300 ${isHovering || status === "paused" ? "opacity-100" : "opacity-0"}`}
+                        className={`absolute inset-x-0 bottom-0 z-50 px-3 md:px-6 py-2 md:py-4 bg-white/95 backdrop-blur-md shadow-lg border-t border-gray-200 transition-opacity duration-300 ${isHovering || status === "paused" ? "opacity-100" : "opacity-0"}`}
                     >
                         {/* Progress Bar */}
                         <input
@@ -513,10 +514,10 @@ const CustomPlayer = ({ videoId, thumbnail, onEnded, onPlay, title, initialTime 
                             max="100"
                             value={progress || 0}
                             onChange={handleSeek}
-                            className="w-full h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer mb-3
+                            className="w-full h-1 md:h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer mb-2 md:mb-3
                                 [&::-webkit-slider-thumb]:appearance-none 
-                                [&::-webkit-slider-thumb]:w-4 
-                                [&::-webkit-slider-thumb]:h-4 
+                                [&::-webkit-slider-thumb]:w-3.5 
+                                [&::-webkit-slider-thumb]:h-3.5 
                                 [&::-webkit-slider-thumb]:bg-blue-600 
                                 [&::-webkit-slider-thumb]:rounded-full 
                                 [&::-webkit-slider-thumb]:shadow-md
@@ -528,22 +529,22 @@ const CustomPlayer = ({ videoId, thumbnail, onEnded, onPlay, title, initialTime 
                         />
 
                         <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-5">
+                            <div className="flex items-center gap-3 md:gap-5">
                                 {/* Play/Pause */}
                                 <button onClick={togglePlay} className="text-gray-900 hover:text-blue-600 transition-colors drop-shadow-sm">
-                                    {status === "playing" ? <Pause size={22} fill="currentColor" /> : <Play size={22} fill="currentColor" />}
+                                    {status === "playing" ? <Pause size={18} fill="currentColor" /> : <Play size={18} fill="currentColor" />}
                                 </button>
 
                                 {/* Time */}
-                                <span className="text-xs font-semibold font-mono text-gray-600">
+                                <span className="text-[10px] md:text-xs font-semibold font-mono text-gray-600">
                                     {formatTime(currentTime)} / {formatTime(duration)}
                                 </span>
                             </div>
 
                             {/* Controls */}
-                            <div className="flex items-center gap-4">
-                                {/* Volume Slider */}
-                                <div className="flex items-center gap-2 group/vol">
+                            <div className="flex items-center gap-2 md:gap-4">
+                                {/* Volume - hidden on mobile to save space */}
+                                <div className="hidden md:flex items-center gap-2 group/vol">
                                     <button onClick={toggleMute} className="text-gray-600 hover:text-gray-900 transition-colors">
                                         {isMuted || volume === 0 ? <VolumeX size={18} /> : <Volume2 size={18} />}
                                     </button>
@@ -565,10 +566,15 @@ const CustomPlayer = ({ videoId, thumbnail, onEnded, onPlay, title, initialTime 
                                     />
                                 </div>
 
+                                {/* Mute toggle on mobile only */}
+                                <button onClick={toggleMute} className="md:hidden text-gray-600 hover:text-gray-900 transition-colors">
+                                    {isMuted || volume === 0 ? <VolumeX size={16} /> : <Volume2 size={16} />}
+                                </button>
+
                                 {/* Playback Speed */}
                                 <button
                                     onClick={cycleSpeed}
-                                    className="text-gray-700 hover:text-blue-600 transition-colors text-xs font-mono font-bold min-w-[40px] text-center px-1.5 py-1 rounded-md border border-gray-200 hover:border-blue-200 bg-gray-50"
+                                    className="text-gray-700 hover:text-blue-600 transition-colors text-[10px] md:text-xs font-mono font-bold min-w-[32px] md:min-w-[40px] text-center px-1 md:px-1.5 py-0.5 md:py-1 rounded-md border border-gray-200 hover:border-blue-200 bg-gray-50"
                                     title="Playback Speed"
                                 >
                                     {playbackSpeed}x
@@ -577,7 +583,7 @@ const CustomPlayer = ({ videoId, thumbnail, onEnded, onPlay, title, initialTime 
                                 {/* Fullscreen - hidden on iPhone only, iPads support it */}
                                 {!isIPhoneDevice && (
                                     <button onClick={toggleFullscreen} className="text-gray-600 hover:text-gray-900 transition-colors">
-                                        <Maximize size={18} />
+                                        <Maximize size={16} className="md:w-[18px] md:h-[18px]" />
                                     </button>
                                 )}
                             </div>
