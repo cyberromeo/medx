@@ -65,7 +65,8 @@ const MIST_2026_SUBJECTS = [
 
 const MIST_2026_REVISION_SUBJECTS = [
   "ANATOMY REVISION",
-  "OPHTHALMOLOGY REVISION"
+  "ENT REVISION",
+  "RADIOLOGY REVISION"
 ];
 
 export default function AdminPage() {
