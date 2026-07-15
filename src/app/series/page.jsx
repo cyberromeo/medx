@@ -282,6 +282,7 @@ export default function SeriesPage() {
                       <motion.div key={subCategory} variants={item}>
                         <SeriesCard
                           title={subCategory}
+                          category={selectedCategory}
                           videos={subVideos}
                           itemVariants={item}
                           watchedIds={progress.watched}
@@ -298,6 +299,7 @@ export default function SeriesPage() {
                       <motion.div key={subCategory} variants={item}>
                         <SeriesCard
                           title={subCategory}
+                          category={selectedCategory}
                           videos={subVideos}
                           itemVariants={item}
                           watchedIds={progress.watched}

@@ -29,8 +29,8 @@ import {
   ArrowRight,
 } from "lucide-react";
 
-export default function SeriesCard({ title, videos, itemVariants, watchedIds = [] }) {
-  const seriesUrl = `/series/${encodeURIComponent(title)}`;
+export default function SeriesCard({ title, category, videos, itemVariants, watchedIds = [] }) {
+  const seriesUrl = `/series/${encodeURIComponent(title)}?category=${encodeURIComponent(category)}`;
 
   const watchedSet = useMemo(() => new Set(watchedIds), [watchedIds]);
   const watchedCount = videos.filter((v) => watchedSet.has(v.$id)).length;

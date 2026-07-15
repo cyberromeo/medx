@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { auth, db } from "@/lib/firebase";
 import { collection, query, limit, getDocs } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowLeft,
@@ -23,8 +23,10 @@ import {
 
 export default function SeriesPlayerPage() {
   const params = useParams();
+  const searchParams = useSearchParams();
   const router = useRouter();
   const seriesName = decodeURIComponent(params.name);
+  const categoryParam = searchParams.get("category");
 
   const [videos, setVideos] = useState([]);
   const [currentVideo, setCurrentVideo] = useState(null);
@@ -55,11 +57,11 @@ export default function SeriesPlayerPage() {
           ...doc.data(),
         }));
 
-        const docs = allDocs.filter(
-          (doc) =>
-            doc.subCategory &&
-            doc.subCategory.toLowerCase() === seriesName.toLowerCase(),
-        );
+        const docs = allDocs.filter((doc) => {
+          const matchesCategory = categoryParam ? doc.category === categoryParam : true;
+          const matchesSubCategory = doc.subCategory && doc.subCategory.toLowerCase() === seriesName.toLowerCase();
+          return matchesCategory && matchesSubCategory;
+        });
 
         const sortedDocs = docs.sort((a, b) =>
           a.title.localeCompare(b.title, undefined, {
