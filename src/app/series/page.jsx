@@ -38,6 +38,7 @@ export default function SeriesPage() {
   const MIST_2026_REVISION_SUBJECTS = [
     "ANATOMY REVISION",
     "ENT REVISION",
+    "OPHTHALMOLOGY REVISION",
     "RADIOLOGY REVISION"
   ];
 
