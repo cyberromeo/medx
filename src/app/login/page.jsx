@@ -66,29 +66,14 @@ export default function LoginPage() {
         isLogin &&
         (err.code === "auth/invalid-credential" || err.code === "auth/wrong-password")
       ) {
-        try {
-          const res = await fetch("/api/auth/check-password", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email }),
-          });
-          if (res.ok) {
-            const data = await res.json();
-            if (!data.hasPassword && !data.notFound) {
-              await sendPasswordResetEmail(auth, email);
-              setError("");
-              setResetMessage(
-                "Your account requires a password reset due to a system update. We have sent a reset link to your email.",
-              );
-              setLoading(false);
-              return;
-            }
-          }
-        } catch (checkErr) {
-          console.error("Failed to check password status:", checkErr);
-        }
+        setError("Incorrect email or password. If you've forgotten your password, click 'Forgot Password?' above.");
+      } else if (err.code === "auth/user-not-found") {
+        setError("No account found with this email.");
+      } else if (err.code === "auth/too-many-requests") {
+        setError("Too many failed attempts. Please try again later.");
+      } else {
+        setError(err.message || "Authentication failed");
       }
-      setError(err.message || "Authentication failed");
     } finally {
       setLoading(false);
     }
