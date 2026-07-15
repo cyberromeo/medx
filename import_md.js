@@ -75,12 +75,13 @@ async function importVideos() {
 
       const docRef = db.collection('videos').doc();
       batch.set(docRef, {
-        id: videoId,
+        videoId: videoId,
         title: currentTitle,
         category: 'MIST_2026',
         subCategory: actualSubject,
         videoUrl: videoUrl,
         thumbnailUrl: thumbnailUrl,
+        duration: "00:00",
         createdAt: new Date()
       });
       console.log(`Prepared: [${actualSubject}] ${currentTitle}`);
