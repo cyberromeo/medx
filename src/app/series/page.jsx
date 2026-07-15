@@ -36,7 +36,8 @@ export default function SeriesPage() {
   ];
 
   const MIST_2026_REVISION_SUBJECTS = [
-    "ANATOMY REVISION"
+    "ANATOMY REVISION",
+    "OPHTHALMOLOGY REVISION"
   ];
 
   useEffect(() => {
