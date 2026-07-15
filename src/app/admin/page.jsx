@@ -56,11 +56,15 @@ const MIST_SUBJECTS = [
 ];
 
 const MIST_2026_SUBJECTS = [
-  "ANATOMY", "ANATOMY REVISION", "PATHOLOGY", "PHYSIOLOGY", "ANESTHESIA", "OPHTHALMOLOGY", 
+  "ANATOMY", "PATHOLOGY", "PHYSIOLOGY", "ANESTHESIA", "OPHTHALMOLOGY", 
   "FORENSIC MEDICINE", "ENT", "PSYCHIATRY", "MEDICINE - DR. KUNAL", 
   "OB GYNE", "PAEDIATRICS", "RADIOLOGY", "BIOCHEMISTRY", "ORTHOPAEDIC", 
   "DERMATOLOGY", "PHARMACOLOGY", "MICROBIOLOGY", "MEDICINE BY DR.SINGARAM", 
   "PSM", "SURGERY"
+];
+
+const MIST_2026_REVISION_SUBJECTS = [
+  "ANATOMY REVISION"
 ];
 
 export default function AdminPage() {
@@ -384,6 +388,7 @@ export default function AdminPage() {
               <option value="all">All Categories</option>
               <option value="MIST">MIST</option>
               <option value="MIST_2026">MIST JUNE 2026</option>
+              <option value="MIST_2026_REVISION">MIST 2026 REVISION</option>
             </select>
             <button
               onClick={() => setShowAddForm(true)}
@@ -526,6 +531,7 @@ export default function AdminPage() {
                     >
                       <option value="MIST">MIST</option>
                       <option value="MIST_2026">MIST JUNE 2026</option>
+                      <option value="MIST_2026_REVISION">MIST 2026 REVISION</option>
                     </select>
                   </div>
                   <div>
@@ -539,7 +545,7 @@ export default function AdminPage() {
                       onChange={(e) => setSubCategory(e.target.value)}
                     >
                       <option value="">Select Subject</option>
-                      {(category === "MIST_2026" ? MIST_2026_SUBJECTS : MIST_SUBJECTS).map((subject) => (
+                      {(category === "MIST_2026_REVISION" ? MIST_2026_REVISION_SUBJECTS : category === "MIST_2026" ? MIST_2026_SUBJECTS : MIST_SUBJECTS).map((subject) => (
                         <option key={subject} value={subject}>
                           {subject}
                         </option>
