@@ -234,34 +234,35 @@ export default function Dashboard() {
         </motion.div>
 
         {/* Widgets grid */}
-        <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-2 gap-3 sm:gap-5 md:grid-cols-2 lg:grid-cols-3">
           {/* Level & XP */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.05 }}
+            className="col-span-1"
           >
-            <div className="group h-full cursor-default overflow-hidden rounded-[1.5rem] border border-[rgba(30,50,90,0.05)] bg-white p-6 shadow-[0_4px_24px_rgba(0,0,0,0.04)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_8px_30px_rgba(0,0,0,0.06)] md:rounded-[2rem] md:p-8">
-              <div className="mb-6 flex items-center gap-4">
-                <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-amber-100 bg-gradient-to-br from-amber-50 to-amber-100/50 text-amber-500 shadow-sm">
-                  <Award size={28} strokeWidth={2.5} />
+            <div className="group h-full cursor-default overflow-hidden rounded-2xl border border-[rgba(30,50,90,0.05)] bg-white p-4 shadow-[0_4px_24px_rgba(0,0,0,0.04)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_8px_30px_rgba(0,0,0,0.06)] sm:rounded-[1.5rem] sm:p-6 md:rounded-[2rem] md:p-8">
+              <div className="mb-4 flex items-center gap-3 sm:gap-4">
+                <div className="flex h-11 w-11 items-center justify-center rounded-xl border border-amber-100 bg-gradient-to-br from-amber-50 to-amber-100/50 text-amber-500 shadow-sm sm:h-14 sm:w-14 sm:rounded-2xl">
+                  <Award className="h-6 w-6 sm:h-7 sm:w-7" strokeWidth={2.5} />
                 </div>
-                <div>
-                  <h2 className="text-xl font-bold tracking-tight text-gray-900 md:text-2xl">
+                <div className="min-w-0">
+                  <h2 className="truncate text-lg font-bold tracking-tight text-gray-900 sm:text-xl md:text-2xl">
                     Level {level}
                   </h2>
-                  <p className="text-sm font-medium text-gray-500">
+                  <p className="truncate text-xs font-medium text-gray-500 sm:text-sm">
                     {levelTitle}
                   </p>
                 </div>
               </div>
 
-              <div className="rounded-2xl bg-gray-50 p-4">
+              <div className="rounded-xl bg-gray-50 p-3 sm:rounded-2xl sm:p-4">
                 <div className="mb-3 flex items-center justify-between">
-                  <span className="text-xs font-semibold tracking-wider text-gray-500 uppercase">
+                  <span className="text-[10px] font-semibold tracking-wider text-gray-500 uppercase sm:text-xs">
                     Level XP
                   </span>
-                  <span className="text-sm font-bold text-gray-900">
+                  <span className="text-xs font-bold text-gray-900 sm:text-sm">
                     {animatedLevelXp.toLocaleString()} /{" "}
                     {xpProgress.needed.toLocaleString()}
                   </span>
@@ -278,7 +279,7 @@ export default function Dashboard() {
                 </div>
               </div>
 
-              <div className="mt-4 flex items-center justify-between text-sm">
+              <div className="mt-3 flex items-center justify-between text-[11px] sm:mt-4 sm:text-sm">
                 <span className="text-gray-500">
                   {progress.streak} day streak
                 </span>
@@ -294,34 +295,35 @@ export default function Dashboard() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
+            className="col-span-1"
           >
             <Link href="/tracker" className="block h-full">
-              <div className="group h-full cursor-pointer overflow-hidden rounded-[1.5rem] border border-[rgba(30,50,90,0.05)] bg-white p-6 shadow-[0_4px_24px_rgba(0,0,0,0.04)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_8px_30px_rgba(0,0,0,0.06)] md:rounded-[2rem] md:p-8">
-                <div className="mb-6 flex items-start justify-between">
-                  <div className="flex items-center gap-4">
-                    <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-teal-100 bg-gradient-to-br from-teal-50 to-teal-100/50 text-teal-600 shadow-sm">
-                      <Target size={28} strokeWidth={2.5} />
+              <div className="group h-full cursor-pointer overflow-hidden rounded-2xl border border-[rgba(30,50,90,0.05)] bg-white p-4 shadow-[0_4px_24px_rgba(0,0,0,0.04)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_8px_30px_rgba(0,0,0,0.06)] sm:rounded-[1.5rem] sm:p-6 md:rounded-[2rem] md:p-8">
+                <div className="mb-4 flex items-start justify-between sm:mb-6">
+                  <div className="flex min-w-0 items-center gap-3 sm:gap-4">
+                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-teal-100 bg-gradient-to-br from-teal-50 to-teal-100/50 text-teal-600 shadow-sm sm:h-14 sm:w-14 sm:rounded-2xl">
+                      <Target className="h-6 w-6 sm:h-7 sm:w-7" strokeWidth={2.5} />
                     </div>
-                    <div>
-                      <h2 className="text-xl font-bold tracking-tight text-gray-900 md:text-2xl">
+                    <div className="min-w-0">
+                      <h2 className="truncate text-lg font-bold tracking-tight text-gray-900 sm:text-xl md:text-2xl">
                         Syllabus
                       </h2>
-                      <p className="text-sm font-medium text-gray-500">
+                      <p className="truncate text-xs font-medium text-gray-500 sm:text-sm">
                         FMGE progress
                       </p>
                     </div>
                   </div>
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full border border-[rgba(30,50,90,0.05)] bg-gray-50 text-gray-500 opacity-0 transition-all duration-300 group-hover:translate-x-0 group-hover:opacity-100 group-hover:text-blue-600">
+                  <div className="hidden h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[rgba(30,50,90,0.05)] bg-gray-50 text-gray-500 opacity-0 transition-all duration-300 group-hover:translate-x-0 group-hover:opacity-100 group-hover:text-blue-600 sm:flex">
                     <ArrowRight size={18} strokeWidth={2.5} />
                   </div>
                 </div>
 
-                <div className="rounded-2xl bg-gray-50 p-4">
+                <div className="rounded-xl bg-gray-50 p-3 sm:rounded-2xl sm:p-4">
                   <div className="mb-3 flex items-center justify-between">
-                    <span className="text-xs font-semibold tracking-wider text-gray-500 uppercase">
+                    <span className="text-[10px] font-semibold tracking-wider text-gray-500 uppercase sm:text-xs">
                       Completion
                     </span>
-                    <span className="text-sm font-bold text-teal-600">
+                    <span className="text-xs font-bold text-teal-600 sm:text-sm">
                       {trackerProgress}%
                     </span>
                   </div>
@@ -341,7 +343,7 @@ export default function Dashboard() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.15 }}
-            className="md:col-span-2 lg:col-span-1"
+            className="col-span-2 md:col-span-2 lg:col-span-1"
           >
             <FmgeCountdown />
           </motion.div>
