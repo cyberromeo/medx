@@ -27,6 +27,12 @@ export const MCQ_SUBCATEGORIES = [
     title: "Exam Archives",
     description: "Subject-wise tests and Mock tests (PDFs)",
     icon: "ScrollText",
+  },
+  {
+    slug: "marrow-modules",
+    title: "Marrow Modules",
+    description: "Specially compiled modules for active revision",
+    icon: "Activity",
   }
 ];
 

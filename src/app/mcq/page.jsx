@@ -5,13 +5,16 @@ import { auth } from "@/lib/firebase";
 import { onAuthStateChanged } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { ClipboardList, ArrowRight, Target, ScrollText, FileQuestion } from "lucide-react";
+import { ClipboardList, ArrowRight, Target, ScrollText, FileQuestion, Activity } from "lucide-react";
 import Link from "next/link";
 import { MCQ_SUBCATEGORIES, getTestsBySubcategory } from "@/lib/mcq";
+import { getProgress } from "@/lib/progress";
+import marrowData from "@/lib/marrow-modules.json";
 
 export default function McqPage() {
   const [loading, setLoading] = useState(true);
   const [testCounts, setTestCounts] = useState({});
+  const [progress, setProgress] = useState({ watched: [] });
   const router = useRouter();
 
   useEffect(() => {
@@ -23,6 +26,7 @@ export default function McqPage() {
 
       const counts = {};
       for (const sub of MCQ_SUBCATEGORIES) {
+        if (sub.slug === 'marrow-modules') continue;
         const tests = await getTestsBySubcategory(sub.slug);
         counts[sub.slug] = tests.reduce(
           (sum, t) => sum + (t.questionCount || 0),
@@ -30,6 +34,10 @@ export default function McqPage() {
         );
       }
       setTestCounts(counts);
+      
+      const userProgress = await getProgress(user.uid);
+      setProgress(userProgress);
+      
       setLoading(false);
     });
     return () => unsubscribe();
@@ -67,7 +75,23 @@ export default function McqPage() {
         <div className="space-y-4">
           {MCQ_SUBCATEGORIES.map((sub, index) => {
             const qCount = testCounts[sub.slug] || 0;
-            const IconComponent = sub.icon === "Target" ? Target : sub.icon === "ScrollText" ? ScrollText : FileQuestion;
+            const IconComponent = sub.icon === "Target" ? Target : sub.icon === "ScrollText" ? ScrollText : sub.icon === "Activity" ? Activity : FileQuestion;
+            
+            // Calculate Marrow progress
+            let marrowSubtext = "";
+            let marrowProgressPercent = 0;
+            if (sub.slug === "marrow-modules") {
+              let totalMarrow = 0;
+              Object.keys(marrowData).forEach(mode => {
+                Object.values(marrowData[mode]).forEach(tests => {
+                  totalMarrow += tests.length;
+                });
+              });
+              
+              const completedMarrow = progress.watched.filter(id => id.startsWith("marrow_")).length;
+              marrowSubtext = \`\${completedMarrow} / \${totalMarrow} Completed\`;
+              marrowProgressPercent = totalMarrow > 0 ? (completedMarrow / totalMarrow) * 100 : 0;
+            }
 
             return (
               <motion.div
@@ -89,8 +113,22 @@ export default function McqPage() {
                         {sub.title}
                       </h2>
                       <p className="text-sm font-medium text-gray-500">
-                        {sub.slug === "exam-archives" ? "PDF Tests" : `${qCount} Questions`}
+                        {sub.slug === "exam-archives" 
+                          ? "PDF Tests" 
+                          : sub.slug === "marrow-modules" 
+                            ? marrowSubtext 
+                            : `${qCount} Questions`}
                       </p>
+                      
+                      {sub.slug === "marrow-modules" && (
+                        <div className="mt-2 h-1.5 w-full max-w-[200px] overflow-hidden rounded-full bg-gray-100">
+                          <div 
+                            className="h-full rounded-full bg-blue-500 transition-all duration-500" 
+                            style={{ width: `${marrowProgressPercent}%` }}
+                          />
+                        </div>
+                      )}
+                      
                       <p className="mt-1 text-sm text-gray-600">{sub.description}</p>
                     </div>
                     <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[rgba(30,50,90,0.05)] bg-gray-50 text-gray-400 transition-all duration-300 group-hover:border-blue-600 group-hover:bg-blue-600 group-hover:text-white">
