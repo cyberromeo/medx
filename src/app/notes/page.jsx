@@ -34,15 +34,23 @@ export default function NotesPage() {
       const response = await fetch(filePath);
       if (!response.ok) throw new Error("Network response was not ok");
       
-      const blob = await response.blob();
+      // Force iOS to download by changing the MIME type to octet-stream
+      const originalBlob = await response.blob();
+      const blob = new Blob([originalBlob], { type: "application/octet-stream" });
+      
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;
       link.download = `${fileName}.pdf`;
+      link.target = "_blank"; // Helps on some iOS versions
       document.body.appendChild(link);
       link.click();
-      document.body.removeChild(link);
-      window.URL.revokeObjectURL(url);
+      
+      // Delay cleanup to ensure iOS has time to process the download
+      setTimeout(() => {
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+      }, 1000);
     } catch (error) {
       console.error("Error downloading file:", error);
       alert("Failed to download file. Please try again.");
