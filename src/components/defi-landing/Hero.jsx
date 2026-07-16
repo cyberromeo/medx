@@ -74,7 +74,7 @@ export default function Hero() {
           >
             <Sparkles size={16} className="text-blue-600" />
             <span className="text-sm font-semibold text-gray-800">
-              Cinematic Learning
+              New 2.O: JUNE 2026 MIST LIVE VIDEOS
             </span>
           </motion.div>
 
