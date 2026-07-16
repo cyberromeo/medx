@@ -58,16 +58,11 @@
         "path": "https://portal.mist.org.in/content/notes/b1a0df3e-3902-49a1-b86b-9ee062c1bdcc.pdf",
         "name": "Dermatology Written",
         "categoryType": "written"
-      }
-    ]
-  },
-  {
-    "subject": "Dermtology",
-    "files": [
+      },
       {
         "name": "MIST Dermtology Workbook - Dr. Manish Soni Sir",
         "path": "/notes/workbooks/Dermtology/MIST Dermtology Workbook - Dr. Manish Soni Sir.pdf",
-        "subject": "Dermtology",
+        "subject": "Dermatology",
         "categoryType": "workbooks"
       }
     ]
@@ -121,16 +116,11 @@
         "path": "https://portal.mist.org.in/content/notes/226ceab8-099c-4f70-b819-dc39a5504971.pdf",
         "name": "FMT Written",
         "categoryType": "written"
-      }
-    ]
-  },
-  {
-    "subject": "FSM",
-    "files": [
+      },
       {
         "name": "MIST FSM Workbook - Dr. Akhilesh Jhamad Sir",
         "path": "/notes/workbooks/FSM/MIST FSM Workbook - Dr. Akhilesh Jhamad Sir.pdf",
-        "subject": "FSM",
+        "subject": "FMT",
         "categoryType": "workbooks"
       }
     ]

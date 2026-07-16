@@ -16,7 +16,9 @@ const subjectKeywords = {
   'anatomy': 'Anatomy',
   'biochem': 'Biochem',
   'derm': 'Dermatology',
-  'fsm': 'FSM',
+  'derma': 'Dermatology',
+  'fsm': 'FMT',
+  'fmt': 'FMT',
   'obg': 'Obstetrics Gynaecology',
   'obstetrics': 'Obstetrics Gynaecology',
   'ortho': 'Orthopaedics',
@@ -58,6 +60,10 @@ function getFiles(dir, categoryType) {
             }
           }
         }
+        
+        // Normalize subject names
+        if (subject === 'FSM' || subject === 'fsm') subject = 'FMT';
+        if (subject === 'Dermtology' || subject === 'Derma' || subject === 'derma') subject = 'Dermatology';
         
         results.push({ name, path: relativePath, subject, categoryType });
       }
