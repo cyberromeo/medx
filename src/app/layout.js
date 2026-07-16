@@ -20,6 +20,7 @@ export const metadata = {
     width: "device-width",
     initialScale: 1,
     maximumScale: 1,
+    userScalable: false,
     viewportFit: "cover",
   },
 };
