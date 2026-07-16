@@ -22,11 +22,20 @@ export const metadata = {
     url: "https://medx.srihari.quest",
     siteName: "MedX",
     type: "website",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 1200,
+        alt: "MEDX 2.0 IS LIVE",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "MedX 2.0 - Study Smarter. Achieve More.",
     description: "MEDX 2.0 IS LIVE! Enjoy a massive content drop with 450+ Marrow modules, 370+ new videos, and comprehensive notes for all subjects.",
+    images: ["/og-image.png"],
   },
 };
 
