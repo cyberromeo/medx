@@ -15,6 +15,7 @@ import {
   X,
   ChevronRight,
   BookOpen,
+  History,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useChatX } from "@/components/ChatXProvider";
@@ -218,6 +219,7 @@ export default function MobileNav() {
                     { href: "/mcq", icon: ClipboardList, label: "QBank" },
                     { href: "/tracker", icon: Activity, label: "Tracker" },
                     { href: "/notes", icon: BookOpen, label: "Notes" },
+                    { href: "/pyts", icon: History, label: "PYTs" },
                     {
                       href: "/leaderboard",
                       icon: Trophy,
