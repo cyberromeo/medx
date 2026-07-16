@@ -18,7 +18,7 @@ export default function AppLayoutWrapper({ children }) {
       <main 
         className="flex h-[100dvh] w-full flex-1 flex-col overflow-hidden px-3 pb-24 md:px-5 md:pb-5"
         style={{
-          paddingTop: 'max(env(safe-area-inset-top), 45px)',
+          paddingTop: 'calc(env(safe-area-inset-top) + 0.75rem)',
         }}
       >
         <div className="relative h-full w-full flex-1 overflow-y-auto rounded-[1.5rem] border border-[rgba(30,50,90,0.05)] bg-white shadow-[0_4px_24px_rgba(0,0,0,0.04)] md:rounded-[2rem]">
