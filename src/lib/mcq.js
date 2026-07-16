@@ -21,6 +21,12 @@ export const MCQ_SUBCATEGORIES = [
     title: "MIST 2026 TOPIC-WISE",
     description: "Topic-wise MCQs for MIST 2026 preparation",
     icon: "Target",
+  },
+  {
+    slug: "exam-archives",
+    title: "Exam Archives",
+    description: "Subject-wise tests and Mock tests (PDFs)",
+    icon: "ScrollText",
   }
 ];
 

@@ -89,7 +89,7 @@ export default function McqPage() {
                         {sub.title}
                       </h2>
                       <p className="text-sm font-medium text-gray-500">
-                        {qCount} Questions
+                        {sub.slug === "exam-archives" ? "PDF Tests" : `${qCount} Questions`}
                       </p>
                       <p className="mt-1 text-sm text-gray-600">{sub.description}</p>
                     </div>
