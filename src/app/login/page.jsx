@@ -7,12 +7,13 @@ import {
   signInWithEmailAndPassword,
   updateProfile,
   sendPasswordResetEmail,
+  sendEmailVerification,
   onAuthStateChanged,
 } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { activateSingleDeviceSession } from "@/lib/session-security";
-import { passwordResetActionCodeSettings } from "@/lib/auth-action-settings";
+import { passwordResetActionCodeSettings, emailVerifyActionCodeSettings } from "@/lib/auth-action-settings";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Mail,
@@ -105,6 +106,13 @@ export default function LoginPage() {
         const displayName = name.trim();
         await updateProfile(userCredential.user, { displayName });
 
+        // Send email verification
+        try {
+          await sendEmailVerification(userCredential.user, emailVerifyActionCodeSettings);
+        } catch (verifyErr) {
+          console.error("Failed to send verification email:", verifyErr);
+        }
+
         // Redeem the activation code after successful account creation
         try {
           await fetch("/api/activation-codes/redeem", {
@@ -123,7 +131,13 @@ export default function LoginPage() {
 
       const userId = userCredential.user.uid;
       await activateSingleDeviceSession(userId);
-      router.push("/dashboard");
+
+      // Redirect to verify-email if not verified, otherwise dashboard
+      if (!userCredential.user.emailVerified) {
+        router.push("/verify-email");
+      } else {
+        router.push("/dashboard");
+      }
     } catch (err) {
       console.error(err);
       if (

@@ -31,7 +31,7 @@ export default function SessionGuard() {
   const redirectingRef = useRef(false);
 
   useEffect(() => {
-    if (pathname === "/login") {
+    if (pathname === "/login" || pathname === "/verify-email") {
       redirectingRef.current = false;
       return;
     }
@@ -76,6 +76,11 @@ export default function SessionGuard() {
 
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
+        // Redirect unverified users to verify-email page
+        if (!user.emailVerified && isProtectedPath(pathname)) {
+          router.replace("/verify-email");
+          return;
+        }
         validateSession();
       } else {
         forceLogout();
