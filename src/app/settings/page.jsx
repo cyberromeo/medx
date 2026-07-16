@@ -2,11 +2,21 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { auth } from "@/lib/firebase";
+import { auth, db } from "@/lib/firebase";
+import { doc, getDoc, setDoc } from "firebase/firestore";
 import { updateProfile, updatePassword, sendPasswordResetEmail, onAuthStateChanged } from "firebase/auth";
 import { User, Shield, RotateCcw, AlertCircle, CheckCircle2, ChevronRight, Loader2, LogOut } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { clearProgressCache } from "@/lib/progress";
+
+const AVATARS = [
+  "https://api.dicebear.com/10.x/adventurer/svg?seed=Felix",
+  "https://api.dicebear.com/10.x/adventurer/svg?seed=Aneka",
+  "https://api.dicebear.com/10.x/adventurer/svg?seed=Jack",
+  "https://api.dicebear.com/10.x/adventurer/svg?seed=Jude",
+  "https://api.dicebear.com/10.x/adventurer/svg?seed=Aiden",
+  "https://api.dicebear.com/10.x/adventurer/svg?seed=Adrian",
+];
 
 export default function SettingsPage() {
   const [user, setUser] = useState(null);
@@ -16,6 +26,8 @@ export default function SettingsPage() {
 
   // Form states
   const [displayName, setDisplayName] = useState("");
+  const [college, setCollege] = useState("");
+  const [photoURL, setPhotoURL] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   
@@ -24,10 +36,21 @@ export default function SettingsPage() {
   const [message, setMessage] = useState({ type: "", text: "" });
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
         setUser(currentUser);
         setDisplayName(currentUser.displayName || "");
+        setPhotoURL(currentUser.photoURL || `https://api.dicebear.com/10.x/glyphs/svg?seed=${currentUser.uid}`);
+        
+        try {
+          const userDoc = await getDoc(doc(db, "users", currentUser.uid));
+          if (userDoc.exists() && userDoc.data().college) {
+            setCollege(userDoc.data().college);
+          }
+        } catch (error) {
+          console.error("Error fetching user data:", error);
+        }
+
         setLoading(false);
       } else {
         router.push("/login");
@@ -45,7 +68,8 @@ export default function SettingsPage() {
     e.preventDefault();
     setIsSubmitting(true);
     try {
-      await updateProfile(user, { displayName });
+      await updateProfile(user, { displayName, photoURL });
+      await setDoc(doc(db, "users", user.uid), { college }, { merge: true });
       showMessage("success", "Profile updated successfully");
     } catch (error) {
       showMessage("error", error.message);
@@ -190,10 +214,32 @@ export default function SettingsPage() {
               >
                 <div>
                   <h3 className="text-lg font-bold text-gray-900">Personal Information</h3>
-                  <p className="text-sm text-gray-500 mt-1">Update your display name and public profile details.</p>
+                  <p className="text-sm text-gray-500 mt-1">Update your display name, avatar, and college.</p>
                 </div>
 
-                <form onSubmit={handleUpdateProfile} className="space-y-5">
+                <form onSubmit={handleUpdateProfile} className="space-y-6">
+                  <div>
+                    <label className="text-[10px] font-bold tracking-widest text-gray-400 uppercase ml-1">
+                      Avatar
+                    </label>
+                    <div className="mt-3 flex flex-wrap gap-4">
+                      {AVATARS.map((url) => (
+                        <button
+                          key={url}
+                          type="button"
+                          onClick={() => setPhotoURL(url)}
+                          className={`h-14 w-14 overflow-hidden rounded-full transition-transform ${
+                            photoURL === url
+                              ? "ring-4 ring-blue-500 ring-offset-2 scale-105"
+                              : "ring-1 ring-gray-200 hover:scale-105 opacity-60 hover:opacity-100"
+                          }`}
+                        >
+                          <img src={url} alt="Avatar option" className="h-full w-full bg-gray-50" />
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
                   <div>
                     <label className="text-[10px] font-bold tracking-widest text-gray-400 uppercase ml-1">
                       Email Address
@@ -204,7 +250,6 @@ export default function SettingsPage() {
                       disabled
                       className="input mt-1 bg-gray-50 text-gray-500 cursor-not-allowed"
                     />
-                    <p className="text-xs text-gray-400 mt-2 ml-1">Email cannot be changed directly.</p>
                   </div>
 
                   <div>
@@ -218,6 +263,19 @@ export default function SettingsPage() {
                       className="input mt-1"
                       placeholder="Dr. John Doe"
                       required
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-[10px] font-bold tracking-widest text-gray-400 uppercase ml-1">
+                      College
+                    </label>
+                    <input
+                      type="text"
+                      value={college}
+                      onChange={(e) => setCollege(e.target.value)}
+                      className="input mt-1"
+                      placeholder="Your Medical College"
                     />
                   </div>
 
