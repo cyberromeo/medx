@@ -7,6 +7,12 @@
         "path": "/notes/workbooks/Anaesthesia/MIST Anaesthesia Workbook - Dr Swati Mam.pdf",
         "subject": "Anaesthesia",
         "categoryType": "workbooks"
+      },
+      {
+        "subject": "Anaesthesia",
+        "path": "https://portal.mist.org.in/content/notes/4332d366-e467-4e96-985a-171a90b0d238.pdf",
+        "name": "Anaesthesia Written",
+        "categoryType": "written"
       }
     ]
   },
@@ -18,6 +24,12 @@
         "path": "/notes/workbooks/Anatomy/MIST Anatomy Workbook - Dr Shilpi mam.pdf",
         "subject": "Anatomy",
         "categoryType": "workbooks"
+      },
+      {
+        "subject": "Anatomy",
+        "path": "https://portal.mist.org.in/content/notes/4b327334-90fc-482a-ad86-93db0a9129c7.pdf",
+        "name": "Anatomy Written",
+        "categoryType": "written"
       }
     ]
   },
@@ -29,6 +41,23 @@
         "path": "/notes/workbooks/Biochem/MIST Biochem Workbook - Dr Sayantann sir.pdf",
         "subject": "Biochem",
         "categoryType": "workbooks"
+      },
+      {
+        "subject": "Biochem",
+        "path": "https://portal.mist.org.in/content/notes/c9553c0b-7604-4bc7-abe9-73b925d6456f.pdf",
+        "name": "Biochem Written",
+        "categoryType": "written"
+      }
+    ]
+  },
+  {
+    "subject": "Dermatology",
+    "files": [
+      {
+        "subject": "Dermatology",
+        "path": "https://portal.mist.org.in/content/notes/b1a0df3e-3902-49a1-b86b-9ee062c1bdcc.pdf",
+        "name": "Dermatology Written",
+        "categoryType": "written"
       }
     ]
   },
@@ -75,6 +104,23 @@
         "path": "/notes/miscellaneous/EXTRA ENT WITH DR SHUBHAM.pdf",
         "subject": "ENT",
         "categoryType": "miscellaneous"
+      },
+      {
+        "subject": "ENT",
+        "path": "https://portal.mist.org.in/content/notes/012f026d-f3a7-4f8f-8336-17a487c53eb4.pdf",
+        "name": "ENT Revision Written",
+        "categoryType": "written"
+      }
+    ]
+  },
+  {
+    "subject": "FMT",
+    "files": [
+      {
+        "subject": "FMT",
+        "path": "https://portal.mist.org.in/content/notes/226ceab8-099c-4f70-b819-dc39a5504971.pdf",
+        "name": "FMT Written",
+        "categoryType": "written"
       }
     ]
   },
@@ -114,6 +160,12 @@
         "path": "/notes/workbooks/Microbiology/MIST Microbiology Workbook - Dr. Danish_compressed.pdf",
         "subject": "Microbiology",
         "categoryType": "workbooks"
+      },
+      {
+        "subject": "Microbiology",
+        "path": "https://portal.mist.org.in/content/notes/abe2c846-e1b4-416c-bd23-945a1131809c.pdf",
+        "name": "Microbiology Written",
+        "categoryType": "written"
       }
     ]
   },
@@ -148,6 +200,12 @@
         "path": "/notes/miscellaneous/Ophtha Revision 2026_watermark.pdf",
         "subject": "Ophthalmology",
         "categoryType": "miscellaneous"
+      },
+      {
+        "subject": "Ophthalmology",
+        "path": "https://portal.mist.org.in/content/notes/460eeb45-d1bc-4d7f-a78f-2345bd0d42bf.pdf",
+        "name": "Ophthalmology Written",
+        "categoryType": "written"
       }
     ]
   },
@@ -170,6 +228,12 @@
         "path": "/notes/workbooks/Pathology/MIST Pathology Workbook - Dr Kunal Veer Garg sir.pdf",
         "subject": "Pathology",
         "categoryType": "workbooks"
+      },
+      {
+        "subject": "Pathology",
+        "path": "https://portal.mist.org.in/content/notes/78845fa1-2aee-4426-9f5a-70189a1aa70b.pdf",
+        "name": "Pathology Written",
+        "categoryType": "written"
       }
     ]
   },
@@ -214,6 +278,12 @@
         "path": "/notes/workbooks/PSM/MIST PSM Workbook - Dr. Deepa Gupta mam.pdf",
         "subject": "PSM",
         "categoryType": "workbooks"
+      },
+      {
+        "subject": "PSM",
+        "path": "https://portal.mist.org.in/content/notes/bca1fd4c-d9cd-4857-aaf4-485c2d94087b.pdf",
+        "name": "PSM Written",
+        "categoryType": "written"
       }
     ]
   },
@@ -236,6 +306,36 @@
         "path": "/notes/workbooks/Radiology/MIST Radiology Workbook - Dr. Nishith Sir.pdf",
         "subject": "Radiology",
         "categoryType": "workbooks"
+      },
+      {
+        "subject": "Radiology",
+        "path": "https://portal.mist.org.in/content/notes/fbfce1e3-8315-4cd4-8db8-4073671d9173.pdf",
+        "name": "Radiology Written Part 1",
+        "categoryType": "written"
+      },
+      {
+        "subject": "Radiology",
+        "path": "https://portal.mist.org.in/content/notes/0c6464ac-cc33-4dff-aee8-a9daa35bccb0.pdf",
+        "name": "Radiology Written Part 2",
+        "categoryType": "written"
+      },
+      {
+        "subject": "Radiology",
+        "path": "https://portal.mist.org.in/content/notes/78590aaa-86f7-4733-baf6-c3f158683ee2.pdf",
+        "name": "Radiology Written Part 3",
+        "categoryType": "written"
+      },
+      {
+        "subject": "Radiology",
+        "path": "https://portal.mist.org.in/content/notes/b7e387d9-df11-4283-879e-a373d2d348e0.pdf",
+        "name": "Radiology Written Part 4",
+        "categoryType": "written"
+      },
+      {
+        "subject": "Radiology",
+        "path": "https://portal.mist.org.in/content/notes/3321daae-4058-4abf-a854-aa4e1fda94a1.pdf",
+        "name": "Radiology Revision Written",
+        "categoryType": "written"
       }
     ]
   },
@@ -247,6 +347,12 @@
         "path": "/notes/workbooks/Surgery/MIST Surgery Workbook - Dr Vineet sir.pdf",
         "subject": "Surgery",
         "categoryType": "workbooks"
+      },
+      {
+        "subject": "Surgery",
+        "path": "https://portal.mist.org.in/content/notes/658b2927-7de0-459e-ba49-ebe11efe5f7d.pdf",
+        "name": "Surgery Written",
+        "categoryType": "written"
       }
     ]
   }

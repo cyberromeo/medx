@@ -37,6 +37,12 @@ export default function NotesPage() {
     e.preventDefault();
     if (downloadingFile) return;
     
+    // For external URLs, we must bypass the proxy iframe and just open them directly
+    if (filePath.startsWith('http')) {
+      window.open(filePath, '_blank');
+      return;
+    }
+    
     setDownloadingFile(filePath);
     
     const iframe = document.createElement("iframe");
@@ -142,12 +148,19 @@ export default function NotesPage() {
                                   {file.name}
                                 </h3>
                                 <div className="mt-1 flex flex-wrap gap-1">
-                                  <span className="inline-flex rounded-md bg-gray-200 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-gray-600">
-                                    {file.categoryType}
-                                  </span>
+                                  {file.categoryType !== 'written' && (
+                                    <span className="inline-flex rounded-md bg-gray-200 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-gray-600">
+                                      {file.categoryType}
+                                    </span>
+                                  )}
                                   {file.categoryType === 'workbooks' && (
                                     <span className="inline-flex rounded-md bg-emerald-100 text-emerald-700 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider">
                                       Unwritten
+                                    </span>
+                                  )}
+                                  {file.categoryType === 'written' && (
+                                    <span className="inline-flex rounded-md bg-red-100 text-red-700 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider">
+                                      Written
                                     </span>
                                   )}
                                 </div>
