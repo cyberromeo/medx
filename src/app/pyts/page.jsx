@@ -62,8 +62,8 @@ export default function PYTsPage() {
               </h1>
               <p className="mt-2 max-w-[600px] text-sm font-medium text-gray-500 leading-relaxed">
                 A comprehensive collection of highly-tested topics from previous years. Topics marked with 
-                <span className="material-symbols-outlined align-middle mx-1" style={{ color: '#FF5722', fontSize: '1.1rem' }}>
-                  local_fire_department
+                <span className="inline-flex items-center justify-center mx-1 text-orange-500 bg-orange-50 rounded-md px-1">
+                  <Flame size={14} className="mr-0.5" /> 
                 </span>
                 have a history of frequent repetition.
               </p>
@@ -138,20 +138,11 @@ export default function PYTsPage() {
                             </div>
                             
                             {topic.priority > 0 && (
-                              <div className="flex items-center gap-[2px] ml-3 shrink-0">
-                                {Array.from({ length: topic.priority }).map((_, i) => (
-                                  <span
-                                    key={i}
-                                    className="material-symbols-outlined"
-                                    style={{
-                                      color: '#FF5722',
-                                      fontSize: '1.25rem',
-                                      filter: 'drop-shadow(0px 1px 2px rgba(255, 87, 34, 0.4))'
-                                    }}
-                                  >
-                                    local_fire_department
-                                  </span>
-                                ))}
+                              <div className="flex items-center gap-0.5 ml-3 shrink-0">
+                                <Flame
+                                  size={18}
+                                  className="text-orange-500 drop-shadow-sm fill-orange-500"
+                                />
                               </div>
                             )}
                           </div>
