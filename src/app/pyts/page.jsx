@@ -129,23 +129,18 @@ export default function PYTsPage() {
                             }`}
                           >
                             <div className="flex items-center gap-4">
-                              <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-white text-xs font-bold text-gray-400 shadow-sm">
+                              <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-white text-xs font-bold text-gray-400 shadow-sm shrink-0">
                                 {(tIndex + 1).toString().padStart(2, '0')}
                               </span>
                               <h4 className={`text-sm md:text-base ${topic.priority > 0 ? "font-bold text-gray-900" : "font-semibold text-gray-700"}`}>
                                 {topic.title}
+                                {topic.priority > 0 && (
+                                  <span className="ml-2 text-sm tracking-[2px]">
+                                    {"🔸".repeat(topic.priority)}
+                                  </span>
+                                )}
                               </h4>
                             </div>
-                            
-                            {topic.priority > 0 && (
-                              <div className="flex items-center gap-0.5 ml-3 shrink-0">
-                                {[...Array(Number(topic.priority) || 0)].map((_, i) => (
-                                  <span key={i} className="text-[1.1rem] drop-shadow-sm leading-none">
-                                    🔸
-                                  </span>
-                                ))}
-                              </div>
-                            )}
                           </div>
                         ))}
                       </div>
