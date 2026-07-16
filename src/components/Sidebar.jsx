@@ -11,6 +11,7 @@ import {
   Trophy,
   MessageSquare,
   LogOut,
+  BookOpen,
 } from "lucide-react";
 import Image from "next/image";
 import { auth } from "@/lib/firebase";
@@ -53,9 +54,10 @@ export default function Sidebar() {
   const navItems = [
     { href: "/dashboard", icon: LayoutGrid, label: "Dashboard" },
     { href: "/series", icon: Video, label: "Library" },
-    { href: "/mcq", icon: ClipboardList, label: "MCQs" },
+    { href: "/mcq", icon: ClipboardList, label: "QBank" },
     { href: "/tracker", icon: Activity, label: "Tracker" },
     { href: "/leaderboard", icon: Trophy, label: "Ranks" },
+    { href: "/notes", icon: BookOpen, label: "Notes" },
     { action: openChat, icon: MessageSquare, id: "chat", label: "Discuss" },
   ];
 

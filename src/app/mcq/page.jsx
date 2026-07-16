@@ -5,7 +5,7 @@ import { auth } from "@/lib/firebase";
 import { onAuthStateChanged } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { ClipboardList, ArrowRight } from "lucide-react";
+import { ClipboardList, ArrowRight, Target, ScrollText, FileQuestion } from "lucide-react";
 import Link from "next/link";
 import { MCQ_SUBCATEGORIES, getTestsBySubcategory } from "@/lib/mcq";
 
@@ -57,7 +57,7 @@ export default function McqPage() {
           </div>
           <div>
             <h1 className="text-2xl font-bold tracking-tight text-gray-900 md:text-3xl">
-              MCQs
+              QBank
             </h1>
             <p className="text-sm font-medium text-gray-500">Select a question set</p>
           </div>
@@ -67,6 +67,7 @@ export default function McqPage() {
         <div className="space-y-4">
           {MCQ_SUBCATEGORIES.map((sub, index) => {
             const qCount = testCounts[sub.slug] || 0;
+            const IconComponent = sub.icon === "Target" ? Target : sub.icon === "ScrollText" ? ScrollText : FileQuestion;
 
             return (
               <motion.div
@@ -80,8 +81,8 @@ export default function McqPage() {
                   className="group relative block overflow-hidden rounded-[1.5rem] border border-[rgba(30,50,90,0.05)] bg-white p-5 shadow-[0_4px_24px_rgba(0,0,0,0.04)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_8px_30px_rgba(0,0,0,0.06)] md:rounded-[2rem] md:p-6"
                 >
                   <div className="relative z-10 flex items-center gap-4">
-                    <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border border-blue-100 bg-blue-50 text-2xl text-blue-600">
-                      {sub.icon}
+                    <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border border-blue-100 bg-blue-50 text-blue-600">
+                      <IconComponent size={28} />
                     </div>
                     <div className="min-w-0 flex-1">
                       <h2 className="text-lg font-bold text-gray-900 md:text-xl">

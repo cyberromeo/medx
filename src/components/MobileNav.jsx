@@ -14,6 +14,7 @@ import {
   LogOut,
   X,
   ChevronRight,
+  BookOpen,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useChatX } from "@/components/ChatXProvider";
@@ -62,7 +63,7 @@ export default function MobileNav() {
     { href: "/dashboard", icon: LayoutGrid, id: "dashboard" },
     { href: "/series", icon: Video, id: "series" },
     { href: "/mcq", icon: ClipboardList, id: "mcq" },
-    { href: "/tracker", icon: Activity, id: "tracker" },
+    { href: "/notes", icon: BookOpen, id: "notes" },
     { action: openChat, icon: MessageSquare, id: "chat" },
   ];
 
@@ -213,8 +214,9 @@ export default function MobileNav() {
                     label: "Dashboard",
                   },
                   { href: "/series", icon: Video, label: "Video Library" },
-                  { href: "/mcq", icon: ClipboardList, label: "MCQ Practice" },
+                  { href: "/mcq", icon: ClipboardList, label: "QBank" },
                   { href: "/tracker", icon: Activity, label: "Tracker" },
+                  { href: "/notes", icon: BookOpen, label: "Notes" },
                   {
                     href: "/leaderboard",
                     icon: Trophy,

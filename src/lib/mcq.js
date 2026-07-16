@@ -20,13 +20,13 @@ export const MCQ_SUBCATEGORIES = [
     slug: "mist-2026-topic-wise",
     title: "MIST 2026 TOPIC-WISE",
     description: "Topic-wise MCQs for MIST 2026 preparation",
-    icon: "🎯",
+    icon: "Target",
   },
   {
     slug: "pyqs",
     title: "Previous Year Questions (PYQs)",
     description: "Practice PYQs with Exam & Revision modes",
-    icon: "📜",
+    icon: "ScrollText",
   }
 ];
 
