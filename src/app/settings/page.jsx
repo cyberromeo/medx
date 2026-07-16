@@ -10,12 +10,12 @@ import { useRouter } from "next/navigation";
 import { clearProgressCache } from "@/lib/progress";
 
 const AVATARS = [
-  "https://api.dicebear.com/10.x/adventurer/svg?seed=Felix",
-  "https://api.dicebear.com/10.x/adventurer/svg?seed=Aneka",
-  "https://api.dicebear.com/10.x/adventurer/svg?seed=Jack",
-  "https://api.dicebear.com/10.x/adventurer/svg?seed=Jude",
-  "https://api.dicebear.com/10.x/adventurer/svg?seed=Aiden",
-  "https://api.dicebear.com/10.x/adventurer/svg?seed=Adrian",
+  "https://api.dicebear.com/10.x/glyphs/svg?seed=Felix",
+  "https://api.dicebear.com/10.x/glyphs/svg?seed=Aneka",
+  "https://api.dicebear.com/10.x/glyphs/svg?seed=Jack",
+  "https://api.dicebear.com/10.x/glyphs/svg?seed=Jude",
+  "https://api.dicebear.com/10.x/glyphs/svg?seed=Aiden",
+  "https://api.dicebear.com/10.x/glyphs/svg?seed=Adrian",
 ];
 
 export default function SettingsPage() {
