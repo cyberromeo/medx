@@ -5,19 +5,12 @@ import { motion, AnimatePresence } from "framer-motion";
 import { auth, db } from "@/lib/firebase";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { updateProfile, updatePassword, sendPasswordResetEmail, onAuthStateChanged } from "firebase/auth";
-import { User, Shield, RotateCcw, AlertCircle, CheckCircle2, ChevronRight, Loader2, LogOut } from "lucide-react";
+import { User, Shield, RotateCcw, AlertCircle, CheckCircle2, ChevronRight, Loader2, LogOut, RefreshCw } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { clearProgressCache } from "@/lib/progress";
 import { passwordResetActionCodeSettings } from "@/lib/auth-action-settings";
 
-const AVATARS = [
-  "https://api.dicebear.com/10.x/glyphs/svg?seed=Felix",
-  "https://api.dicebear.com/10.x/glyphs/svg?seed=Aneka",
-  "https://api.dicebear.com/10.x/glyphs/svg?seed=Jack",
-  "https://api.dicebear.com/10.x/glyphs/svg?seed=Jude",
-  "https://api.dicebear.com/10.x/glyphs/svg?seed=Aiden",
-  "https://api.dicebear.com/10.x/glyphs/svg?seed=Adrian",
-];
+
 
 export default function SettingsPage() {
   const [user, setUser] = useState(null);
@@ -223,21 +216,21 @@ export default function SettingsPage() {
                     <label className="text-[10px] font-bold tracking-widest text-gray-400 uppercase ml-1">
                       Avatar
                     </label>
-                    <div className="mt-3 flex flex-wrap gap-4">
-                      {AVATARS.map((url) => (
-                        <button
-                          key={url}
-                          type="button"
-                          onClick={() => setPhotoURL(url)}
-                          className={`h-14 w-14 overflow-hidden rounded-full transition-transform ${
-                            photoURL === url
-                              ? "ring-4 ring-blue-500 ring-offset-2 scale-105"
-                              : "ring-1 ring-gray-200 hover:scale-105 opacity-60 hover:opacity-100"
-                          }`}
-                        >
-                          <img src={url} alt="Avatar option" className="h-full w-full bg-gray-50" />
-                        </button>
-                      ))}
+                    <div className="mt-3 flex items-center gap-6">
+                      <div className="h-20 w-20 shrink-0 overflow-hidden rounded-full ring-4 ring-blue-500 ring-offset-2">
+                        <img src={photoURL || `https://api.dicebear.com/10.x/glyphs/svg?seed=default`} alt="Current Avatar" className="h-full w-full bg-gray-50" />
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const randomSeed = Math.random().toString(36).substring(2, 10);
+                          setPhotoURL(`https://api.dicebear.com/10.x/glyphs/svg?seed=${randomSeed}`);
+                        }}
+                        className="flex items-center gap-2 rounded-xl bg-gray-100 px-4 py-2.5 text-sm font-semibold text-gray-700 transition-colors hover:bg-gray-200 active:scale-95"
+                      >
+                        <RefreshCw size={16} />
+                        Shuffle Avatar
+                      </button>
                     </div>
                   </div>
 
