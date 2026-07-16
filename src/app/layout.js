@@ -7,13 +7,26 @@ import SessionGuard from "@/components/SessionGuard";
 import { Analytics } from "@vercel/analytics/next";
 
 export const metadata = {
-  title: "MedX - Medical Video Platform",
-  description: "Premium FMGE preparation platform",
+  title: "MedX 2.0 - Study Smarter. Achieve More.",
+  description: "MEDX 2.0 IS LIVE! Explore new MIST 2026 Videos, Previous Year Topics, Comprehensive Notes, and a brand-new Preparation Tracker. Over 450+ Marrow modules and 370+ new videos added.",
+  keywords: ["FMGE", "MedX", "MIST 2026", "Medical preparation", "Marrow modules", "Study Tracker"],
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
     title: "MedX",
+  },
+  openGraph: {
+    title: "MedX 2.0 - Study Smarter. Achieve More.",
+    description: "MEDX 2.0 IS LIVE! Explore new MIST 2026 Videos, Previous Year Topics, and a brand-new Preparation Tracker.",
+    url: "https://medx.srihari.quest",
+    siteName: "MedX",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "MedX 2.0 - Study Smarter. Achieve More.",
+    description: "MEDX 2.0 IS LIVE! Enjoy a massive content drop with 450+ Marrow modules, 370+ new videos, and comprehensive notes for all subjects.",
   },
 };
 
