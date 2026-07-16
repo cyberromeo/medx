@@ -415,7 +415,7 @@ const CustomPlayer = ({ videoId, thumbnail, onEnded, onPlay, title, initialTime 
         >
             {/* ===== SPLASH SCREEN - Covers YouTube branding during initial load ===== */}
             {showSplash && (
-                <div className="absolute inset-0 z-[60] bg-black flex flex-col items-center justify-center" style={{ WebkitTransform: 'translateZ(0)' }}>
+                <div className="absolute inset-0 z-[60] bg-black flex flex-col items-center justify-center pointer-events-none" style={{ WebkitTransform: 'translateZ(0)' }}>
                     <Loader2 className="w-12 h-12 text-primary animate-spin mb-4" />
                     <span className="text-primary text-sm font-medium tracking-wider">Loading Video...</span>
                     <div className="absolute top-4 left-4 px-3 py-1 rounded-full bg-primary-soft border border-primary-soft">
@@ -433,10 +433,10 @@ const CustomPlayer = ({ videoId, thumbnail, onEnded, onPlay, title, initialTime 
 
             {/* ===== INTERACTION SHIELD ===== */}
             {/* Blocks all mouse/touch events on YouTube iframe and hides branding */}
-            {(status === "playing" || status === "paused" || status === "loading") && (
+            {(status === "playing" || status === "paused") && (
                 <div
                     className="absolute inset-0 z-30 touch-none cursor-pointer"
-                    onClick={status !== "loading" ? togglePlay : undefined}
+                    onClick={togglePlay}
                     style={{ WebkitTapHighlightColor: "transparent" }}
                 />
             )}
