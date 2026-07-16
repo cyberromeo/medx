@@ -145,16 +145,16 @@ export default function LoginPage() {
         } catch (redeemErr) {
           console.error("Failed to redeem activation code:", redeemErr);
         }
+      }
 
-        // Sign out immediately after signup, as requested
-        await signOut(auth);
-        setIsLogin(true);
-        setResetMessage("Account created successfully! We've sent a verification email. Please check your inbox, activate your account, and then log in.");
-        setPassword("");
-        setConfirmPassword("");
-        setActivationCode("");
-        setLoading(false);
-        return;
+      const userId = userCredential.user.uid;
+      await activateSingleDeviceSession(userId);
+
+      // Redirect to verify-email if not verified, otherwise dashboard
+      if (!userCredential.user.emailVerified) {
+        router.push("/verify-email");
+      } else {
+        router.push("/dashboard");
       }
     } catch (err) {
       console.error(err);
