@@ -99,13 +99,23 @@ export default function MarrowModulesPage() {
           {!currentMode ? (
             /* Level 1: Modes */
             <motion.div
-              key="modes"
+              key="modes-container"
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -20 }}
-              className="grid grid-cols-1 md:grid-cols-2 gap-4"
             >
-              {modes.map((mode, index) => {
+              {/* Tutorial Box */}
+              <div className="mb-6 rounded-2xl border border-blue-100 bg-blue-50/50 p-4 text-sm text-blue-800">
+                <h3 className="mb-2 font-bold text-blue-900">How to use this tracker:</h3>
+                <ul className="list-inside list-disc space-y-1 font-medium">
+                  <li>Click <strong>Give Test</strong> to open the module directly in Marrow.</li>
+                  <li>After completing the test, return here and click the <strong>checkmark (○)</strong> to mark it done.</li>
+                  <li>Earn XP, build your streak, and track your overall progress automatically!</li>
+                </ul>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {modes.map((mode, index) => {
                 const totalTests = Object.values(marrowData[mode]).reduce((acc, curr) => acc + curr.length, 0);
                 const title = mode === '100_question_tests' ? '100 Question Tests' : 'Topic Wise Tests';
                 
@@ -131,6 +141,7 @@ export default function MarrowModulesPage() {
                   </motion.div>
                 );
               })}
+              </div>
             </motion.div>
           ) : (
             /* Level 2: Subjects */
