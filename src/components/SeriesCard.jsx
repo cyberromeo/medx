@@ -4,7 +4,6 @@ import { useMemo } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import {
-  PlayCircle,
   PersonStanding,
   Activity,
   FlaskConical,
@@ -133,7 +132,6 @@ export default function SeriesCard({ title, category, videos, itemVariants, watc
           <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[rgba(30,50,90,0.05)] bg-gray-50 text-gray-400 transition-all duration-300 group-active:scale-95 group-hover:border-blue-600 group-hover:bg-blue-600 group-hover:text-white">
             <ArrowRight size={18} strokeWidth={2.5} className="transition-transform group-hover:translate-x-0.5" />
           </div>
-          <PlayCircle className="hidden" />
         </div>
       </Link>
     </motion.div>

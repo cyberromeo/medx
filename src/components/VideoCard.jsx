@@ -15,7 +15,7 @@ export default function VideoCard({ video, itemVariants }) {
               alt={video.title}
               className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
             />
-            <div className="bg-primary absolute inset-0" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent" />
             <div className="absolute top-2 right-2 rounded border border-white/10 bg-black/70 px-2 py-1 text-[10px] font-bold text-white/90">
               {video.duration}
             </div>

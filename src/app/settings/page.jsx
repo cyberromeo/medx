@@ -8,6 +8,7 @@ import { updateProfile, updatePassword, sendPasswordResetEmail, onAuthStateChang
 import { User, Shield, RotateCcw, AlertCircle, CheckCircle2, ChevronRight, Loader2, LogOut } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { clearProgressCache } from "@/lib/progress";
+import { passwordResetActionCodeSettings } from "@/lib/auth-action-settings";
 
 const AVATARS = [
   "https://api.dicebear.com/10.x/glyphs/svg?seed=Felix",
@@ -104,7 +105,7 @@ export default function SettingsPage() {
   const handleSendResetEmail = async () => {
     setIsSubmitting(true);
     try {
-      await sendPasswordResetEmail(auth, user.email);
+      await sendPasswordResetEmail(auth, user.email, passwordResetActionCodeSettings);
       showMessage("success", "Password reset email sent to " + user.email);
     } catch (error) {
       showMessage("error", error.message);

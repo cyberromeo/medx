@@ -12,6 +12,7 @@ import {
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { activateSingleDeviceSession } from "@/lib/session-security";
+import { passwordResetActionCodeSettings } from "@/lib/auth-action-settings";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Mail,
@@ -111,7 +112,7 @@ export default function LoginPage() {
     setResetMessage("");
     setLoading(true);
     try {
-      await sendPasswordResetEmail(auth, email);
+      await sendPasswordResetEmail(auth, email, passwordResetActionCodeSettings);
       setResetMessage("Password reset email sent! Check your inbox.");
     } catch (err) {
       console.error(err);

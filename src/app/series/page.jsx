@@ -105,16 +105,16 @@ export default function SeriesPage() {
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-8 flex items-center gap-4"
+          className="mb-6 flex items-center gap-3 md:mb-8 md:gap-4"
         >
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gray-900 text-white shadow-sm">
-            <Play size={22} className="ml-0.5" />
+          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gray-900 text-white shadow-sm md:h-12 md:w-12">
+            <Play size={20} className="ml-0.5" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold tracking-tight text-gray-900 md:text-3xl">
+            <h1 className="text-xl font-bold tracking-tight text-gray-900 md:text-3xl">
               Video Library
             </h1>
-            <p className="text-sm font-medium text-gray-500">Select a video category</p>
+            <p className="text-xs font-medium text-gray-500 md:text-sm">Select a video category</p>
           </div>
         </motion.div>
 
@@ -126,9 +126,9 @@ export default function SeriesPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
             onClick={() => setSelectedCategory("MIST")}
-            className="group cursor-pointer overflow-hidden rounded-[1.5rem] border border-[rgba(30,50,90,0.05)] bg-white p-6 shadow-[0_4px_24px_rgba(0,0,0,0.04)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_8px_30px_rgba(0,0,0,0.06)] md:rounded-[2rem] md:p-8"
+            className="group cursor-pointer overflow-hidden rounded-[1.5rem] border border-[rgba(30,50,90,0.05)] bg-white p-5 shadow-[0_4px_24px_rgba(0,0,0,0.04)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_8px_30px_rgba(0,0,0,0.06)] md:rounded-[2rem] md:p-8"
           >
-            <div className="mb-8 flex items-start justify-between">
+            <div className="mb-6 flex items-start justify-between md:mb-8">
               <div className="flex items-center gap-4">
                 <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-500 to-blue-700 text-xl font-bold text-white shadow-sm">
                   M
@@ -170,9 +170,9 @@ export default function SeriesPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.12 }}
             onClick={() => setSelectedCategory("MIST_2026")}
-            className="group cursor-pointer overflow-hidden rounded-[1.5rem] border border-[rgba(30,50,90,0.05)] bg-white p-6 shadow-[0_4px_24px_rgba(0,0,0,0.04)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_8px_30px_rgba(0,0,0,0.06)] md:rounded-[2rem] md:p-8"
+            className="group cursor-pointer overflow-hidden rounded-[1.5rem] border border-[rgba(30,50,90,0.05)] bg-white p-5 shadow-[0_4px_24px_rgba(0,0,0,0.04)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_8px_30px_rgba(0,0,0,0.06)] md:rounded-[2rem] md:p-8"
           >
-            <div className="mb-8 flex items-start justify-between">
+            <div className="mb-6 flex items-start justify-between md:mb-8">
               <div className="flex items-center gap-4">
                 <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500 to-emerald-700 text-xl font-bold text-white shadow-sm">
                   M
@@ -213,9 +213,9 @@ export default function SeriesPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.13 }}
             onClick={() => setSelectedCategory("MIST_2026_REVISION")}
-            className="group cursor-pointer overflow-hidden rounded-[1.5rem] border border-[rgba(30,50,90,0.05)] bg-white p-6 shadow-[0_4px_24px_rgba(0,0,0,0.04)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_8px_30px_rgba(0,0,0,0.06)] md:rounded-[2rem] md:p-8"
+            className="group cursor-pointer overflow-hidden rounded-[1.5rem] border border-[rgba(30,50,90,0.05)] bg-white p-5 shadow-[0_4px_24px_rgba(0,0,0,0.04)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_8px_30px_rgba(0,0,0,0.06)] md:rounded-[2rem] md:p-8"
           >
-            <div className="mb-8 flex items-start justify-between">
+            <div className="mb-6 flex items-start justify-between md:mb-8">
               <div className="flex items-center gap-4">
                 <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-purple-500 to-purple-700 text-xl font-bold text-white shadow-sm">
                   R
@@ -255,7 +255,7 @@ export default function SeriesPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.15 }}
-            className="group relative flex min-h-[200px] cursor-not-allowed flex-col justify-between overflow-hidden rounded-[1.5rem] border border-[rgba(30,50,90,0.05)] bg-gray-50/60 p-6 opacity-70 grayscale md:rounded-[2rem] md:p-8"
+            className="group relative flex min-h-[200px] cursor-not-allowed flex-col justify-between overflow-hidden rounded-[1.5rem] border border-[rgba(30,50,90,0.05)] bg-gray-50/60 p-5 opacity-70 grayscale md:rounded-[2rem] md:p-8"
           >
             <div>
               <h2 className="text-2xl font-bold tracking-tight text-gray-500 md:text-3xl">
@@ -270,7 +270,7 @@ export default function SeriesPage() {
                 Previous year questions vault unlocking soon...
               </p>
             </div>
-            <span className="absolute top-6 right-6 rounded-full bg-gray-200 px-2 py-0.5 text-[10px] font-bold tracking-wider text-gray-500 uppercase">
+            <span className="absolute top-5 right-5 rounded-full bg-gray-200 px-2 py-0.5 text-[10px] font-bold tracking-wider text-gray-500 uppercase">
               Soon
             </span>
           </motion.div>

@@ -30,6 +30,7 @@ const adminAuth = getAuth(app);
 
 async function sendPasswordResetEmail(email) {
   const apiKey = process.env.NEXT_PUBLIC_FIREBASE_API_KEY;
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
   const response = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=${apiKey}`, {
     method: 'POST',
     headers: {
@@ -38,6 +39,10 @@ async function sendPasswordResetEmail(email) {
     body: JSON.stringify({
       requestType: 'PASSWORD_RESET',
       email: email,
+      // Land on our own /reset-password page (reads oobCode + mode from query),
+      // instead of the default firebaseapp.com hosted page.
+      continueUrl: `${siteUrl}/reset-password`,
+      canHandleCodeInApp: true,
     }),
   });
 

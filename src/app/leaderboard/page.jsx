@@ -198,7 +198,7 @@ export default function LeaderboardPage() {
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: index * 0.04 }}
-                className={`flex items-center gap-4 overflow-hidden rounded-2xl border p-4 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md ${
+                className={`relative flex items-center gap-3 overflow-hidden rounded-2xl border p-3 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md sm:gap-4 sm:p-4 ${
                   isCurrentUser
                     ? "border-blue-300 bg-blue-50/60"
                     : "border-[rgba(30,50,90,0.05)] bg-white hover:border-gray-200"
@@ -207,12 +207,12 @@ export default function LeaderboardPage() {
                 {isCurrentUser && (
                   <div className="absolute bottom-0 left-0 top-0 w-1.5 bg-blue-600" />
                 )}
-                <div className="w-8 shrink-0 text-center text-lg font-bold text-gray-400 sm:w-10 sm:text-xl">
+                <div className="w-8 shrink-0 text-center text-base font-bold text-gray-400 sm:w-10 sm:text-xl">
                   #{rank}
                 </div>
 
                 <div
-                  className={`h-12 w-12 shrink-0 overflow-hidden rounded-2xl border-2 ${
+                  className={`h-11 w-11 shrink-0 overflow-hidden rounded-2xl border-2 sm:h-12 sm:w-12 ${
                     isCurrentUser ? "border-blue-300" : "border-white"
                   } shadow-sm`}
                 >
@@ -247,9 +247,9 @@ export default function LeaderboardPage() {
                   </div>
                 </div>
 
-                <div className="flex shrink-0 items-center justify-end gap-1.5 rounded-xl border border-[rgba(30,50,90,0.05)] bg-gray-50 px-3 py-1.5">
+                <div className="flex shrink-0 items-center justify-end gap-1.5 rounded-xl border border-[rgba(30,50,90,0.05)] bg-gray-50 px-2.5 py-1.5 sm:px-3">
                   <Star className="text-amber-500" size={16} />
-                  <span className="text-base font-bold text-gray-900">
+                  <span className="text-sm font-bold text-gray-900 sm:text-base">
                     {user.xp.toLocaleString()}
                   </span>
                 </div>
