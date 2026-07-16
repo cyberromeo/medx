@@ -130,7 +130,7 @@ export default function SeriesPage() {
           >
             <div className="mb-6 flex items-start justify-between md:mb-8">
               <div className="flex items-center gap-4">
-                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500 to-emerald-700 text-xl font-bold text-white shadow-sm">
+                <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500 to-emerald-700 text-xl font-bold text-white shadow-sm">
                   M
                 </div>
                 <div>
@@ -173,7 +173,7 @@ export default function SeriesPage() {
           >
             <div className="mb-6 flex items-start justify-between md:mb-8">
               <div className="flex items-center gap-4">
-                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-purple-500 to-purple-700 text-xl font-bold text-white shadow-sm">
+                <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-purple-500 to-purple-700 text-xl font-bold text-white shadow-sm">
                   R
                 </div>
                 <div>
@@ -216,7 +216,7 @@ export default function SeriesPage() {
           >
             <div className="mb-6 flex items-start justify-between md:mb-8">
               <div className="flex items-center gap-4">
-                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-500 to-blue-700 text-xl font-bold text-white shadow-sm">
+                <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-500 to-blue-700 text-xl font-bold text-white shadow-sm">
                   M
                 </div>
                 <div>
