@@ -104,11 +104,7 @@ export default function SettingsPage() {
   const handleSendResetEmail = async () => {
     setIsSubmitting(true);
     try {
-      const actionCodeSettings = {
-        url: window.location.origin + "/login", // Where they go after resetting on Firebase's page
-        handleCodeInApp: false,
-      };
-      await sendPasswordResetEmail(auth, user.email, actionCodeSettings);
+      await sendPasswordResetEmail(auth, user.email);
       showMessage("success", "Password reset email sent to " + user.email);
     } catch (error) {
       showMessage("error", error.message);
