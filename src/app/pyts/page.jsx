@@ -139,10 +139,13 @@ export default function PYTsPage() {
                             
                             {topic.priority > 0 && (
                               <div className="flex items-center gap-0.5 ml-3 shrink-0">
-                                <Flame
-                                  size={18}
-                                  className="text-orange-500 drop-shadow-sm fill-orange-500"
-                                />
+                                {[...Array(Number(topic.priority) || 0)].map((_, i) => (
+                                  <Flame
+                                    key={i}
+                                    size={18}
+                                    className="text-orange-500 drop-shadow-sm fill-orange-500"
+                                  />
+                                ))}
                               </div>
                             )}
                           </div>
