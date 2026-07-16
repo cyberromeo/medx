@@ -63,7 +63,7 @@ export default function PYTsPage() {
               <p className="mt-2 max-w-[600px] text-sm font-medium text-gray-500 leading-relaxed">
                 A comprehensive collection of highly-tested topics from previous years. Topics marked with 
                 <span className="inline-flex items-center justify-center mx-1 text-sm bg-orange-50 rounded-md px-1.5 py-0.5">
-                  🔥
+                  🔸
                 </span>
                 have a history of frequent repetition.
               </p>
@@ -141,7 +141,7 @@ export default function PYTsPage() {
                               <div className="flex items-center gap-0.5 ml-3 shrink-0">
                                 {[...Array(Number(topic.priority) || 0)].map((_, i) => (
                                   <span key={i} className="text-[1.1rem] drop-shadow-sm leading-none">
-                                    🔥
+                                    🔸
                                   </span>
                                 ))}
                               </div>
