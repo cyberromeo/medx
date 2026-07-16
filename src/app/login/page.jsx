@@ -23,6 +23,7 @@ import {
   Loader2,
   Stethoscope,
   ArrowLeft,
+  KeyRound,
 } from "lucide-react";
 import Image from "next/image";
 
@@ -32,6 +33,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [name, setName] = useState("");
+  const [activationCode, setActivationCode] = useState("");
   const [error, setError] = useState("");
   const [resetMessage, setResetMessage] = useState("");
   const [loading, setLoading] = useState(false);
@@ -69,9 +71,32 @@ export default function LoginPage() {
       return;
     }
 
+    // Validate activation code for sign up
+    if (!isLogin) {
+      if (!activationCode.trim()) {
+        setError("Activation code is required to create an account");
+        return;
+      }
+    }
+
     setLoading(true);
 
     try {
+      // If signing up, validate activation code first
+      if (!isLogin) {
+        const validateRes = await fetch("/api/activation-codes/validate", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ code: activationCode.trim() }),
+        });
+        const validateData = await validateRes.json();
+        if (!validateRes.ok || !validateData.valid) {
+          setError(validateData.error || "Invalid activation code");
+          setLoading(false);
+          return;
+        }
+      }
+
       let userCredential;
       if (isLogin) {
         userCredential = await signInWithEmailAndPassword(auth, email, password);
@@ -79,6 +104,21 @@ export default function LoginPage() {
         userCredential = await createUserWithEmailAndPassword(auth, email, password);
         const displayName = name.trim();
         await updateProfile(userCredential.user, { displayName });
+
+        // Redeem the activation code after successful account creation
+        try {
+          await fetch("/api/activation-codes/redeem", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              code: activationCode.trim(),
+              userId: userCredential.user.uid,
+              email: email,
+            }),
+          });
+        } catch (redeemErr) {
+          console.error("Failed to redeem activation code:", redeemErr);
+        }
       }
 
       const userId = userCredential.user.uid;
@@ -238,6 +278,25 @@ export default function LoginPage() {
                             className="input input-with-icon"
                             value={name}
                             onChange={(e) => setName(e.target.value)}
+                            required={!isLogin}
+                          />
+                        </div>
+                      </div>
+                      <div>
+                        <label className="ml-1 text-[10px] font-bold tracking-widest text-gray-400 uppercase">
+                          Activation Code
+                        </label>
+                        <div className="relative mt-1">
+                          <KeyRound
+                            size={16}
+                            className="pointer-events-none absolute top-1/2 left-4 -translate-y-1/2 text-gray-400"
+                          />
+                          <input
+                            type="text"
+                            placeholder="XXXX-XXXX"
+                            className="input input-with-icon font-mono tracking-widest uppercase"
+                            value={activationCode}
+                            onChange={(e) => setActivationCode(e.target.value.toUpperCase())}
                             required={!isLogin}
                           />
                         </div>
@@ -440,6 +499,19 @@ export default function LoginPage() {
                       placeholder="John Doe"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
+                      required={!isLogin}
+                    />
+                  </div>
+                  <div className="flex flex-col gap-1.5">
+                    <label className="ml-1 text-[13px] font-medium text-gray-700">
+                      Activation Code
+                    </label>
+                    <input
+                      type="text"
+                      className="w-full rounded-[14px] border border-[rgba(30,50,90,0.06)] bg-[#fcfcfc] px-5 py-3.5 font-mono text-[15px] tracking-widest text-gray-900 uppercase shadow-[0_2px_10px_rgba(0,0,0,0.02)] transition-all placeholder:text-gray-400 placeholder:tracking-normal placeholder:normal-case focus:border-gray-400 focus:ring-4 focus:ring-gray-900/5 focus:outline-none"
+                      placeholder="Enter activation code"
+                      value={activationCode}
+                      onChange={(e) => setActivationCode(e.target.value.toUpperCase())}
                       required={!isLogin}
                     />
                   </div>
