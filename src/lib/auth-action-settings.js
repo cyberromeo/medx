@@ -14,5 +14,5 @@ export const passwordResetActionCodeSettings = {
 
 export const emailVerifyActionCodeSettings = {
   url: `${SITE_URL}/login`,
-  handleCodeInApp: true,
+  handleCodeInApp: false,
 };

@@ -9,6 +9,7 @@ import {
   sendPasswordResetEmail,
   sendEmailVerification,
   onAuthStateChanged,
+  signOut,
 } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -43,9 +44,14 @@ export default function LoginPage() {
 
   // Skip login page if already authenticated
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
-        router.replace("/dashboard");
+        await user.reload(); // Ensure fresh emailVerified status
+        if (user.emailVerified) {
+          router.replace("/dashboard");
+        } else {
+          router.replace("/verify-email");
+        }
       } else {
         setAuthChecking(false);
       }
@@ -101,6 +107,18 @@ export default function LoginPage() {
       let userCredential;
       if (isLogin) {
         userCredential = await signInWithEmailAndPassword(auth, email, password);
+        
+        // If they sign in but are not verified, redirect them to /verify-email
+        // so they can use the resend button.
+        if (!userCredential.user.emailVerified) {
+          router.push("/verify-email");
+          return;
+        }
+
+        const userId = userCredential.user.uid;
+        await activateSingleDeviceSession(userId);
+        router.push("/dashboard");
+
       } else {
         userCredential = await createUserWithEmailAndPassword(auth, email, password);
         const displayName = name.trim();
@@ -127,16 +145,16 @@ export default function LoginPage() {
         } catch (redeemErr) {
           console.error("Failed to redeem activation code:", redeemErr);
         }
-      }
 
-      const userId = userCredential.user.uid;
-      await activateSingleDeviceSession(userId);
-
-      // Redirect to verify-email if not verified, otherwise dashboard
-      if (!userCredential.user.emailVerified) {
-        router.push("/verify-email");
-      } else {
-        router.push("/dashboard");
+        // Sign out immediately after signup, as requested
+        await signOut(auth);
+        setIsLogin(true);
+        setResetMessage("Account created successfully! We've sent a verification email. Please check your inbox, activate your account, and then log in.");
+        setPassword("");
+        setConfirmPassword("");
+        setActivationCode("");
+        setLoading(false);
+        return;
       }
     } catch (err) {
       console.error(err);
