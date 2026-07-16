@@ -42,6 +42,7 @@ export default function RootLayout({ children }) {
             {children}
           </AppLayoutWrapper>
 
+          <MobileNav />
           <Analytics />
         </ChatXProvider>
       </body>
