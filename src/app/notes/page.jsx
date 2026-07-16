@@ -25,38 +25,28 @@ export default function NotesPage() {
     return () => unsubscribe();
   }, [router]);
 
-  const handleDownload = async (e, filePath, fileName) => {
+  const handleDownload = (e, filePath, fileName) => {
     e.preventDefault();
     if (downloadingFile) return;
     
     setDownloadingFile(filePath);
-    try {
-      const response = await fetch(filePath);
-      if (!response.ok) throw new Error("Network response was not ok");
-      
-      // Force iOS to download by changing the MIME type to octet-stream
-      const originalBlob = await response.blob();
-      const blob = new Blob([originalBlob], { type: "application/octet-stream" });
-      
-      const url = window.URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = `${fileName}.pdf`;
-      link.target = "_blank"; // Helps on some iOS versions
-      document.body.appendChild(link);
-      link.click();
-      
-      // Delay cleanup to ensure iOS has time to process the download
-      setTimeout(() => {
-        document.body.removeChild(link);
-        window.URL.revokeObjectURL(url);
-      }, 1000);
-    } catch (error) {
-      console.error("Error downloading file:", error);
-      alert("Failed to download file. Please try again.");
-    } finally {
+    
+    // Use an invisible iframe to route the request to the server.
+    // This allows next.config.mjs to attach the 'Content-Disposition: attachment' header,
+    // which is the ONLY guaranteed way to force iOS Safari to download instead of previewing.
+    const iframe = document.createElement("iframe");
+    iframe.style.display = "none";
+    iframe.src = `${filePath}?download=1`;
+    document.body.appendChild(iframe);
+    
+    // The native iOS download prompt triggers almost instantly, so we reset the 
+    // loading state after a few seconds once the handoff is complete.
+    setTimeout(() => {
       setDownloadingFile(null);
-    }
+      if (document.body.contains(iframe)) {
+        document.body.removeChild(iframe);
+      }
+    }, 2500);
   };
 
   if (loading) {
