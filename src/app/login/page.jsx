@@ -1,12 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { auth } from "@/lib/firebase";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   updateProfile,
   sendPasswordResetEmail,
+  onAuthStateChanged,
 } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -33,7 +34,29 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const [resetMessage, setResetMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const [authChecking, setAuthChecking] = useState(true);
   const router = useRouter();
+
+  // Skip login page if already authenticated
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        router.replace("/dashboard");
+      } else {
+        setAuthChecking(false);
+      }
+    });
+    return () => unsubscribe();
+  }, [router]);
+
+  // Show loading while checking auth
+  if (authChecking) {
+    return (
+      <div className="flex h-screen items-center justify-center bg-[#f0f0f0]">
+        <Loader2 size={24} className="animate-spin text-gray-400" />
+      </div>
+    );
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault();

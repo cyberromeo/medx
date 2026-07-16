@@ -1,9 +1,22 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { ArrowUpRight, BookOpen } from "lucide-react";
+import Link from "next/link";
+import { auth } from "@/lib/firebase";
+import { onAuthStateChanged } from "firebase/auth";
 
 export default function CTA() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setIsLoggedIn(!!user);
+    });
+    return () => unsubscribe();
+  }, []);
+
   const containerVariants = {
     hidden: { opacity: 0 },
     show: {
@@ -53,19 +66,23 @@ export default function CTA() {
             variants={itemVariants}
             className="flex flex-col items-center gap-4 sm:flex-row"
           >
-            <button className="group flex items-center gap-3 rounded-full bg-white px-6 py-3 font-semibold text-gray-900 shadow-xl transition-all hover:bg-gray-100 md:px-8 md:py-4">
-              Start Learning
-              <div className="rounded-full bg-gray-200 p-1 transition-transform group-hover:scale-110">
-                <ArrowUpRight size={16} className="text-gray-900" />
-              </div>
-            </button>
-            <button className="group flex items-center gap-3 rounded-full border border-white/20 bg-white/10 px-6 py-3 font-semibold text-white shadow-xl backdrop-blur-md transition-all hover:bg-white/20 md:px-8 md:py-4">
-              <BookOpen
-                size={18}
-                className="transition-transform group-hover:scale-110"
-              />
-              View Syllabus
-            </button>
+            <Link href={isLoggedIn ? "/dashboard" : "/login"}>
+              <button className="group flex items-center gap-3 rounded-full bg-white px-6 py-3 font-semibold text-gray-900 shadow-xl transition-all hover:bg-gray-100 md:px-8 md:py-4">
+                {isLoggedIn ? "Open Dashboard" : "Start Learning"}
+                <div className="rounded-full bg-gray-200 p-1 transition-transform group-hover:scale-110">
+                  <ArrowUpRight size={16} className="text-gray-900" />
+                </div>
+              </button>
+            </Link>
+            <Link href="/syllabus">
+              <button className="group flex items-center gap-3 rounded-full border border-white/20 bg-white/10 px-6 py-3 font-semibold text-white shadow-xl backdrop-blur-md transition-all hover:bg-white/20 md:px-8 md:py-4">
+                <BookOpen
+                  size={18}
+                  className="transition-transform group-hover:scale-110"
+                />
+                View Syllabus
+              </button>
+            </Link>
           </motion.div>
         </motion.div>
       </section>

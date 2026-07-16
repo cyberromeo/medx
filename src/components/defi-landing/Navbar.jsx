@@ -1,10 +1,22 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { ChevronRight, ArrowUpRight } from "lucide-react";
 import Link from "next/link";
+import { auth } from "@/lib/firebase";
+import { onAuthStateChanged } from "firebase/auth";
 
 export default function Navbar() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setIsLoggedIn(!!user);
+    });
+    return () => unsubscribe();
+  }, []);
+
   return (
     <motion.nav
       initial={{ opacity: 0, y: -20 }}
@@ -36,12 +48,14 @@ export default function Navbar() {
 
       {/* Desktop Button (Hidden on mobile) */}
       <div className="hidden md:block">
-        <button className="group flex items-center gap-2 rounded-full bg-[#0b1329] px-4 py-2 text-white transition-all duration-300 hover:bg-[#111d3d]">
-          <span className="text-sm font-medium">Start Learning</span>
-          <div className="rounded-full bg-white/20 p-1 transition-transform group-hover:scale-110">
-            <ArrowUpRight size={14} className="text-white" />
-          </div>
-        </button>
+        <Link href={isLoggedIn ? "/dashboard" : "/login"}>
+          <button className="group flex items-center gap-2 rounded-full bg-[#0b1329] px-4 py-2 text-white transition-all duration-300 hover:bg-[#111d3d]">
+            <span className="text-sm font-medium">{isLoggedIn ? "Open Dashboard" : "Start Learning"}</span>
+            <div className="rounded-full bg-white/20 p-1 transition-transform group-hover:scale-110">
+              <ArrowUpRight size={14} className="text-white" />
+            </div>
+          </button>
+        </Link>
       </div>
     </motion.nav>
   );

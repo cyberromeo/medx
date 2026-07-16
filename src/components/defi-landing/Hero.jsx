@@ -1,12 +1,24 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Sparkles, ArrowUpRight } from "lucide-react";
 import Link from "next/link";
 import Navbar from "./Navbar";
 import InstallPrompt from "../InstallPrompt";
+import { auth } from "@/lib/firebase";
+import { onAuthStateChanged } from "firebase/auth";
 
 export default function Hero() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setIsLoggedIn(!!user);
+    });
+    return () => unsubscribe();
+  }, []);
+
   const containerVariants = {
     hidden: { opacity: 0 },
     show: {
@@ -105,7 +117,7 @@ export default function Hero() {
         </motion.div>
 
         {/* Bottom Right Corner Cut-out */}
-        <Link href="/login" className="absolute right-0 bottom-0 z-20">
+        <Link href={isLoggedIn ? "/dashboard" : "/login"} className="absolute right-0 bottom-0 z-20">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
@@ -137,10 +149,11 @@ export default function Hero() {
             <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-200 transition-all duration-300 group-hover/corner:scale-110 group-hover/corner:bg-gray-300">
               <ArrowUpRight size={20} className="text-gray-700" />
             </div>
-            <span className="font-semibold text-gray-800">Login</span>
+            <span className="font-semibold text-gray-800">{isLoggedIn ? "Open" : "Login"}</span>
           </motion.div>
         </Link>
       </section>
     </div>
   );
 }
+
