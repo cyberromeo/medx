@@ -224,7 +224,7 @@ export default function Dashboard() {
         >
           <h1 className="text-3xl font-bold tracking-tight text-gray-900 md:text-5xl">
             {getGreeting()},{" "}
-            <span className="text-blue-600">
+            <span className="text-blue-600 whitespace-nowrap">
               Dr. {user?.displayName?.split(" ")[0] || "Learner"}
             </span>
           </h1>
