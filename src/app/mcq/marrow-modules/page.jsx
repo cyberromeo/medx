@@ -85,7 +85,7 @@ export default function MarrowModulesPage() {
             </div>
             <div>
               <h1 className="text-2xl font-bold tracking-tight text-gray-900 md:text-3xl">
-                {currentMode ? (currentMode === '100 question tests' ? '100 Question Tests' : 'Topic Wise Tests') : "Marrow Modules"}
+                {currentMode ? (currentMode === '100_question_tests' ? '100 Question Tests' : 'Topic Wise Tests') : "Marrow Modules"}
               </h1>
               <p className="text-sm font-medium text-gray-500">
                 {currentMode ? "Select a subject to view tests" : "Specially compiled modules for active revision"}
@@ -107,7 +107,7 @@ export default function MarrowModulesPage() {
             >
               {modes.map((mode, index) => {
                 const totalTests = Object.values(marrowData[mode]).reduce((acc, curr) => acc + curr.length, 0);
-                const title = mode === '100 question tests' ? '100 Question Tests' : 'Topic Wise Tests';
+                const title = mode === '100_question_tests' ? '100 Question Tests' : 'Topic Wise Tests';
                 
                 return (
                   <motion.div
@@ -242,7 +242,7 @@ export default function MarrowModulesPage() {
                               </h3>
                               <div className="mt-2 flex flex-wrap gap-1">
                                 <span className="inline-flex rounded-md bg-white border border-[rgba(30,50,90,0.05)] px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-gray-500">
-                                  {currentMode === '100 question tests' ? '100 MCQs' : 'Topic Wise'}
+                                  {currentMode === '100_question_tests' ? '100 MCQs' : 'Topic Wise'}
                                 </span>
                               </div>
                             </div>
