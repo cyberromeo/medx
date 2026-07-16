@@ -10,19 +10,20 @@ export const metadata = {
   title: "MedX - Medical Video Platform",
   description: "Premium FMGE preparation platform",
   manifest: "/manifest.json",
-  themeColor: "#f0f0f0",
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
     title: "MedX",
   },
-  viewport: {
-    width: "device-width",
-    initialScale: 1,
-    maximumScale: 1,
-    userScalable: false,
-    viewportFit: "cover",
-  },
+};
+
+export const viewport = {
+  themeColor: "#f0f0f0",
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  viewportFit: "cover",
 };
 
 export default function RootLayout({ children }) {
