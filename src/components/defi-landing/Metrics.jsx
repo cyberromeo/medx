@@ -6,7 +6,7 @@ export default function Metrics() {
   const metricsData = [
     { value: "19", label: "Subjects Covered" },
     { value: "1000+", label: "Hours of Lectures" },
-    { value: "4K+", label: "Active Students" },
+    { value: "50+", label: "Active Students" },
     { value: "Zero", label: "Buffering" },
   ];
 
