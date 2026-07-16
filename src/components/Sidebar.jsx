@@ -122,13 +122,17 @@ export default function Sidebar() {
 
         {/* Bottom: Avatar + Logout */}
         <div className="mt-auto flex flex-col items-center gap-3 px-2">
-          <div className="h-8 w-8 overflow-hidden rounded-full border border-[rgba(30,50,90,0.08)] shadow-sm">
+          <Link 
+            href="/settings"
+            title="Settings"
+            className="h-8 w-8 overflow-hidden rounded-full border border-[rgba(30,50,90,0.08)] shadow-sm transition-transform hover:scale-105 active:scale-95"
+          >
             <img
               src={avatarUrl}
               alt="Avatar"
               className="h-full w-full object-cover"
             />
-          </div>
+          </Link>
           <button
             onClick={handleLogout}
             className="flex h-11 w-11 items-center justify-center rounded-xl text-gray-400 transition-colors hover:bg-red-50 hover:text-red-500"
