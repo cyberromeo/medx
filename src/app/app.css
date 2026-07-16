@@ -1,5 +1,11 @@
 @import "tailwindcss";
 
+@layer base {
+  input, textarea, select {
+    font-size: 16px !important;
+  }
+}
+
 @font-face {
   font-family: "Helvetica";
   src: url("https://db.onlinewebfonts.com/t/a64ff11d2c24584c767f6257e880dc65.eot");

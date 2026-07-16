@@ -72,14 +72,8 @@ export default function MobileNav() {
 
   return (
     <>
-      {/* Floating bottom nav */}
-      <motion.nav
-        initial={{ y: 120, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ type: "spring", stiffness: 260, damping: 26 }}
-        className="pointer-events-none fixed inset-x-0 bottom-0 z-40 flex justify-center pb-[calc(env(safe-area-inset-bottom)+14px)] md:hidden"
-      >
-        <div className="pointer-events-auto flex w-[calc(100%-2rem)] max-w-[380px] items-center justify-between rounded-[1.5rem] border border-[rgba(30,50,90,0.06)] bg-white/90 px-5 py-3 shadow-[0_8px_30px_rgba(0,0,0,0.08)] backdrop-blur-xl">
+      {/* Integrated bottom nav */}
+      <nav className="flex w-full items-center justify-around px-2 py-3 bg-white">
           {navItems.map((item) => {
             const isActive = item.href ? pathname.startsWith(item.href) : false;
 
@@ -153,8 +147,7 @@ export default function MobileNav() {
               </div>
             </div>
           </button>
-        </div>
-      </motion.nav>
+      </nav>
 
       {/* Slide-out menu */}
       <AnimatePresence>
