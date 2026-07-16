@@ -137,7 +137,10 @@ export default function SeriesPage() {
                   <h2 className="text-2xl font-bold tracking-tight text-gray-900 transition-colors group-hover:text-emerald-600 md:text-3xl">
                     MIST
                   </h2>
-                  <span className="mt-1 inline-block rounded-md bg-green-100 px-2 py-0.5 text-[10px] font-bold text-green-600 uppercase tracking-wider">JUNE 2026</span>
+                  <div className="mt-1 flex flex-wrap gap-2">
+                    <span className="inline-block rounded-md bg-green-100 px-2 py-0.5 text-[10px] font-bold text-green-600 uppercase tracking-wider">NEW</span>
+                    <span className="inline-block rounded-md bg-emerald-100 px-2 py-0.5 text-[10px] font-bold text-emerald-700 uppercase tracking-wider">JUNE 2026</span>
+                  </div>
                   <p className="mt-0.5 text-sm font-medium text-gray-500">
                     {countWatched("MIST_2026")}/{countVideos("MIST_2026")} videos &middot; {MIST_2026_SUBJECTS.length} subjects
                   </p>
@@ -180,7 +183,10 @@ export default function SeriesPage() {
                   <h2 className="text-2xl font-bold tracking-tight text-gray-900 transition-colors group-hover:text-purple-600 md:text-3xl">
                     MIST REVISION
                   </h2>
-                  <span className="mt-1 inline-block rounded-md bg-purple-100 px-2 py-0.5 text-[10px] font-bold text-purple-600 uppercase tracking-wider">JUNE 2026</span>
+                  <div className="mt-1 flex flex-wrap gap-2">
+                    <span className="inline-block rounded-md bg-purple-100 px-2 py-0.5 text-[10px] font-bold text-purple-600 uppercase tracking-wider">REVISION</span>
+                    <span className="inline-block rounded-md bg-purple-100 px-2 py-0.5 text-[10px] font-bold text-purple-700 uppercase tracking-wider">JUNE 2026</span>
+                  </div>
                   <p className="mt-0.5 text-sm font-medium text-gray-500">
                     {countWatched("MIST_2026_REVISION")}/{countVideos("MIST_2026_REVISION")} videos &middot; {MIST_2026_REVISION_SUBJECTS.length} subjects
                   </p>
@@ -223,7 +229,10 @@ export default function SeriesPage() {
                   <h2 className="text-2xl font-bold tracking-tight text-gray-900 transition-colors group-hover:text-blue-600 md:text-3xl">
                     MIST
                   </h2>
-                  <span className="mt-1 inline-block rounded-md bg-blue-100 px-2 py-0.5 text-[10px] font-bold text-blue-600 uppercase tracking-wider">JUNE 2025</span>
+                  <div className="mt-1 flex flex-wrap gap-2">
+                    <span className="inline-block rounded-md bg-red-100 px-2 py-0.5 text-[10px] font-bold text-red-600 uppercase tracking-wider">Archived</span>
+                    <span className="inline-block rounded-md bg-blue-100 px-2 py-0.5 text-[10px] font-bold text-blue-700 uppercase tracking-wider">JUNE 2025</span>
+                  </div>
                   <p className="mt-0.5 text-sm font-medium text-gray-500">
                     {countWatched("MIST")}/{countVideos("MIST")} videos &middot; 19 subjects
                   </p>
