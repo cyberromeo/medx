@@ -45,21 +45,28 @@ function getFiles(dir, categoryType) {
         const relativePath = file.substring(path.join(__dirname, 'public').length).replace(/\\/g, '/');
         const name = path.basename(file, '.pdf');
         
-        let subject = "Other";
+        let subcategory = "Other";
+        
         if (categoryType === 'mock test') {
-          subject = "Mock Tests";
+          // Extract mock folder name
+          const folderParts = file.substring(path.join(__dirname, 'public', 'exam-archives', 'mock test').length).split(path.sep);
+          if (folderParts.length > 2) {
+            subcategory = folderParts[1];
+          } else {
+            subcategory = "Uncategorized Mocks";
+          }
         } else {
-          // Infer subject from filename
+          // Infer subject from filename for Subject Wise Tests
           const lowerName = name.toLowerCase();
           for (const [keyword, mappedSubject] of Object.entries(subjectKeywords)) {
             if (lowerName.includes(keyword)) {
-              subject = mappedSubject;
+              subcategory = mappedSubject;
               break;
             }
           }
         }
         
-        results.push({ name, path: relativePath, subject, categoryType });
+        results.push({ name, path: relativePath, subcategory, categoryType });
       }
     }
   });
@@ -71,24 +78,35 @@ const subjectWiseTests = getFiles(path.join(publicExamsDir, 'subject wise test')
 
 const allFiles = [...mockTests, ...subjectWiseTests];
 
-const subjectsMap = {};
+const nestedData = {
+  "Subject Wise Tests": {},
+  "Mock Tests": {}
+};
 
 allFiles.forEach(file => {
-  if (!subjectsMap[file.subject]) {
-    subjectsMap[file.subject] = {
-      subject: file.subject,
+  const topCategory = file.categoryType === 'mock test' ? 'Mock Tests' : 'Subject Wise Tests';
+  
+  if (!nestedData[topCategory][file.subcategory]) {
+    nestedData[topCategory][file.subcategory] = {
+      name: file.subcategory,
       files: []
     };
   }
-  subjectsMap[file.subject].files.push(file);
+  
+  nestedData[topCategory][file.subcategory].files.push(file);
 });
 
-// Convert map to sorted array (Mock Tests first, then alphabetical)
-const groupedData = Object.values(subjectsMap).sort((a, b) => {
-  if (a.subject === "Mock Tests") return -1;
-  if (b.subject === "Mock Tests") return 1;
-  return a.subject.localeCompare(b.subject);
-});
+// Format to final array
+const finalData = [
+  {
+    category: "Subject Wise Tests",
+    subcategories: Object.values(nestedData["Subject Wise Tests"]).sort((a, b) => a.name.localeCompare(b.name))
+  },
+  {
+    category: "Mock Tests",
+    subcategories: Object.values(nestedData["Mock Tests"]).sort((a, b) => a.name.localeCompare(b.name))
+  }
+];
 
-fs.writeFileSync(path.join(__dirname, 'src', 'lib', 'exams-data.json'), JSON.stringify(groupedData, null, 2));
-console.log('Generated exams-data.json successfully!');
+fs.writeFileSync(path.join(__dirname, 'src', 'lib', 'exams-data.json'), JSON.stringify(finalData, null, 2));
+console.log('Generated nested exams-data.json successfully!');

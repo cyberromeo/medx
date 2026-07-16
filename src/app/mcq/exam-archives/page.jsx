@@ -5,12 +5,14 @@ import { auth } from "@/lib/firebase";
 import { onAuthStateChanged } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { Folder, FileText, Download, Eye, X, ScrollText } from "lucide-react";
+import { Folder, FileText, Download, Eye, X, ScrollText, ArrowLeft } from "lucide-react";
+import Link from "next/link";
 import examsData from "@/lib/exams-data.json";
 
 export default function ExamArchivesPage() {
   const [loading, setLoading] = useState(true);
-  const [selectedSubject, setSelectedSubject] = useState(null);
+  const [currentCategory, setCurrentCategory] = useState(null);
+  const [selectedSubcategory, setSelectedSubcategory] = useState(null);
   const [downloadingFile, setDownloadingFile] = useState(null);
   const router = useRouter();
 
@@ -57,50 +59,123 @@ export default function ExamArchivesPage() {
     );
   }
 
+  // Count total files in a category
+  const countFiles = (categoryData) => {
+    return categoryData.subcategories.reduce((acc, curr) => acc + curr.files.length, 0);
+  };
+
   return (
     <div className="p-6 md:p-10">
       <div className="mx-auto max-w-4xl">
+        
+        {/* Top level Back to Library link */}
+        <motion.div
+          initial={{ opacity: 0, x: -10 }}
+          animate={{ opacity: 1, x: 0 }}
+          className="mb-6"
+        >
+          <Link href="/mcq" className="inline-flex items-center gap-2 text-sm font-semibold text-gray-500 hover:text-gray-900 transition-colors">
+            <ArrowLeft size={16} />
+            Back to Library
+          </Link>
+        </motion.div>
+
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-8 flex items-center gap-4"
+          className="mb-8 flex items-center justify-between gap-4"
         >
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gray-900 text-white shadow-sm">
-            <ScrollText size={24} />
-          </div>
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight text-gray-900 md:text-3xl">
-              Exam Archives
-            </h1>
-            <p className="text-sm font-medium text-gray-500">Subject-wise tests and Mock tests</p>
+          <div className="flex items-center gap-4">
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gray-900 text-white shadow-sm">
+              <ScrollText size={24} />
+            </div>
+            <div>
+              <h1 className="text-2xl font-bold tracking-tight text-gray-900 md:text-3xl">
+                {currentCategory ? currentCategory.category : "Exam Archives"}
+              </h1>
+              <p className="text-sm font-medium text-gray-500">
+                {currentCategory ? "Select a subcategory" : "Subject-wise tests and Mock tests"}
+              </p>
+            </div>
           </div>
         </motion.div>
 
-        {/* 2-Column Grid Folders */}
-        <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
-          {examsData.map((subjectData, index) => (
+        {/* Dynamic Folder Grid (Level 1 or Level 2) */}
+        <AnimatePresence mode="wait">
+          {!currentCategory ? (
+            /* Level 1: Categories */
             <motion.div
-              key={subjectData.subject}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.05 }}
-              onClick={() => setSelectedSubject(subjectData)}
-              className="group flex cursor-pointer flex-col items-center justify-center rounded-[1.5rem] border border-[rgba(30,50,90,0.05)] bg-white p-6 text-center shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md"
+              key="categories"
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4"
             >
-              <div className="mb-3 flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-50 text-blue-500 transition-colors group-hover:bg-blue-100 group-hover:text-blue-600">
-                <Folder size={32} fill="currentColor" className="opacity-20" />
-                <Folder size={32} className="absolute" />
-              </div>
-              <h2 className="text-sm font-bold text-gray-900 line-clamp-2">
-                {subjectData.subject}
-              </h2>
-              <p className="mt-1 text-[11px] font-semibold uppercase tracking-wider text-gray-500">
-                {subjectData.files.length} {subjectData.files.length === 1 ? 'File' : 'Files'}
-              </p>
+              {examsData.map((cat, index) => (
+                <motion.div
+                  key={cat.category}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.05 }}
+                  onClick={() => setCurrentCategory(cat)}
+                  className="group flex cursor-pointer flex-col items-center justify-center rounded-[1.5rem] border border-[rgba(30,50,90,0.05)] bg-white p-6 text-center shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md"
+                >
+                  <div className="mb-3 flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-50 text-blue-500 transition-colors group-hover:bg-blue-100 group-hover:text-blue-600">
+                    <Folder size={32} fill="currentColor" className="opacity-20" />
+                    <Folder size={32} className="absolute" />
+                  </div>
+                  <h2 className="text-sm font-bold text-gray-900 line-clamp-2">
+                    {cat.category}
+                  </h2>
+                  <p className="mt-1 text-[11px] font-semibold uppercase tracking-wider text-gray-500">
+                    {cat.subcategories.length} Folders
+                  </p>
+                </motion.div>
+              ))}
             </motion.div>
-          ))}
-        </div>
+          ) : (
+            /* Level 2: Subcategories */
+            <motion.div
+              key="subcategories"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 20 }}
+            >
+              <button
+                onClick={() => setCurrentCategory(null)}
+                className="mb-4 inline-flex items-center gap-2 text-sm font-bold text-blue-600 transition-colors hover:text-blue-700"
+              >
+                <ArrowLeft size={16} />
+                Back to {examsData.length > 0 ? "Categories" : "Archives"}
+              </button>
+              
+              <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
+                {currentCategory.subcategories.map((subcat, index) => (
+                  <motion.div
+                    key={subcat.name}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.05 }}
+                    onClick={() => setSelectedSubcategory(subcat)}
+                    className="group flex cursor-pointer flex-col items-center justify-center rounded-[1.5rem] border border-[rgba(30,50,90,0.05)] bg-white p-6 text-center shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md"
+                  >
+                    <div className="mb-3 flex h-16 w-16 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-500 transition-colors group-hover:bg-emerald-100 group-hover:text-emerald-600">
+                      <Folder size={32} fill="currentColor" className="opacity-20" />
+                      <Folder size={32} className="absolute" />
+                    </div>
+                    <h2 className="text-sm font-bold text-gray-900 line-clamp-2">
+                      {subcat.name}
+                    </h2>
+                    <p className="mt-1 text-[11px] font-semibold uppercase tracking-wider text-gray-500">
+                      {subcat.files.length} {subcat.files.length === 1 ? 'File' : 'Files'}
+                    </p>
+                  </motion.div>
+                ))}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
         
         {examsData.length === 0 && (
           <div className="py-12 text-center text-gray-500">
@@ -109,14 +184,14 @@ export default function ExamArchivesPage() {
         )}
       </div>
 
-      {/* Subject Modal */}
+      {/* Subcategory PDF Viewer Modal */}
       <AnimatePresence>
-        {selectedSubject && (
+        {selectedSubcategory && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            onClick={() => setSelectedSubject(null)}
+            onClick={() => setSelectedSubcategory(null)}
             className="fixed inset-0 z-50 flex items-end justify-center bg-black/30 p-0 backdrop-blur-sm sm:items-center sm:p-6"
           >
             <motion.div
@@ -130,18 +205,18 @@ export default function ExamArchivesPage() {
               {/* Modal header */}
               <div className="sticky top-0 z-10 flex items-center justify-between border-b border-[rgba(30,50,90,0.06)] bg-white/90 p-4 backdrop-blur-md sm:p-6">
                 <div className="flex items-center gap-4">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600">
                     <Folder size={24} />
                   </div>
                   <div>
-                    <h2 className="text-xl font-bold text-gray-900">{selectedSubject.subject}</h2>
+                    <h2 className="text-xl font-bold text-gray-900">{selectedSubcategory.name}</h2>
                     <p className="mt-0.5 text-xs font-semibold tracking-wider text-gray-500 uppercase">
-                      {selectedSubject.files.length} {selectedSubject.files.length === 1 ? 'File' : 'Files'}
+                      {selectedSubcategory.files.length} {selectedSubcategory.files.length === 1 ? 'File' : 'Files'}
                     </p>
                   </div>
                 </div>
                 <button
-                  onClick={() => setSelectedSubject(null)}
+                  onClick={() => setSelectedSubcategory(null)}
                   className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-100 text-gray-600 transition-all active:scale-95 hover:bg-gray-200"
                 >
                   <X size={20} />
@@ -151,7 +226,7 @@ export default function ExamArchivesPage() {
               {/* PDF Grid */}
               <div className="flex-1 overflow-y-auto p-4 sm:p-6">
                 <div className="grid gap-4 md:grid-cols-2">
-                  {selectedSubject.files.map((file) => (
+                  {selectedSubcategory.files.map((file) => (
                     <div
                       key={file.path}
                       className="flex flex-col rounded-2xl border border-[rgba(30,50,90,0.05)] bg-gray-50/50 p-4 transition-colors hover:bg-gray-50"
@@ -166,7 +241,7 @@ export default function ExamArchivesPage() {
                           </h3>
                           <div className="mt-2 flex flex-wrap gap-1">
                             <span className="inline-flex rounded-md bg-gray-200 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-gray-700">
-                              {file.categoryType === 'mock test' ? 'Mock Test' : 'Subject Wise Test'}
+                              {currentCategory?.category === 'Mock Tests' ? 'Mock Test' : 'Subject Wise Test'}
                             </span>
                           </div>
                         </div>

@@ -1,277 +1,322 @@
 [
   {
-    "subject": "Mock Tests",
-    "files": [
+    "category": "Subject Wise Tests",
+    "subcategories": [
       {
-        "name": "RANDOM MOCK-1_ 5th May 2026",
-        "path": "/exam-archives/mock test/mock 1/RANDOM MOCK-1_ 5th May 2026.pdf",
-        "subject": "Mock Tests",
-        "categoryType": "mock test"
+        "name": "Anaesthesia",
+        "files": [
+          {
+            "name": "ANAE_SWT_3 May 2026",
+            "path": "/exam-archives/subject wise test/ANAE_SWT_3 May 2026.pdf",
+            "subcategory": "Anaesthesia",
+            "categoryType": "subject wise test"
+          }
+        ]
       },
       {
-        "name": "RANDOM MOCK -2_11th May 2026",
-        "path": "/exam-archives/mock test/mock 2/RANDOM MOCK -2_11th May 2026.pdf",
-        "subject": "Mock Tests",
-        "categoryType": "mock test"
+        "name": "Anatomy",
+        "files": [
+          {
+            "name": "ANATOMY_SWT_21st APRIL 2026",
+            "path": "/exam-archives/subject wise test/ANATOMY_SWT_21st APRIL 2026.pdf",
+            "subcategory": "Anatomy",
+            "categoryType": "subject wise test"
+          }
+        ]
       },
       {
-        "name": "MOCK 3_PAPER 1_26 May 26",
-        "path": "/exam-archives/mock test/mock 3/MOCK 3_PAPER 1_26 May 26.pdf",
-        "subject": "Mock Tests",
-        "categoryType": "mock test"
+        "name": "Biochem",
+        "files": [
+          {
+            "name": "BIOCHEMISTRY_SWT _27 April 2026",
+            "path": "/exam-archives/subject wise test/BIOCHEMISTRY_SWT _27 April 2026.pdf",
+            "subcategory": "Biochem",
+            "categoryType": "subject wise test"
+          }
+        ]
       },
       {
-        "name": "MOCK 3_PAPER 2_26 May 26",
-        "path": "/exam-archives/mock test/mock 3/MOCK 3_PAPER 2_26 May 26.pdf",
-        "subject": "Mock Tests",
-        "categoryType": "mock test"
+        "name": "Dermatology",
+        "files": [
+          {
+            "name": "DERMATOLOGY_SWT _9th MAY 2026",
+            "path": "/exam-archives/subject wise test/DERMATOLOGY_SWT _9th MAY 2026.pdf",
+            "subcategory": "Dermatology",
+            "categoryType": "subject wise test"
+          }
+        ]
       },
       {
-        "name": "MOCK 4 -PAPER 1_7 JUNE 2026",
-        "path": "/exam-archives/mock test/mock 4/MOCK 4 -PAPER 1_7 JUNE 2026.pdf",
-        "subject": "Mock Tests",
-        "categoryType": "mock test"
+        "name": "FMT",
+        "files": [
+          {
+            "name": "FSM SWT 9th may 26",
+            "path": "/exam-archives/subject wise test/FSM SWT 9th may 26.pdf",
+            "subcategory": "FMT",
+            "categoryType": "subject wise test"
+          }
+        ]
       },
       {
-        "name": "MOCK 4_PAPER 2_7 JUNE 26",
-        "path": "/exam-archives/mock test/mock 4/MOCK 4_PAPER 2_7 JUNE 26.pdf",
-        "subject": "Mock Tests",
-        "categoryType": "mock test"
+        "name": "Medicine",
+        "files": [
+          {
+            "name": "MEDICINE (SA)_SWT 11th JUNE 2026",
+            "path": "/exam-archives/subject wise test/MEDICINE (SA)_SWT 11th JUNE 2026.pdf",
+            "subcategory": "Medicine",
+            "categoryType": "subject wise test"
+          }
+        ]
       },
       {
-        "name": "MOCK Test -5_Paper 2_13 June 2026",
-        "path": "/exam-archives/mock test/mock 5/MOCK Test -5_Paper 2_13 June 2026.pdf",
-        "subject": "Mock Tests",
-        "categoryType": "mock test"
+        "name": "Microbiology",
+        "files": [
+          {
+            "name": "SWT MICROBIOLOGY_14th MAY 2026",
+            "path": "/exam-archives/subject wise test/SWT MICROBIOLOGY_14th MAY 2026.pdf",
+            "subcategory": "Microbiology",
+            "categoryType": "subject wise test"
+          }
+        ]
       },
       {
-        "name": "MOCK TEST 5 , PAPER 1_13th JUNE 2026",
-        "path": "/exam-archives/mock test/mock 5/MOCK TEST 5 , PAPER 1_13th JUNE 2026.pdf",
-        "subject": "Mock Tests",
-        "categoryType": "mock test"
+        "name": "Obstetrics Gynaecology",
+        "files": [
+          {
+            "name": "OBG SWT_24th MAY 2026",
+            "path": "/exam-archives/subject wise test/OBG SWT_24th MAY 2026.pdf",
+            "subcategory": "Obstetrics Gynaecology",
+            "categoryType": "subject wise test"
+          }
+        ]
       },
       {
-        "name": "MOCK TEST - 6 , PAPER - 2_16th JUNE 2026",
-        "path": "/exam-archives/mock test/mock 6/MOCK TEST - 6 , PAPER - 2_16th JUNE 2026.pdf",
-        "subject": "Mock Tests",
-        "categoryType": "mock test"
+        "name": "Ophthalmology",
+        "files": [
+          {
+            "name": "OPTHA_SWT _18 April 2026",
+            "path": "/exam-archives/subject wise test/OPTHA_SWT _18 April 2026.pdf",
+            "subcategory": "Ophthalmology",
+            "categoryType": "subject wise test"
+          }
+        ]
       },
       {
-        "name": "MOCK Test -6_Paper 1_16 June 2026",
-        "path": "/exam-archives/mock test/mock 6/MOCK Test -6_Paper 1_16 June 2026.pdf",
-        "subject": "Mock Tests",
-        "categoryType": "mock test"
+        "name": "Orthopaedics",
+        "files": [
+          {
+            "name": "Orthopaedics_SWT 31st May,26",
+            "path": "/exam-archives/subject wise test/Orthopaedics_SWT 31st May,26.pdf",
+            "subcategory": "Orthopaedics",
+            "categoryType": "subject wise test"
+          }
+        ]
       },
       {
-        "name": "MOCK - 7 PAPER - 1_18th JUNE 2026",
-        "path": "/exam-archives/mock test/mock 7/MOCK - 7 PAPER - 1_18th JUNE 2026.pdf",
-        "subject": "Mock Tests",
-        "categoryType": "mock test"
+        "name": "Pathology",
+        "files": [
+          {
+            "name": "PATHOLOGY_SWT _24 April 2026",
+            "path": "/exam-archives/subject wise test/PATHOLOGY_SWT _24 April 2026.pdf",
+            "subcategory": "Pathology",
+            "categoryType": "subject wise test"
+          }
+        ]
       },
       {
-        "name": "MOCK Test -7_Paper 2_18 June 2026",
-        "path": "/exam-archives/mock test/mock 7/MOCK Test -7_Paper 2_18 June 2026.pdf",
-        "subject": "Mock Tests",
-        "categoryType": "mock test"
+        "name": "Pediatrics",
+        "files": [
+          {
+            "name": "PAEDIATRICS_SWT 7th may 2026",
+            "path": "/exam-archives/subject wise test/PAEDIATRICS_SWT 7th may 2026.pdf",
+            "subcategory": "Pediatrics",
+            "categoryType": "subject wise test"
+          }
+        ]
       },
       {
-        "name": "MOCK TEST 8 , PAPER 1_20th JUNE 2026 ",
-        "path": "/exam-archives/mock test/mock 8/MOCK TEST 8 , PAPER 1_20th JUNE 2026 .pdf",
-        "subject": "Mock Tests",
-        "categoryType": "mock test"
+        "name": "Pharmacology",
+        "files": [
+          {
+            "name": "SWT_PHARMA_14 May 2026",
+            "path": "/exam-archives/subject wise test/SWT_PHARMA_14 May 2026.pdf",
+            "subcategory": "Pharmacology",
+            "categoryType": "subject wise test"
+          }
+        ]
       },
       {
-        "name": "MOCK TEST 8 PAPER 2_20TH JUN 2026",
-        "path": "/exam-archives/mock test/mock 8/MOCK TEST 8 PAPER 2_20TH JUN 2026.pdf",
-        "subject": "Mock Tests",
-        "categoryType": "mock test"
+        "name": "Physiology",
+        "files": [
+          {
+            "name": "PHYSIOLOGY_SWT 29th MAY 2026",
+            "path": "/exam-archives/subject wise test/PHYSIOLOGY_SWT 29th MAY 2026.pdf",
+            "subcategory": "Physiology",
+            "categoryType": "subject wise test"
+          }
+        ]
+      },
+      {
+        "name": "Psychiatry",
+        "files": [
+          {
+            "name": "Psychiatry_SWT_29th May 2026",
+            "path": "/exam-archives/subject wise test/Psychiatry_SWT_29th May 2026.pdf",
+            "subcategory": "Psychiatry",
+            "categoryType": "subject wise test"
+          }
+        ]
+      },
+      {
+        "name": "Radiology",
+        "files": [
+          {
+            "name": "RADIOLOGY_SWT 31st MAY 2026",
+            "path": "/exam-archives/subject wise test/RADIOLOGY_SWT 31st MAY 2026.pdf",
+            "subcategory": "Radiology",
+            "categoryType": "subject wise test"
+          }
+        ]
+      },
+      {
+        "name": "Surgery",
+        "files": [
+          {
+            "name": "SURGERY_SWT 05th JUNE 2026",
+            "path": "/exam-archives/subject wise test/SURGERY_SWT 05th JUNE 2026.pdf",
+            "subcategory": "Surgery",
+            "categoryType": "subject wise test"
+          }
+        ]
       }
     ]
   },
   {
-    "subject": "Anaesthesia",
-    "files": [
+    "category": "Mock Tests",
+    "subcategories": [
       {
-        "name": "ANAE_SWT_3 May 2026",
-        "path": "/exam-archives/subject wise test/ANAE_SWT_3 May 2026.pdf",
-        "subject": "Anaesthesia",
-        "categoryType": "subject wise test"
-      }
-    ]
-  },
-  {
-    "subject": "Anatomy",
-    "files": [
+        "name": "mock 1",
+        "files": [
+          {
+            "name": "RANDOM MOCK-1_ 5th May 2026",
+            "path": "/exam-archives/mock test/mock 1/RANDOM MOCK-1_ 5th May 2026.pdf",
+            "subcategory": "mock 1",
+            "categoryType": "mock test"
+          }
+        ]
+      },
       {
-        "name": "ANATOMY_SWT_21st APRIL 2026",
-        "path": "/exam-archives/subject wise test/ANATOMY_SWT_21st APRIL 2026.pdf",
-        "subject": "Anatomy",
-        "categoryType": "subject wise test"
-      }
-    ]
-  },
-  {
-    "subject": "Biochem",
-    "files": [
+        "name": "mock 2",
+        "files": [
+          {
+            "name": "RANDOM MOCK -2_11th May 2026",
+            "path": "/exam-archives/mock test/mock 2/RANDOM MOCK -2_11th May 2026.pdf",
+            "subcategory": "mock 2",
+            "categoryType": "mock test"
+          }
+        ]
+      },
       {
-        "name": "BIOCHEMISTRY_SWT _27 April 2026",
-        "path": "/exam-archives/subject wise test/BIOCHEMISTRY_SWT _27 April 2026.pdf",
-        "subject": "Biochem",
-        "categoryType": "subject wise test"
-      }
-    ]
-  },
-  {
-    "subject": "Dermatology",
-    "files": [
+        "name": "mock 3",
+        "files": [
+          {
+            "name": "MOCK 3_PAPER 1_26 May 26",
+            "path": "/exam-archives/mock test/mock 3/MOCK 3_PAPER 1_26 May 26.pdf",
+            "subcategory": "mock 3",
+            "categoryType": "mock test"
+          },
+          {
+            "name": "MOCK 3_PAPER 2_26 May 26",
+            "path": "/exam-archives/mock test/mock 3/MOCK 3_PAPER 2_26 May 26.pdf",
+            "subcategory": "mock 3",
+            "categoryType": "mock test"
+          }
+        ]
+      },
       {
-        "name": "DERMATOLOGY_SWT _9th MAY 2026",
-        "path": "/exam-archives/subject wise test/DERMATOLOGY_SWT _9th MAY 2026.pdf",
-        "subject": "Dermatology",
-        "categoryType": "subject wise test"
-      }
-    ]
-  },
-  {
-    "subject": "FMT",
-    "files": [
+        "name": "mock 4",
+        "files": [
+          {
+            "name": "MOCK 4 -PAPER 1_7 JUNE 2026",
+            "path": "/exam-archives/mock test/mock 4/MOCK 4 -PAPER 1_7 JUNE 2026.pdf",
+            "subcategory": "mock 4",
+            "categoryType": "mock test"
+          },
+          {
+            "name": "MOCK 4_PAPER 2_7 JUNE 26",
+            "path": "/exam-archives/mock test/mock 4/MOCK 4_PAPER 2_7 JUNE 26.pdf",
+            "subcategory": "mock 4",
+            "categoryType": "mock test"
+          }
+        ]
+      },
       {
-        "name": "FSM SWT 9th may 26",
-        "path": "/exam-archives/subject wise test/FSM SWT 9th may 26.pdf",
-        "subject": "FMT",
-        "categoryType": "subject wise test"
-      }
-    ]
-  },
-  {
-    "subject": "Medicine",
-    "files": [
+        "name": "mock 5",
+        "files": [
+          {
+            "name": "MOCK Test -5_Paper 2_13 June 2026",
+            "path": "/exam-archives/mock test/mock 5/MOCK Test -5_Paper 2_13 June 2026.pdf",
+            "subcategory": "mock 5",
+            "categoryType": "mock test"
+          },
+          {
+            "name": "MOCK TEST 5 , PAPER 1_13th JUNE 2026",
+            "path": "/exam-archives/mock test/mock 5/MOCK TEST 5 , PAPER 1_13th JUNE 2026.pdf",
+            "subcategory": "mock 5",
+            "categoryType": "mock test"
+          }
+        ]
+      },
       {
-        "name": "MEDICINE (SA)_SWT 11th JUNE 2026",
-        "path": "/exam-archives/subject wise test/MEDICINE (SA)_SWT 11th JUNE 2026.pdf",
-        "subject": "Medicine",
-        "categoryType": "subject wise test"
-      }
-    ]
-  },
-  {
-    "subject": "Microbiology",
-    "files": [
+        "name": "mock 6",
+        "files": [
+          {
+            "name": "MOCK TEST - 6 , PAPER - 2_16th JUNE 2026",
+            "path": "/exam-archives/mock test/mock 6/MOCK TEST - 6 , PAPER - 2_16th JUNE 2026.pdf",
+            "subcategory": "mock 6",
+            "categoryType": "mock test"
+          },
+          {
+            "name": "MOCK Test -6_Paper 1_16 June 2026",
+            "path": "/exam-archives/mock test/mock 6/MOCK Test -6_Paper 1_16 June 2026.pdf",
+            "subcategory": "mock 6",
+            "categoryType": "mock test"
+          }
+        ]
+      },
       {
-        "name": "SWT MICROBIOLOGY_14th MAY 2026",
-        "path": "/exam-archives/subject wise test/SWT MICROBIOLOGY_14th MAY 2026.pdf",
-        "subject": "Microbiology",
-        "categoryType": "subject wise test"
-      }
-    ]
-  },
-  {
-    "subject": "Obstetrics Gynaecology",
-    "files": [
+        "name": "mock 7",
+        "files": [
+          {
+            "name": "MOCK - 7 PAPER - 1_18th JUNE 2026",
+            "path": "/exam-archives/mock test/mock 7/MOCK - 7 PAPER - 1_18th JUNE 2026.pdf",
+            "subcategory": "mock 7",
+            "categoryType": "mock test"
+          },
+          {
+            "name": "MOCK Test -7_Paper 2_18 June 2026",
+            "path": "/exam-archives/mock test/mock 7/MOCK Test -7_Paper 2_18 June 2026.pdf",
+            "subcategory": "mock 7",
+            "categoryType": "mock test"
+          }
+        ]
+      },
       {
-        "name": "OBG SWT_24th MAY 2026",
-        "path": "/exam-archives/subject wise test/OBG SWT_24th MAY 2026.pdf",
-        "subject": "Obstetrics Gynaecology",
-        "categoryType": "subject wise test"
-      }
-    ]
-  },
-  {
-    "subject": "Ophthalmology",
-    "files": [
-      {
-        "name": "OPTHA_SWT _18 April 2026",
-        "path": "/exam-archives/subject wise test/OPTHA_SWT _18 April 2026.pdf",
-        "subject": "Ophthalmology",
-        "categoryType": "subject wise test"
-      }
-    ]
-  },
-  {
-    "subject": "Orthopaedics",
-    "files": [
-      {
-        "name": "Orthopaedics_SWT 31st May,26",
-        "path": "/exam-archives/subject wise test/Orthopaedics_SWT 31st May,26.pdf",
-        "subject": "Orthopaedics",
-        "categoryType": "subject wise test"
-      }
-    ]
-  },
-  {
-    "subject": "Pathology",
-    "files": [
-      {
-        "name": "PATHOLOGY_SWT _24 April 2026",
-        "path": "/exam-archives/subject wise test/PATHOLOGY_SWT _24 April 2026.pdf",
-        "subject": "Pathology",
-        "categoryType": "subject wise test"
-      }
-    ]
-  },
-  {
-    "subject": "Pediatrics",
-    "files": [
-      {
-        "name": "PAEDIATRICS_SWT 7th may 2026",
-        "path": "/exam-archives/subject wise test/PAEDIATRICS_SWT 7th may 2026.pdf",
-        "subject": "Pediatrics",
-        "categoryType": "subject wise test"
-      }
-    ]
-  },
-  {
-    "subject": "Pharmacology",
-    "files": [
-      {
-        "name": "SWT_PHARMA_14 May 2026",
-        "path": "/exam-archives/subject wise test/SWT_PHARMA_14 May 2026.pdf",
-        "subject": "Pharmacology",
-        "categoryType": "subject wise test"
-      }
-    ]
-  },
-  {
-    "subject": "Physiology",
-    "files": [
-      {
-        "name": "PHYSIOLOGY_SWT 29th MAY 2026",
-        "path": "/exam-archives/subject wise test/PHYSIOLOGY_SWT 29th MAY 2026.pdf",
-        "subject": "Physiology",
-        "categoryType": "subject wise test"
-      }
-    ]
-  },
-  {
-    "subject": "Psychiatry",
-    "files": [
-      {
-        "name": "Psychiatry_SWT_29th May 2026",
-        "path": "/exam-archives/subject wise test/Psychiatry_SWT_29th May 2026.pdf",
-        "subject": "Psychiatry",
-        "categoryType": "subject wise test"
-      }
-    ]
-  },
-  {
-    "subject": "Radiology",
-    "files": [
-      {
-        "name": "RADIOLOGY_SWT 31st MAY 2026",
-        "path": "/exam-archives/subject wise test/RADIOLOGY_SWT 31st MAY 2026.pdf",
-        "subject": "Radiology",
-        "categoryType": "subject wise test"
-      }
-    ]
-  },
-  {
-    "subject": "Surgery",
-    "files": [
-      {
-        "name": "SURGERY_SWT 05th JUNE 2026",
-        "path": "/exam-archives/subject wise test/SURGERY_SWT 05th JUNE 2026.pdf",
-        "subject": "Surgery",
-        "categoryType": "subject wise test"
+        "name": "mock 8",
+        "files": [
+          {
+            "name": "MOCK TEST 8 , PAPER 1_20th JUNE 2026 ",
+            "path": "/exam-archives/mock test/mock 8/MOCK TEST 8 , PAPER 1_20th JUNE 2026 .pdf",
+            "subcategory": "mock 8",
+            "categoryType": "mock test"
+          },
+          {
+            "name": "MOCK TEST 8 PAPER 2_20TH JUN 2026",
+            "path": "/exam-archives/mock test/mock 8/MOCK TEST 8 PAPER 2_20TH JUN 2026.pdf",
+            "subcategory": "mock 8",
+            "categoryType": "mock test"
+          }
+        ]
       }
     ]
   }
