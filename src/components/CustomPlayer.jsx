@@ -182,9 +182,9 @@ const CustomPlayer = ({ videoId, thumbnail, onEnded, onPlay, title, initialTime 
         };
     }, []);
 
-    // 2. Initialize Player ONLY when user clicks Play
+    // 2. Initialize Player on mount so iOS can synchronously play in user gesture
     useEffect(() => {
-        if (validId && status !== "idle") {
+        if (validId) {
             const iphoneDevice = isIPhone(); // Only iPhones need native fullscreen
             const initPlayer = () => {
                 // Double check if the element exists in the DOM yet
@@ -205,7 +205,7 @@ const CustomPlayer = ({ videoId, thumbnail, onEnded, onPlay, title, initialTime 
                         playerRef.current = new window.YT.Player(elementId, {
                             videoId: validId,
                             playerVars: {
-                                autoplay: 1, // Auto play since user already clicked!
+                                autoplay: 0, // Initialize paused so we don't trigger iOS block
                                 mute: 0,
                                 controls: 0,
                                 disablekb: 1,
@@ -235,8 +235,10 @@ const CustomPlayer = ({ videoId, thumbnail, onEnded, onPlay, title, initialTime 
                                         if (d > 0) setProgress((initialTime / d) * 100);
                                     }
 
-                                    // Ensure it plays
-                                    event.target.playVideo();
+                                    // If user already clicked play before it was ready
+                                    if (shouldPlayRef.current) {
+                                        event.target.playVideo();
+                                    }
                                 },
                                 onStateChange: (event) => {
                                     if (event.data === window.YT.PlayerState.PLAYING) {
@@ -262,7 +264,7 @@ const CustomPlayer = ({ videoId, thumbnail, onEnded, onPlay, title, initialTime 
 
             setTimeout(initPlayer, 0);
         }
-    }, [validId, initialTime, status]);
+    }, [validId, initialTime]);
 
     // 3. Progress Loop
     useEffect(() => {
