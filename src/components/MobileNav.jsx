@@ -174,7 +174,7 @@ export default function MobileNav() {
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
               transition={{ type: "spring", damping: 28, stiffness: 240 }}
-              className="fixed bottom-0 right-0 top-0 z-50 flex w-[82%] max-w-[340px] flex-col overflow-hidden bg-[#f0f0f0] shadow-2xl md:hidden"
+              className="fixed bottom-0 right-0 top-0 z-50 flex w-[82%] max-w-[340px] flex-col overflow-hidden rounded-l-[2rem] bg-[#f0f0f0] shadow-2xl md:hidden"
             >
               {/* Header */}
               <div className="flex justify-between border-b border-[rgba(30,50,90,0.06)] bg-white px-6 pb-6 pt-14">
@@ -206,45 +206,44 @@ export default function MobileNav() {
               </div>
 
               {/* Menu options */}
-              <div className="flex-1 space-y-3 overflow-y-auto p-4">
-                {[
-                  {
-                    href: "/dashboard",
-                    icon: LayoutGrid,
-                    label: "Dashboard",
-                  },
-                  { href: "/series", icon: Video, label: "Video Library" },
-                  { href: "/mcq", icon: ClipboardList, label: "QBank" },
-                  { href: "/tracker", icon: Activity, label: "Tracker" },
-                  { href: "/notes", icon: BookOpen, label: "Notes" },
-                  {
-                    href: "/leaderboard",
-                    icon: Trophy,
-                    label: "Leaderboard",
-                  },
-                  {
-                    href: "/settings",
-                    icon: Settings,
-                    label: "Settings",
-                  },
-                ].map((option) => (
-                  <Link
-                    key={option.href}
-                    href={option.href}
-                    onClick={() => setIsMenuOpen(false)}
-                    className="flex w-full items-center justify-between rounded-2xl border border-[rgba(30,50,90,0.05)] bg-white p-4 shadow-sm transition-all active:scale-[0.98] hover:shadow-md"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gray-100 text-gray-600">
-                        <option.icon size={20} />
+              <div className="flex-1 overflow-y-auto p-4">
+                <div className="grid grid-cols-2 gap-3">
+                  {[
+                    {
+                      href: "/dashboard",
+                      icon: LayoutGrid,
+                      label: "Dashboard",
+                    },
+                    { href: "/series", icon: Video, label: "Video Library" },
+                    { href: "/mcq", icon: ClipboardList, label: "QBank" },
+                    { href: "/tracker", icon: Activity, label: "Tracker" },
+                    { href: "/notes", icon: BookOpen, label: "Notes" },
+                    {
+                      href: "/leaderboard",
+                      icon: Trophy,
+                      label: "Leaderboard",
+                    },
+                    {
+                      href: "/settings",
+                      icon: Settings,
+                      label: "Settings",
+                    },
+                  ].map((option) => (
+                    <Link
+                      key={option.href}
+                      href={option.href}
+                      onClick={() => setIsMenuOpen(false)}
+                      className="flex flex-col items-center justify-center gap-2.5 rounded-2xl border border-[rgba(30,50,90,0.05)] bg-white p-4 shadow-sm transition-all active:scale-[0.98] hover:shadow-md text-center"
+                    >
+                      <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gray-50 text-gray-600 transition-colors group-hover:bg-blue-50 group-hover:text-blue-600">
+                        <option.icon size={24} strokeWidth={2.5} />
                       </div>
-                      <span className="font-semibold text-gray-900">
+                      <span className="text-[11px] font-bold tracking-wide text-gray-900">
                         {option.label}
                       </span>
-                    </div>
-                    <ChevronRight size={18} className="text-gray-400" />
-                  </Link>
-                ))}
+                    </Link>
+                  ))}
+                </div>
               </div>
 
               {/* Logout */}
