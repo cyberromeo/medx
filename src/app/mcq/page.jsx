@@ -89,7 +89,7 @@ export default function McqPage() {
               });
               
               const completedMarrow = progress.watched.filter(id => id.startsWith("marrow_")).length;
-              marrowSubtext = \`\${completedMarrow} / \${totalMarrow} Completed\`;
+              marrowSubtext = `${completedMarrow} / ${totalMarrow} Completed`;
               marrowProgressPercent = totalMarrow > 0 ? (completedMarrow / totalMarrow) * 100 : 0;
             }
 
