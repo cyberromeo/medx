@@ -1,162 +1,253 @@
-{
-  "workbooks": [
-    {
-      "name": "MIST Anaesthesia Workbook - Dr Swati Mam",
-      "path": "/notes/workbooks/Anaesthesia/MIST Anaesthesia Workbook - Dr Swati Mam.pdf",
-      "subject": "Anaesthesia",
-      "type": "workbooks"
-    },
-    {
-      "name": "MIST Anatomy Workbook - Dr Shilpi mam",
-      "path": "/notes/workbooks/Anatomy/MIST Anatomy Workbook - Dr Shilpi mam.pdf",
-      "subject": "Anatomy",
-      "type": "workbooks"
-    },
-    {
-      "name": "MIST Biochem Workbook - Dr Sayantann sir",
-      "path": "/notes/workbooks/Biochem/MIST Biochem Workbook - Dr Sayantann sir.pdf",
-      "subject": "Biochem",
-      "type": "workbooks"
-    },
-    {
-      "name": "MIST Dermtology Workbook - Dr. Manish Soni Sir",
-      "path": "/notes/workbooks/Dermtology/MIST Dermtology Workbook - Dr. Manish Soni Sir.pdf",
-      "subject": "Dermtology",
-      "type": "workbooks"
-    },
-    {
-      "name": "ENT WorkBook Dr Shubham Mittal Sir, 02-11-2025",
-      "path": "/notes/workbooks/ENT/ENT WorkBook Dr Shubham Mittal Sir, 02-11-2025.pdf",
-      "subject": "ENT",
-      "type": "workbooks"
-    },
-    {
-      "name": "MIST FSM Workbook - Dr. Akhilesh Jhamad Sir",
-      "path": "/notes/workbooks/FSM/MIST FSM Workbook - Dr. Akhilesh Jhamad Sir.pdf",
-      "subject": "FSM",
-      "type": "workbooks"
-    },
-    {
-      "name": "MIST Medicine Workbook - Dr. Santhosh Patil Sir",
-      "path": "/notes/workbooks/Medicine/MIST Medicine Workbook - Dr. Santhosh Patil Sir.pdf",
-      "subject": "Medicine",
-      "type": "workbooks"
-    },
-    {
-      "name": "MIST Microbiology Workbook - Dr. Danish_compressed",
-      "path": "/notes/workbooks/Microbiology/MIST Microbiology Workbook - Dr. Danish_compressed.pdf",
-      "subject": "Microbiology",
-      "type": "workbooks"
-    },
-    {
-      "name": "MIST Obstetrics Gynaecology Workbook ",
-      "path": "/notes/workbooks/Obstetrics Gynaecology/MIST Obstetrics Gynaecology Workbook .pdf",
-      "subject": "Obstetrics Gynaecology",
-      "type": "workbooks"
-    },
-    {
-      "name": "MIST Ophthalmology Workbook - Dr. Anuradha mam",
-      "path": "/notes/workbooks/Ophthalmology/MIST Ophthalmology Workbook - Dr. Anuradha mam.pdf",
-      "subject": "Ophthalmology",
-      "type": "workbooks"
-    },
-    {
-      "name": "MIST Ophthalmology Workbook - Dr. Sashwat Ray Sir",
-      "path": "/notes/workbooks/Ophthalmology/MIST Ophthalmology Workbook - Dr. Sashwat Ray Sir.pdf",
-      "subject": "Ophthalmology",
-      "type": "workbooks"
-    },
-    {
-      "name": "MIST Orthopaedics Workbook - Dr. Akshay Saxena Sir",
-      "path": "/notes/workbooks/Orthopaedics/MIST Orthopaedics Workbook - Dr. Akshay Saxena Sir.pdf",
-      "subject": "Orthopaedics",
-      "type": "workbooks"
-    },
-    {
-      "name": "MIST Pathology Workbook - Dr Kunal Veer Garg sir",
-      "path": "/notes/workbooks/Pathology/MIST Pathology Workbook - Dr Kunal Veer Garg sir.pdf",
-      "subject": "Pathology",
-      "type": "workbooks"
-    },
-    {
-      "name": "MIST Pediatrics Workbook - Dr. Singaram Sir ",
-      "path": "/notes/workbooks/Pediatrics/MIST Pediatrics Workbook - Dr. Singaram Sir .pdf",
-      "subject": "Pediatrics",
-      "type": "workbooks"
-    },
-    {
-      "name": "MIST Pharmacology Workbook - Dr. Salman Kamal Sir",
-      "path": "/notes/workbooks/Pharmacology/MIST Pharmacology Workbook - Dr. Salman Kamal Sir.pdf",
-      "subject": "Pharmacology",
-      "type": "workbooks"
-    },
-    {
-      "name": "MIST Physiology Workbook",
-      "path": "/notes/workbooks/Physiology/MIST Physiology Workbook.pdf",
-      "subject": "Physiology",
-      "type": "workbooks"
-    },
-    {
-      "name": "MIST PSM Workbook - Dr. Deepa Gupta mam",
-      "path": "/notes/workbooks/PSM/MIST PSM Workbook - Dr. Deepa Gupta mam.pdf",
-      "subject": "PSM",
-      "type": "workbooks"
-    },
-    {
-      "name": "MIST Psychiatry Workbook - Dr. Prashant Agrawal sir",
-      "path": "/notes/workbooks/Psychiatry/MIST Psychiatry Workbook - Dr. Prashant Agrawal sir.pdf",
-      "subject": "Psychiatry",
-      "type": "workbooks"
-    },
-    {
-      "name": "MIST Radiology Workbook - Dr. Nishith Sir",
-      "path": "/notes/workbooks/Radiology/MIST Radiology Workbook - Dr. Nishith Sir.pdf",
-      "subject": "Radiology",
-      "type": "workbooks"
-    },
-    {
-      "name": "MIST Surgery Workbook - Dr Vineet sir",
-      "path": "/notes/workbooks/Surgery/MIST Surgery Workbook - Dr Vineet sir.pdf",
-      "subject": "Surgery",
-      "type": "workbooks"
-    }
-  ],
-  "miscellaneous": [
-    {
-      "name": "ENT 75 previous + New questions ",
-      "path": "/notes/miscellaneous/ENT 75 previous + New questions .pdf",
-      "subject": "Miscellaneous",
-      "type": "miscellaneous"
-    },
-    {
-      "name": "ENT REVISION BY DR SHUBHAM 4",
-      "path": "/notes/miscellaneous/ENT REVISION BY DR SHUBHAM 4.pdf",
-      "subject": "Miscellaneous",
-      "type": "miscellaneous"
-    },
-    {
-      "name": "ENT-110Q-Dr. Mittal_3rd May 2026",
-      "path": "/notes/miscellaneous/ENT-110Q-Dr. Mittal_3rd May 2026.pdf",
-      "subject": "Miscellaneous",
-      "type": "miscellaneous"
-    },
-    {
-      "name": "EXTRA ENT WITH DR SHUBHAM",
-      "path": "/notes/miscellaneous/EXTRA ENT WITH DR SHUBHAM.pdf",
-      "subject": "Miscellaneous",
-      "type": "miscellaneous"
-    },
-    {
-      "name": "MEDICINE_40 QUESTIONS_Kunal Veer Garg_11 June 2026",
-      "path": "/notes/miscellaneous/MEDICINE_40 QUESTIONS_Kunal Veer Garg_11 June 2026.pdf",
-      "subject": "Miscellaneous",
-      "type": "miscellaneous"
-    },
-    {
-      "name": "Ophtha Revision 2026_watermark",
-      "path": "/notes/miscellaneous/Ophtha Revision 2026_watermark.pdf",
-      "subject": "Miscellaneous",
-      "type": "miscellaneous"
-    }
-  ]
-}
+[
+  {
+    "subject": "Anaesthesia",
+    "files": [
+      {
+        "name": "MIST Anaesthesia Workbook - Dr Swati Mam",
+        "path": "/notes/workbooks/Anaesthesia/MIST Anaesthesia Workbook - Dr Swati Mam.pdf",
+        "subject": "Anaesthesia",
+        "categoryType": "workbooks"
+      }
+    ]
+  },
+  {
+    "subject": "Anatomy",
+    "files": [
+      {
+        "name": "MIST Anatomy Workbook - Dr Shilpi mam",
+        "path": "/notes/workbooks/Anatomy/MIST Anatomy Workbook - Dr Shilpi mam.pdf",
+        "subject": "Anatomy",
+        "categoryType": "workbooks"
+      }
+    ]
+  },
+  {
+    "subject": "Biochem",
+    "files": [
+      {
+        "name": "MIST Biochem Workbook - Dr Sayantann sir",
+        "path": "/notes/workbooks/Biochem/MIST Biochem Workbook - Dr Sayantann sir.pdf",
+        "subject": "Biochem",
+        "categoryType": "workbooks"
+      }
+    ]
+  },
+  {
+    "subject": "Dermtology",
+    "files": [
+      {
+        "name": "MIST Dermtology Workbook - Dr. Manish Soni Sir",
+        "path": "/notes/workbooks/Dermtology/MIST Dermtology Workbook - Dr. Manish Soni Sir.pdf",
+        "subject": "Dermtology",
+        "categoryType": "workbooks"
+      }
+    ]
+  },
+  {
+    "subject": "ENT",
+    "files": [
+      {
+        "name": "ENT WorkBook Dr Shubham Mittal Sir, 02-11-2025",
+        "path": "/notes/workbooks/ENT/ENT WorkBook Dr Shubham Mittal Sir, 02-11-2025.pdf",
+        "subject": "ENT",
+        "categoryType": "workbooks"
+      },
+      {
+        "name": "ENT 75 previous + New questions ",
+        "path": "/notes/miscellaneous/ENT 75 previous + New questions .pdf",
+        "subject": "ENT",
+        "categoryType": "miscellaneous"
+      },
+      {
+        "name": "ENT REVISION BY DR SHUBHAM 4",
+        "path": "/notes/miscellaneous/ENT REVISION BY DR SHUBHAM 4.pdf",
+        "subject": "ENT",
+        "categoryType": "miscellaneous"
+      },
+      {
+        "name": "ENT-110Q-Dr. Mittal_3rd May 2026",
+        "path": "/notes/miscellaneous/ENT-110Q-Dr. Mittal_3rd May 2026.pdf",
+        "subject": "ENT",
+        "categoryType": "miscellaneous"
+      },
+      {
+        "name": "EXTRA ENT WITH DR SHUBHAM",
+        "path": "/notes/miscellaneous/EXTRA ENT WITH DR SHUBHAM.pdf",
+        "subject": "ENT",
+        "categoryType": "miscellaneous"
+      }
+    ]
+  },
+  {
+    "subject": "FSM",
+    "files": [
+      {
+        "name": "MIST FSM Workbook - Dr. Akhilesh Jhamad Sir",
+        "path": "/notes/workbooks/FSM/MIST FSM Workbook - Dr. Akhilesh Jhamad Sir.pdf",
+        "subject": "FSM",
+        "categoryType": "workbooks"
+      }
+    ]
+  },
+  {
+    "subject": "Medicine",
+    "files": [
+      {
+        "name": "MIST Medicine Workbook - Dr. Santhosh Patil Sir",
+        "path": "/notes/workbooks/Medicine/MIST Medicine Workbook - Dr. Santhosh Patil Sir.pdf",
+        "subject": "Medicine",
+        "categoryType": "workbooks"
+      },
+      {
+        "name": "MEDICINE_40 QUESTIONS_Kunal Veer Garg_11 June 2026",
+        "path": "/notes/miscellaneous/MEDICINE_40 QUESTIONS_Kunal Veer Garg_11 June 2026.pdf",
+        "subject": "Medicine",
+        "categoryType": "miscellaneous"
+      }
+    ]
+  },
+  {
+    "subject": "Microbiology",
+    "files": [
+      {
+        "name": "MIST Microbiology Workbook - Dr. Danish_compressed",
+        "path": "/notes/workbooks/Microbiology/MIST Microbiology Workbook - Dr. Danish_compressed.pdf",
+        "subject": "Microbiology",
+        "categoryType": "workbooks"
+      }
+    ]
+  },
+  {
+    "subject": "Obstetrics Gynaecology",
+    "files": [
+      {
+        "name": "MIST Obstetrics Gynaecology Workbook ",
+        "path": "/notes/workbooks/Obstetrics Gynaecology/MIST Obstetrics Gynaecology Workbook .pdf",
+        "subject": "Obstetrics Gynaecology",
+        "categoryType": "workbooks"
+      }
+    ]
+  },
+  {
+    "subject": "Ophthalmology",
+    "files": [
+      {
+        "name": "MIST Ophthalmology Workbook - Dr. Anuradha mam",
+        "path": "/notes/workbooks/Ophthalmology/MIST Ophthalmology Workbook - Dr. Anuradha mam.pdf",
+        "subject": "Ophthalmology",
+        "categoryType": "workbooks"
+      },
+      {
+        "name": "MIST Ophthalmology Workbook - Dr. Sashwat Ray Sir",
+        "path": "/notes/workbooks/Ophthalmology/MIST Ophthalmology Workbook - Dr. Sashwat Ray Sir.pdf",
+        "subject": "Ophthalmology",
+        "categoryType": "workbooks"
+      },
+      {
+        "name": "Ophtha Revision 2026_watermark",
+        "path": "/notes/miscellaneous/Ophtha Revision 2026_watermark.pdf",
+        "subject": "Ophthalmology",
+        "categoryType": "miscellaneous"
+      }
+    ]
+  },
+  {
+    "subject": "Orthopaedics",
+    "files": [
+      {
+        "name": "MIST Orthopaedics Workbook - Dr. Akshay Saxena Sir",
+        "path": "/notes/workbooks/Orthopaedics/MIST Orthopaedics Workbook - Dr. Akshay Saxena Sir.pdf",
+        "subject": "Orthopaedics",
+        "categoryType": "workbooks"
+      }
+    ]
+  },
+  {
+    "subject": "Pathology",
+    "files": [
+      {
+        "name": "MIST Pathology Workbook - Dr Kunal Veer Garg sir",
+        "path": "/notes/workbooks/Pathology/MIST Pathology Workbook - Dr Kunal Veer Garg sir.pdf",
+        "subject": "Pathology",
+        "categoryType": "workbooks"
+      }
+    ]
+  },
+  {
+    "subject": "Pediatrics",
+    "files": [
+      {
+        "name": "MIST Pediatrics Workbook - Dr. Singaram Sir ",
+        "path": "/notes/workbooks/Pediatrics/MIST Pediatrics Workbook - Dr. Singaram Sir .pdf",
+        "subject": "Pediatrics",
+        "categoryType": "workbooks"
+      }
+    ]
+  },
+  {
+    "subject": "Pharmacology",
+    "files": [
+      {
+        "name": "MIST Pharmacology Workbook - Dr. Salman Kamal Sir",
+        "path": "/notes/workbooks/Pharmacology/MIST Pharmacology Workbook - Dr. Salman Kamal Sir.pdf",
+        "subject": "Pharmacology",
+        "categoryType": "workbooks"
+      }
+    ]
+  },
+  {
+    "subject": "Physiology",
+    "files": [
+      {
+        "name": "MIST Physiology Workbook",
+        "path": "/notes/workbooks/Physiology/MIST Physiology Workbook.pdf",
+        "subject": "Physiology",
+        "categoryType": "workbooks"
+      }
+    ]
+  },
+  {
+    "subject": "PSM",
+    "files": [
+      {
+        "name": "MIST PSM Workbook - Dr. Deepa Gupta mam",
+        "path": "/notes/workbooks/PSM/MIST PSM Workbook - Dr. Deepa Gupta mam.pdf",
+        "subject": "PSM",
+        "categoryType": "workbooks"
+      }
+    ]
+  },
+  {
+    "subject": "Psychiatry",
+    "files": [
+      {
+        "name": "MIST Psychiatry Workbook - Dr. Prashant Agrawal sir",
+        "path": "/notes/workbooks/Psychiatry/MIST Psychiatry Workbook - Dr. Prashant Agrawal sir.pdf",
+        "subject": "Psychiatry",
+        "categoryType": "workbooks"
+      }
+    ]
+  },
+  {
+    "subject": "Radiology",
+    "files": [
+      {
+        "name": "MIST Radiology Workbook - Dr. Nishith Sir",
+        "path": "/notes/workbooks/Radiology/MIST Radiology Workbook - Dr. Nishith Sir.pdf",
+        "subject": "Radiology",
+        "categoryType": "workbooks"
+      }
+    ]
+  },
+  {
+    "subject": "Surgery",
+    "files": [
+      {
+        "name": "MIST Surgery Workbook - Dr Vineet sir",
+        "path": "/notes/workbooks/Surgery/MIST Surgery Workbook - Dr Vineet sir.pdf",
+        "subject": "Surgery",
+        "categoryType": "workbooks"
+      }
+    ]
+  }
+]
