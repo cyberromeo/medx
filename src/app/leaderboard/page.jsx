@@ -4,10 +4,26 @@ import { useEffect, useState } from "react";
 import { auth } from "@/lib/firebase";
 import { onAuthStateChanged } from "firebase/auth";
 import { motion, AnimatePresence } from "framer-motion";
-import { Trophy, Medal, Crown, Star, ArrowLeft, TrendingUp } from "lucide-react";
+import { Trophy, Medal, Crown, Star, ArrowLeft, TrendingUp, Clock } from "lucide-react";
 import Link from "next/link";
 
 const drName = (name) => (name?.startsWith("Dr.") ? name : `Dr. ${name}`);
+
+const timeAgo = (ms) => {
+  if (!ms) return "Active recently";
+  const seconds = Math.floor((new Date() - new Date(ms)) / 1000);
+  let interval = seconds / 31536000;
+  if (interval > 1) return Math.floor(interval) + "y ago";
+  interval = seconds / 2592000;
+  if (interval > 1) return Math.floor(interval) + "mo ago";
+  interval = seconds / 86400;
+  if (interval > 1) return Math.floor(interval) + "d ago";
+  interval = seconds / 3600;
+  if (interval > 1) return Math.floor(interval) + "h ago";
+  interval = seconds / 60;
+  if (interval > 1) return Math.floor(interval) + "m ago";
+  return "Just now";
+};
 
 export default function LeaderboardPage() {
   const [leaderboard, setLeaderboard] = useState([]);
@@ -241,9 +257,15 @@ export default function LeaderboardPage() {
                       </span>
                     )}
                   </div>
-                  <div className="mt-0.5 flex items-center gap-1.5 text-xs font-medium text-gray-500">
-                    <TrendingUp size={12} />
-                    <span>Level {user.level}</span>
+                  <div className="mt-0.5 flex items-center gap-3 text-xs font-medium text-gray-500">
+                    <div className="flex items-center gap-1">
+                      <TrendingUp size={12} />
+                      <span>Level {user.level}</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <Clock size={12} />
+                      <span>{timeAgo(user.lastActive)}</span>
+                    </div>
                   </div>
                 </div>
 
