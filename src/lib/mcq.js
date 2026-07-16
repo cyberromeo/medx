@@ -21,12 +21,6 @@ export const MCQ_SUBCATEGORIES = [
     title: "MIST 2026 TOPIC-WISE",
     description: "Topic-wise MCQs for MIST 2026 preparation",
     icon: "Target",
-  },
-  {
-    slug: "pyqs",
-    title: "Previous Year Questions (PYQs)",
-    description: "Practice PYQs with Exam & Revision modes",
-    icon: "ScrollText",
   }
 ];
 

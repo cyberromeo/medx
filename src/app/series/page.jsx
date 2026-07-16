@@ -250,30 +250,7 @@ export default function SeriesPage() {
               </div>
             </div>
           </motion.div>
-          {/* PYQs - coming soon */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.15 }}
-            className="group relative flex min-h-[200px] cursor-not-allowed flex-col justify-between overflow-hidden rounded-[1.5rem] border border-[rgba(30,50,90,0.05)] bg-gray-50/60 p-5 opacity-70 grayscale md:rounded-[2rem] md:p-8"
-          >
-            <div>
-              <h2 className="text-2xl font-bold tracking-tight text-gray-500 md:text-3xl">
-                PYQs
-              </h2>
-              <p className="mt-0.5 text-sm font-medium text-gray-400">
-                Archive coming soon
-              </p>
-            </div>
-            <div className="flex items-center rounded-xl bg-white/60 p-3">
-              <p className="text-xs font-medium text-gray-400">
-                Previous year questions vault unlocking soon...
-              </p>
-            </div>
-            <span className="absolute top-5 right-5 rounded-full bg-gray-200 px-2 py-0.5 text-[10px] font-bold tracking-wider text-gray-500 uppercase">
-              Soon
-            </span>
-          </motion.div>
+
         </div>
       </div>
 
