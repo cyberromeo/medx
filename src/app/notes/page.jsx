@@ -159,9 +159,14 @@ export default function NotesPage() {
                                     </span>
                                   )}
                                   {file.categoryType === 'written' && (
-                                    <span className="inline-flex rounded-md bg-red-100 text-red-700 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider">
-                                      Written
-                                    </span>
+                                    <>
+                                      <span className="inline-flex rounded-md bg-gray-200 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-gray-600">
+                                        Workbooks
+                                      </span>
+                                      <span className="inline-flex rounded-md bg-red-100 text-red-700 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider">
+                                        Written
+                                      </span>
+                                    </>
                                   )}
                                 </div>
                               </div>
