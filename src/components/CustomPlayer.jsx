@@ -289,7 +289,7 @@ const CustomPlayer = ({ videoId, thumbnail, onEnded, onPlay, title, initialTime 
 
     // Handlers
     const handleStartPlay = () => {
-        setShowSplash(true); // Show splash to cover YouTube branding on ALL devices
+        if (!isIPhoneDevice) setShowSplash(true); // Show splash to cover YouTube branding (skip on iPhone)
         setStatus("loading");
         shouldPlayRef.current = true;
         if (playerRef.current && typeof playerRef.current.playVideo === 'function') {
@@ -303,7 +303,7 @@ const CustomPlayer = ({ videoId, thumbnail, onEnded, onPlay, title, initialTime 
         if (showSplash) {
             timer = setTimeout(() => {
                 setShowSplash(false);
-            }, 3000); // Give iOS more time to load
+            }, 2000);
         }
         if (status === "playing" && showSplash) {
             setShowSplash(false);
@@ -415,7 +415,7 @@ const CustomPlayer = ({ videoId, thumbnail, onEnded, onPlay, title, initialTime 
         >
             {/* ===== SPLASH SCREEN - Covers YouTube branding during initial load ===== */}
             {showSplash && (
-                <div className="absolute inset-0 z-[60] bg-black flex flex-col items-center justify-center pointer-events-none" style={{ WebkitTransform: 'translateZ(0)' }}>
+                <div className="absolute inset-0 z-50 bg-black flex flex-col items-center justify-center transition-opacity duration-500">
                     <Loader2 className="w-12 h-12 text-primary animate-spin mb-4" />
                     <span className="text-primary text-sm font-medium tracking-wider">Loading Video...</span>
                     <div className="absolute top-4 left-4 px-3 py-1 rounded-full bg-primary-soft border border-primary-soft">
@@ -424,12 +424,10 @@ const CustomPlayer = ({ videoId, thumbnail, onEnded, onPlay, title, initialTime 
                 </div>
             )}
 
-            {/* ===== YOUTUBE IFRAME CONTAINER - only render after user clicks play ===== */}
-            {status !== "idle" && (
-                <div className="absolute inset-0 z-10 overflow-hidden">
-                    <VideoContainer validId={validId} />
-                </div>
-            )}
+            {/* ===== YOUTUBE IFRAME CONTAINER ===== */}
+            <div className="absolute inset-0 z-10 overflow-hidden">
+                <VideoContainer validId={validId} />
+            </div>
 
             {/* ===== INTERACTION SHIELD ===== */}
             {/* Blocks all mouse/touch events on YouTube iframe and hides branding */}
@@ -485,7 +483,7 @@ const CustomPlayer = ({ videoId, thumbnail, onEnded, onPlay, title, initialTime 
 
             {/* ===== LOADING SPINNER ===== */}
             {status === "loading" && (
-                <div className="absolute inset-0 z-50 flex items-center justify-center bg-black pointer-events-none" style={{ WebkitTransform: 'translateZ(0)' }}>
+                <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/40 pointer-events-none">
                     <Loader2 className="w-12 h-12 text-primary animate-spin drop-shadow-xl" />
                 </div>
             )}
