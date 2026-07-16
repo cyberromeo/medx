@@ -15,7 +15,7 @@ export default function AppLayoutWrapper({ children }) {
   return (
     <div className="flex h-screen w-full overflow-hidden bg-[#f0f0f0]">
       <Sidebar />
-      <main className="flex h-screen w-full flex-1 flex-col overflow-hidden p-3 pb-24 md:p-5 md:pb-5">
+      <main className="flex h-screen w-full flex-1 flex-col overflow-hidden px-3 pb-24 pt-[max(env(safe-area-inset-top),0.75rem)] md:px-5 md:pb-5 md:pt-[max(env(safe-area-inset-top),1.25rem)]">
         <div className="relative h-full w-full flex-1 overflow-y-auto rounded-[1.5rem] border border-[rgba(30,50,90,0.05)] bg-white shadow-[0_4px_24px_rgba(0,0,0,0.04)] md:rounded-[2rem]">
           {children}
         </div>
