@@ -6,7 +6,7 @@ import Sidebar from "@/components/Sidebar";
 export default function AppLayoutWrapper({ children }) {
   const pathname = usePathname();
 
-  if (pathname === "/" || pathname === "/login" || pathname === "/syllabus" || pathname === "/verify-email" || pathname === "/acticode") {
+  if (pathname === "/" || pathname === "/login" || pathname === "/syllabus" || pathname === "/verify-email" || pathname === "/acticode" || pathname === "/studytime") {
     return (
       <main className="flex-1 w-full overflow-y-auto">{children}</main>
     );
