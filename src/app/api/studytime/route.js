@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 
 const PASSWORD = "superstudiopro";
 const DEFAULT_DAILY_GOAL = 11 * 3600; // 11 hours
+const DEFAULT_NTFY_TOPIC = "https://ntfy.sh/medx_study_siren_superstudiopro";
 
 function getStudyDayAnchor(date = new Date()) {
   const istOffset = 5.5 * 60 * 60 * 1000;
@@ -45,61 +46,69 @@ function calculateStreak(history, currentAnchor, goalSeconds) {
 }
 
 async function dispatchSirenWebhook(webhookUrl, mode, durationSeconds) {
-  if (!webhookUrl || !webhookUrl.trim()) {
-    return { success: false, error: "No Webhook URL provided" };
-  }
+  const results = [];
+  const titleStr = "🚨 AERO FOCUS TIMER ENDED!";
+  const bodyStr = "TIMER ENDED! GET BACK TO WORK IMMEDIATELY!";
 
+  // 1. Built-in Ntfy Siren Topic Dispatch
   try {
-    let targetUrl = webhookUrl.trim();
-    
-    // Handle webhook-notifier.com secret links
-    if (targetUrl.includes("webhook-notifier.com/join#secret=")) {
-      const match = targetUrl.match(/secret=([^&]+)/);
-      if (match) {
-        const secret = match[1];
-        targetUrl = `https://webhook-notifier.com/api/notify?secret=${secret}`;
-      }
-    }
-
-    const titleStr = "🚨 AERO FOCUS TIMER ENDED!";
-    const bodyStr = "TIMER ENDED! GET BACK TO WORK IMMEDIATELY!";
-
-    // Multi-platform compatible payload
-    const payload = {
-      // Generic & Webhook Notifier format
-      title: titleStr,
-      body: bodyStr,
-      message: `${titleStr}\n${bodyStr}`,
-      // Discord format
-      content: `${titleStr}\n**${bodyStr}**`,
-      // Slack / Teams format
-      text: `${titleStr}\n${bodyStr}`,
-      // Ntfy / Pushover format
-      topic: "studytime",
-      priority: 5,
-      // Metadata
-      event: "timer_ended",
-      mode: mode || "study",
-      durationSeconds: durationSeconds || 3600,
-      timestamp: new Date().toISOString(),
-    };
-
-    const res = await fetch(targetUrl, {
+    const ntfyRes = await fetch(DEFAULT_NTFY_TOPIC, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
+      headers: {
+        "Title": titleStr,
+        "Priority": "5",
+        "Tags": "warning,alarm_clock,rotating_light",
+      },
+      body: bodyStr,
     });
-
-    const resText = await res.text().catch(() => "");
-    return {
-      success: res.ok,
-      status: res.status,
-      response: resText.substring(0, 200),
-    };
-  } catch (err) {
-    console.error("Failed to send siren webhook:", err);
-    return { success: false, error: err.message || "Failed to reach Webhook URL" };
+    results.push({ target: "ntfy_default", success: ntfyRes.ok, status: ntfyRes.status });
+  } catch (e) {
+    results.push({ target: "ntfy_default", success: false, error: e.message });
   }
+
+  // 2. Custom Webhook Dispatch (if provided and different from default)
+  if (webhookUrl && webhookUrl.trim() && webhookUrl.trim() !== DEFAULT_NTFY_TOPIC) {
+    try {
+      let targetUrl = webhookUrl.trim();
+      
+      const payload = {
+        title: titleStr,
+        body: bodyStr,
+        message: `${titleStr}\n${bodyStr}`,
+        content: `${titleStr}\n**${bodyStr}**`,
+        text: `${titleStr}\n${bodyStr}`,
+        topic: "studytime",
+        priority: 5,
+        event: "timer_ended",
+        mode: mode || "study",
+        durationSeconds: durationSeconds || 3600,
+        timestamp: new Date().toISOString(),
+      };
+
+      const customRes = await fetch(targetUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      const resText = await customRes.text().catch(() => "");
+      results.push({
+        target: "custom_webhook",
+        success: customRes.ok,
+        status: customRes.status,
+        response: resText.substring(0, 150),
+      });
+    } catch (err) {
+      results.push({ target: "custom_webhook", success: false, error: err.message });
+    }
+  }
+
+  const primaryResult = results.find((r) => r.target === "custom_webhook") || results[0];
+  return {
+    success: primaryResult ? primaryResult.success : true,
+    results,
+    primary: primaryResult,
+  };
 }
 
 async function getOrInitState() {
@@ -115,7 +124,7 @@ async function getOrInitState() {
     history: {},
     streak: 0,
     todos: [],
-    webhookUrl: "",
+    webhookUrl: DEFAULT_NTFY_TOPIC,
     activeTimer: null,
     lastUpdated: new Date().toISOString(),
   };
@@ -128,7 +137,7 @@ async function getOrInitState() {
       dailyGoalSeconds: data.dailyGoalSeconds || DEFAULT_DAILY_GOAL,
       history: data.history || {},
       todos: data.todos || [],
-      webhookUrl: data.webhookUrl || "",
+      webhookUrl: data.webhookUrl || DEFAULT_NTFY_TOPIC,
       activeTimer: data.activeTimer || null,
     };
 
@@ -143,11 +152,11 @@ async function getOrInitState() {
     }
   }
 
-  // CLOUD TIMER EVALUATION
+  // --- CLOUD TIMER EVALUATION ENGINE ---
   if (state.activeTimer && state.activeTimer.isRunning) {
     const now = Date.now();
     const startTimeMs = new Date(state.activeTimer.startTime).getTime();
-    const elapsedSecs = Math.floor((now - startTimeMs) / 1000);
+    const elapsedSecs = Math.max(0, Math.floor((now - startTimeMs) / 1000));
     const remainingSecs = Math.max(0, state.activeTimer.durationSeconds - elapsedSecs);
 
     state.activeTimer.secondsRemaining = remainingSecs;
@@ -172,15 +181,12 @@ async function getOrInitState() {
         });
       }
 
-      // Dispatch Webhook Siren Notification
-      const targetWebhook = state.webhookUrl || state.activeTimer.webhookUrl;
-      if (targetWebhook) {
-        await dispatchSirenWebhook(
-          targetWebhook,
-          state.activeTimer.mode,
-          state.activeTimer.durationSeconds
-        );
-      }
+      // Dispatch Webhook Siren Notifications
+      await dispatchSirenWebhook(
+        state.webhookUrl || state.activeTimer.webhookUrl,
+        state.activeTimer.mode,
+        state.activeTimer.durationSeconds
+      );
     }
   }
 
@@ -234,7 +240,7 @@ export async function POST(request) {
         const durationSeconds = Math.max(10, parseInt(body.durationSeconds || 3600, 10));
         const mode = body.mode || "study";
         const note = body.note || "";
-        const webhookUrl = body.webhookUrl || state.webhookUrl || "";
+        const webhookUrl = body.webhookUrl || state.webhookUrl || DEFAULT_NTFY_TOPIC;
 
         state.activeTimer = {
           id: "timer_" + Date.now(),
@@ -256,11 +262,12 @@ export async function POST(request) {
         if (state.activeTimer && state.activeTimer.isRunning) {
           const now = Date.now();
           const startTimeMs = new Date(state.activeTimer.startTime).getTime();
-          const elapsedSecs = Math.floor((now - startTimeMs) / 1000);
+          const elapsedSecs = Math.max(0, Math.floor((now - startTimeMs) / 1000));
           const remainingSecs = Math.max(0, state.activeTimer.durationSeconds - elapsedSecs);
 
           state.activeTimer.isRunning = false;
           state.activeTimer.secondsRemaining = remainingSecs;
+          state.activeTimer.durationSeconds = remainingSecs; // Store exact remaining duration
           state.lastUpdated = new Date().toISOString();
         }
         break;
@@ -268,8 +275,10 @@ export async function POST(request) {
 
       case "resume_timer": {
         if (state.activeTimer && !state.activeTimer.isRunning && !state.activeTimer.completed) {
-          const remaining = state.activeTimer.secondsRemaining || 3600;
-          state.activeTimer.startTime = new Date(Date.now() - (state.activeTimer.durationSeconds - remaining) * 1000).toISOString();
+          const remaining = state.activeTimer.secondsRemaining || state.activeTimer.durationSeconds || 3600;
+          state.activeTimer.startTime = new Date().toISOString();
+          state.activeTimer.durationSeconds = remaining;
+          state.activeTimer.secondsRemaining = remaining;
           state.activeTimer.isRunning = true;
           state.lastUpdated = new Date().toISOString();
         }
@@ -283,15 +292,15 @@ export async function POST(request) {
       }
 
       case "set_webhook": {
-        state.webhookUrl = (body.webhookUrl || "").trim();
+        state.webhookUrl = (body.webhookUrl || DEFAULT_NTFY_TOPIC).trim();
         state.lastUpdated = new Date().toISOString();
         break;
       }
 
       case "test_webhook": {
-        const targetUrl = body.webhookUrl || state.webhookUrl;
-        const result = await dispatchSirenWebhook(targetUrl, "test", 3600);
-        return NextResponse.json({ success: result.success, result, state });
+        const targetUrl = body.webhookUrl || state.webhookUrl || DEFAULT_NTFY_TOPIC;
+        const res = await dispatchSirenWebhook(targetUrl, "test", 3600);
+        return NextResponse.json({ success: true, result: res, state });
       }
 
       case "log": {

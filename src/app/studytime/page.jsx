@@ -12,7 +12,6 @@ import {
   Pause,
   RotateCcw,
   SkipForward,
-  Volume2,
   Plus,
   Check,
   Trash2,
@@ -28,13 +27,15 @@ import {
   Globe,
   BellRing,
   Send,
-  AlertCircle,
   CheckCircle2,
   XCircle,
+  ExternalLink,
+  Smartphone,
 } from "lucide-react";
 
 const PASSWORD = "superstudiopro";
 const DAILY_GOAL_DEFAULT = 11 * 3600; // 11 hours
+const DEFAULT_NTFY_TOPIC = "https://ntfy.sh/medx_study_siren_superstudiopro";
 
 export default function StudyTimePage() {
   // Auth state
@@ -51,10 +52,10 @@ export default function StudyTimePage() {
   const [history, setHistory] = useState({});
   const [streak, setStreak] = useState(0);
   const [todos, setTodos] = useState([]);
-  const [webhookUrl, setWebhookUrl] = useState("");
+  const [webhookUrl, setWebhookUrl] = useState(DEFAULT_NTFY_TOPIC);
   const [savingWebhook, setSavingWebhook] = useState(false);
   const [webhookMsg, setWebhookMsg] = useState("");
-  const [webhookStatus, setWebhookStatus] = useState(null); // { success: true/false, message: "" }
+  const [webhookStatus, setWebhookStatus] = useState(null);
 
   // Timer state
   const [timerMode, setTimerMode] = useState("study"); // 'study', 'break10', 'break20'
@@ -71,7 +72,6 @@ export default function StudyTimePage() {
 
   // API Modal state
   const [showApiModal, setShowApiModal] = useState(false);
-  const [copiedCmd, setCopiedCmd] = useState("");
   const [logs, setLogs] = useState([]);
   const [loadingLogs, setLoadingLogs] = useState(false);
 
@@ -115,9 +115,11 @@ export default function StudyTimePage() {
         setHistory(data.state.history || {});
         setStreak(data.state.streak || 0);
         setTodos(data.state.todos || []);
-        setWebhookUrl(data.state.webhookUrl || "");
+        if (data.state.webhookUrl) {
+          setWebhookUrl(data.state.webhookUrl);
+        }
 
-        // Sync Cloud Active Timer
+        // Sync Cloud Active Timer safely without resetting pauses
         const active = data.state.activeTimer;
         if (active) {
           setTimerMode(active.mode || "study");
@@ -129,8 +131,8 @@ export default function StudyTimePage() {
           } else if (active.completed) {
             setTimerRemaining(0);
             setTimerState("idle");
-          } else {
-            setTimerRemaining(active.secondsRemaining || active.durationSeconds);
+          } else if (active.secondsRemaining !== undefined && active.secondsRemaining > 0) {
+            setTimerRemaining(active.secondsRemaining);
             setTimerState("paused");
           }
         }
@@ -190,9 +192,6 @@ export default function StudyTimePage() {
             }
             triggerAlarm();
             return 0;
-          }
-          if (timerMode === "study") {
-            setTodayStudySeconds((t) => t + 1);
           }
           return prev - 1;
         });
@@ -271,17 +270,28 @@ export default function StudyTimePage() {
     }
   };
 
-  // Cloud Timer Start / Toggle
+  // Cloud Timer Start / Pause / Resume Controls (FIXED: NO RESET ON RESUME)
   const togglePlayPause = async () => {
     initAudio();
+
     if (timerState === "running") {
+      // PAUSE
       setTimerState("paused");
       fetch("/api/studytime", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ password: PASSWORD, action: "pause_timer" }),
       });
+    } else if (timerState === "paused") {
+      // RESUME FROM PAUSED TIME (DO NOT RESET!)
+      setTimerState("running");
+      fetch("/api/studytime", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ password: PASSWORD, action: "resume_timer" }),
+      });
     } else {
+      // START NEW TIMER
       setTimerState("running");
       fetch("/api/studytime", {
         method: "POST",
@@ -289,7 +299,7 @@ export default function StudyTimePage() {
         body: JSON.stringify({
           password: PASSWORD,
           action: "start_timer",
-          durationSeconds: timerTotal,
+          durationSeconds: timerRemaining || timerTotal,
           mode: timerMode,
           webhookUrl,
         }),
@@ -336,7 +346,7 @@ export default function StudyTimePage() {
       const data = await res.json();
       if (data.success) {
         setWebhookMsg("Saved!");
-        setWebhookStatus({ success: true, message: "Webhook URL updated successfully" });
+        setWebhookStatus({ success: true, message: "Siren Webhook URL updated" });
         setTimeout(() => setWebhookMsg(""), 3000);
       }
     } catch (err) {
@@ -347,7 +357,7 @@ export default function StudyTimePage() {
   };
 
   const handleTestWebhook = async () => {
-    setWebhookMsg("Dispatching test Siren...");
+    setWebhookMsg("Dispatching Siren...");
     setWebhookStatus(null);
     try {
       const res = await fetch("/api/studytime", {
@@ -361,21 +371,21 @@ export default function StudyTimePage() {
       });
       const data = await res.json();
       if (data.success) {
-        setWebhookMsg("Test Siren Dispatched! 🚨");
+        setWebhookMsg("Siren Fired! 🚨");
         setWebhookStatus({
           success: true,
-          message: data.result?.response ? `HTTP ${data.result.status}: ${data.result.response}` : "Webhook alert triggered!",
+          message: "Siren alert dispatched successfully to Ntfy/Webhook!",
         });
       } else {
         setWebhookMsg("Failed");
         setWebhookStatus({
           success: false,
-          message: data.result?.error || data.error || "Failed to trigger webhook",
+          message: data.result?.error || data.error || "Failed to dispatch Siren alert",
         });
       }
     } catch (err) {
       console.error("Failed to test webhook:", err);
-      setWebhookStatus({ success: false, message: "Error reaching backend server" });
+      setWebhookStatus({ success: false, message: "Error reaching server" });
     }
   };
 
@@ -444,7 +454,7 @@ export default function StudyTimePage() {
     }
   };
 
-  // Fetch session logs for API modal
+  // Fetch session logs
   const fetchLogs = async () => {
     setLoadingLogs(true);
     try {
@@ -473,13 +483,14 @@ export default function StudyTimePage() {
 
   const formatHoursDecimal = (secs) => (secs / 3600).toFixed(2);
 
+  // Smooth, non-erratic Goal Progress calculations
   const goalPercent = Math.min(100, Math.round((todayStudySeconds / dailyGoalSeconds) * 100));
   const remainingGoalSecs = Math.max(0, dailyGoalSeconds - todayStudySeconds);
 
   // SVG Radial Ring Calculation
   const radius = 130;
   const circumference = 2 * Math.PI * radius;
-  const strokeDashoffset = circumference - (timerRemaining / timerTotal) * circumference;
+  const strokeDashoffset = circumference - (timerRemaining / (timerTotal || 1)) * circumference;
 
   // Past 7 days history
   const getLast7Days = () => {
@@ -499,7 +510,7 @@ export default function StudyTimePage() {
     return result;
   };
 
-  // --- PASSWORD GATE SCREEN (MATCHING MEDX THEME) ---
+  // --- PASSWORD GATE SCREEN ---
   if (!authenticated) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-[#f0f0f0] p-4">
@@ -580,7 +591,7 @@ export default function StudyTimePage() {
     );
   }
 
-  // --- MAIN DASHBOARD (MEDX LIGHT THEME) ---
+  // --- MAIN DASHBOARD ---
   const chartData = getLast7Days();
   const maxChartHours = Math.max(12, ...chartData.map((d) => d.hours));
 
@@ -598,7 +609,7 @@ export default function StudyTimePage() {
                 Study Time Tracker
               </h1>
               <p className="text-xs text-gray-500">
-                AeroFocus Cloud Timer & REST API Engine
+                AeroFocus Cloud Timer & Phone Siren Alerts
               </p>
             </div>
           </div>
@@ -722,6 +733,26 @@ export default function StudyTimePage() {
                 })}
               </div>
             </div>
+
+            {/* Built-in Ntfy Siren Subscription Card */}
+            <div className="rounded-[2rem] border border-emerald-200 bg-emerald-50/60 p-6 shadow-[0_4px_24px_rgba(0,0,0,0.02)]">
+              <div className="flex items-center gap-2 text-emerald-800 text-sm font-bold tracking-wide uppercase mb-2">
+                <Smartphone size={18} className="text-emerald-600" />
+                <span>Phone Siren Alerts</span>
+              </div>
+              <p className="text-xs text-emerald-700 mb-4 leading-relaxed">
+                Subscribe to instant phone alerts when cloud timer ends! Open Ntfy app or browser link below.
+              </p>
+              <a
+                href={DEFAULT_NTFY_TOPIC}
+                target="_blank"
+                rel="noreferrer"
+                className="flex items-center justify-center gap-2 rounded-full bg-emerald-600 py-2.5 px-4 text-xs font-bold text-white shadow-md hover:bg-emerald-700 transition-all"
+              >
+                <span>Subscribe on Phone (Ntfy)</span>
+                <ExternalLink size={14} />
+              </a>
+            </div>
           </aside>
 
           {/* ================= CENTER COLUMN: TIMER & WEBHOOK ================= */}
@@ -791,7 +822,7 @@ export default function StudyTimePage() {
                     {timerState === "running"
                       ? "Cloud Timer Active ⚡"
                       : timerState === "paused"
-                      ? "Session paused"
+                      ? "Paused — Tap Play to resume"
                       : "Tap play to start cloud timer"}
                   </span>
                 </div>
@@ -810,7 +841,7 @@ export default function StudyTimePage() {
                 <button
                   onClick={togglePlayPause}
                   className="flex h-16 w-16 items-center justify-center rounded-full bg-gray-900 text-white shadow-lg transition-all hover:bg-gray-800 hover:scale-105 active:scale-95"
-                  title={timerState === "running" ? "Pause" : "Play"}
+                  title={timerState === "running" ? "Pause" : "Play / Resume"}
                 >
                   {timerState === "running" ? <Pause size={28} /> : <Play size={28} className="ml-1" />}
                 </button>
@@ -842,16 +873,16 @@ export default function StudyTimePage() {
                 </div>
 
                 <p className="text-xs text-gray-500 mb-3">
-                  Paste your Webhook trigger URL (Discord, Telegram, Ntfy, Webhook Notifier endpoint, etc.). When the cloud timer completes, the Siren alert fires automatically!
+                  Custom Webhook URL (Discord, Telegram, Ntfy, Webhook Notifier). Built-in Ntfy Siren active by default!
                 </p>
 
                 <div className="space-y-3">
                   <input
                     type="url"
-                    placeholder="https://..."
+                    placeholder="https://ntfy.sh/..."
                     value={webhookUrl}
                     onChange={(e) => setWebhookUrl(e.target.value)}
-                    className="w-full rounded-xl border border-[rgba(30,50,90,0.08)] bg-gray-50 px-3.5 py-2.5 text-xs text-gray-900 placeholder-gray-400 focus:border-gray-900 focus:outline-none"
+                    className="w-full rounded-xl border border-[rgba(30,50,90,0.08)] bg-gray-50 px-3.5 py-2.5 text-xs text-gray-900 font-mono placeholder-gray-400 focus:border-gray-900 focus:outline-none"
                   />
 
                   <div className="flex gap-2">
@@ -990,7 +1021,7 @@ export default function StudyTimePage() {
 
                 {/* Cloud Timer Start */}
                 <div className="space-y-1">
-                  <span className="text-[11px] font-bold text-gray-400 uppercase">1. Start Cloud Timer (Runs on cloud)</span>
+                  <span className="text-[11px] font-bold text-gray-400 uppercase">1. Start Cloud Timer</span>
                   <div className="rounded-xl bg-gray-900 p-3 font-mono text-xs text-emerald-400 border border-gray-800 space-y-1">
                     <pre className="text-gray-200 text-[11px]">
 {`POST /api/studytime
@@ -1005,18 +1036,18 @@ export default function StudyTimePage() {
                   </div>
                 </div>
 
-                {/* Set Webhook */}
+                {/* Pause & Resume */}
                 <div className="space-y-1">
-                  <span className="text-[11px] font-bold text-gray-400 uppercase">2. Set Siren Webhook Endpoint</span>
-                  <div className="rounded-xl bg-gray-900 p-3 font-mono text-xs text-amber-300 border border-gray-800 space-y-1">
-                    <pre className="text-gray-200 text-[11px]">
-{`POST /api/studytime
-{
-  "password": "superstudiopro",
-  "action": "set_webhook",
-  "webhookUrl": "https://..."
-}`}
-                    </pre>
+                  <span className="text-[11px] font-bold text-gray-400 uppercase">2. Pause & Resume Cloud Timer</span>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 font-mono text-xs">
+                    <div className="rounded-xl bg-gray-900 p-2.5 border border-gray-800">
+                      <span className="text-amber-400 font-bold block">action: &quot;pause_timer&quot;</span>
+                      <span className="text-[10px] text-gray-400">{`{"password": "superstudiopro", "action": "pause_timer"}`}</span>
+                    </div>
+                    <div className="rounded-xl bg-gray-900 p-2.5 border border-gray-800">
+                      <span className="text-emerald-400 font-bold block">action: &quot;resume_timer&quot;</span>
+                      <span className="text-[10px] text-gray-400">{`{"password": "superstudiopro", "action": "resume_timer"}`}</span>
+                    </div>
                   </div>
                 </div>
               </div>
