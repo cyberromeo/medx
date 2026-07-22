@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 
 const PASSWORD = "superstudiopro";
 const DEFAULT_DAILY_GOAL = 11 * 3600; // 11 hours
+const DEFAULT_PYQ_GOAL = 2 * 3600;    // 2 hours
 const DEFAULT_NTFY_TOPIC = "https://ntfy.sh/medx_study_siren_superstudiopro";
 
 function getStudyDayAnchor(date = new Date()) {
@@ -45,19 +46,58 @@ function calculateStreak(history, currentAnchor, goalSeconds) {
   return streak;
 }
 
+function computeWeeklySummary(history, historyPyq, currentAnchor, todayStudySecs, todayPyqSecs) {
+  const list = [];
+  let totalStudySecs = 0;
+  let totalPyqSecs = 0;
+  const now = new Date();
+
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(now);
+    d.setDate(d.getDate() - i);
+    const yyyy = d.getFullYear();
+    const mm = String(d.getMonth() + 1).padStart(2, "0");
+    const dd = String(d.getDate()).padStart(2, "0");
+    const key = `${yyyy}-${mm}-${dd}`;
+    const dayName = d.toLocaleDateString("en-US", { weekday: "short" });
+
+    const sSecs = history[key] || (key === currentAnchor ? todayStudySecs : 0);
+    const pSecs = historyPyq[key] || (key === currentAnchor ? todayPyqSecs : 0);
+
+    totalStudySecs += sSecs;
+    totalPyqSecs += pSecs;
+
+    list.push({
+      date: key,
+      day: dayName,
+      studySeconds: sSecs,
+      studyHours: parseFloat((sSecs / 3600).toFixed(2)),
+      pyqSeconds: pSecs,
+      pyqHours: parseFloat((pSecs / 3600).toFixed(2)),
+      totalHours: parseFloat(((sSecs + pSecs) / 3600).toFixed(2)),
+    });
+  }
+
+  return {
+    weeklyHistory: list,
+    weeklyStudyTotalHours: parseFloat((totalStudySecs / 3600).toFixed(2)),
+    weeklyPyqTotalHours: parseFloat((totalPyqSecs / 3600).toFixed(2)),
+    weeklyGrandTotalHours: parseFloat(((totalStudySecs + totalPyqSecs) / 3600).toFixed(2)),
+  };
+}
+
 async function dispatchSirenWebhook(webhookUrl, mode, durationSeconds) {
   const results = [];
-  const titleStr = "🚨 AERO FOCUS TIMER ENDED!";
-  const bodyStr = "TIMER ENDED! GET BACK TO WORK IMMEDIATELY!";
+  const titleStr = mode === "pyq" ? "🚨 PYQ SESSION COMPLETED!" : "🚨 AERO FOCUS TIMER ENDED!";
+  const bodyStr = mode === "pyq" ? "Great job on PYQs! Keep grinding!" : "TIMER ENDED! GET BACK TO WORK IMMEDIATELY!";
 
-  // 1. Built-in Ntfy Siren Topic Dispatch
   try {
     const ntfyRes = await fetch(DEFAULT_NTFY_TOPIC, {
       method: "POST",
       headers: {
         "Title": titleStr,
         "Priority": "5",
-        "Tags": "warning,alarm_clock,rotating_light",
+        "Tags": mode === "pyq" ? "books,target,fire" : "warning,alarm_clock,rotating_light",
       },
       body: bodyStr,
     });
@@ -66,11 +106,8 @@ async function dispatchSirenWebhook(webhookUrl, mode, durationSeconds) {
     results.push({ target: "ntfy_default", success: false, error: e.message });
   }
 
-  // 2. Custom Webhook Dispatch (if provided and different from default)
   if (webhookUrl && webhookUrl.trim() && webhookUrl.trim() !== DEFAULT_NTFY_TOPIC) {
     try {
-      let targetUrl = webhookUrl.trim();
-      
       const payload = {
         title: titleStr,
         body: bodyStr,
@@ -85,7 +122,7 @@ async function dispatchSirenWebhook(webhookUrl, mode, durationSeconds) {
         timestamp: new Date().toISOString(),
       };
 
-      const customRes = await fetch(targetUrl, {
+      const customRes = await fetch(webhookUrl.trim(), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
@@ -120,9 +157,13 @@ async function getOrInitState() {
   let state = {
     currentStudyDay: todayAnchor,
     todayStudySeconds: 0,
+    todayPyqSeconds: 0,
     dailyGoalSeconds: DEFAULT_DAILY_GOAL,
+    dailyPyqGoalSeconds: DEFAULT_PYQ_GOAL,
     history: {},
+    historyPyq: {},
     streak: 0,
+    streakPyq: 0,
     todos: [],
     webhookUrl: DEFAULT_NTFY_TOPIC,
     activeTimer: null,
@@ -134,8 +175,11 @@ async function getOrInitState() {
     state = {
       ...state,
       ...data,
+      todayPyqSeconds: data.todayPyqSeconds || 0,
       dailyGoalSeconds: data.dailyGoalSeconds || DEFAULT_DAILY_GOAL,
+      dailyPyqGoalSeconds: data.dailyPyqGoalSeconds || DEFAULT_PYQ_GOAL,
       history: data.history || {},
+      historyPyq: data.historyPyq || {},
       todos: data.todos || [],
       webhookUrl: data.webhookUrl || DEFAULT_NTFY_TOPIC,
       activeTimer: data.activeTimer || null,
@@ -145,14 +189,16 @@ async function getOrInitState() {
       const oldAnchor = state.currentStudyDay;
       if (oldAnchor) {
         state.history[oldAnchor] = state.todayStudySeconds || 0;
+        state.historyPyq[oldAnchor] = state.todayPyqSeconds || 0;
       }
       state.currentStudyDay = todayAnchor;
       state.todayStudySeconds = 0;
+      state.todayPyqSeconds = 0;
       state.todos = (state.todos || []).filter((t) => !t.completed);
     }
   }
 
-  // --- CLOUD TIMER EVALUATION ENGINE ---
+  // CLOUD TIMER EVALUATION
   if (state.activeTimer && state.activeTimer.isRunning) {
     const now = Date.now();
     const startTimeMs = new Date(state.activeTimer.startTime).getTime();
@@ -166,31 +212,53 @@ async function getOrInitState() {
       state.activeTimer.completed = true;
       state.activeTimer.isRunning = false;
 
-      if (state.activeTimer.mode === "study") {
-        const addedSeconds = state.activeTimer.durationSeconds;
+      const addedSeconds = state.activeTimer.durationSeconds;
+      const mode = state.activeTimer.mode || "study";
+
+      if (mode === "pyq") {
+        state.todayPyqSeconds = (state.todayPyqSeconds || 0) + addedSeconds;
+        state.historyPyq[todayAnchor] = state.todayPyqSeconds;
+      } else if (mode === "study") {
         state.todayStudySeconds = (state.todayStudySeconds || 0) + addedSeconds;
         state.history[todayAnchor] = state.todayStudySeconds;
-
-        await adminDb.collection("studyTimeLogs").add({
-          seconds: addedSeconds,
-          mode: state.activeTimer.mode,
-          note: state.activeTimer.note || "Cloud Timer Completed",
-          anchorDay: todayAnchor,
-          timestamp: new Date().toISOString(),
-          source: "cloud_timer",
-        });
       }
 
-      // Dispatch Webhook Siren Notifications
+      await adminDb.collection("studyTimeLogs").add({
+        seconds: addedSeconds,
+        mode: mode,
+        note: state.activeTimer.note || (mode === "pyq" ? "Cloud PYQ Session Completed" : "Cloud Study Session Completed"),
+        anchorDay: todayAnchor,
+        timestamp: new Date().toISOString(),
+        source: "cloud_timer",
+      });
+
       await dispatchSirenWebhook(
         state.webhookUrl || state.activeTimer.webhookUrl,
-        state.activeTimer.mode,
-        state.activeTimer.durationSeconds
+        mode,
+        addedSeconds
       );
     }
   }
 
   state.streak = calculateStreak(state.history, todayAnchor, state.dailyGoalSeconds);
+  state.streakPyq = calculateStreak(state.historyPyq, todayAnchor, state.dailyPyqGoalSeconds);
+
+  // Compute calculated API summaries
+  const weeklySummary = computeWeeklySummary(
+    state.history,
+    state.historyPyq,
+    todayAnchor,
+    state.todayStudySeconds,
+    state.todayPyqSeconds
+  );
+
+  state = {
+    ...state,
+    todayStudyHours: parseFloat((state.todayStudySeconds / 3600).toFixed(2)),
+    todayPyqHours: parseFloat((state.todayPyqSeconds / 3600).toFixed(2)),
+    ...weeklySummary,
+  };
+
   await docRef.set(state, { merge: true });
   return state;
 }
@@ -238,7 +306,7 @@ export async function POST(request) {
     switch (action) {
       case "start_timer": {
         const durationSeconds = Math.max(10, parseInt(body.durationSeconds || 3600, 10));
-        const mode = body.mode || "study";
+        const mode = body.mode || "study"; // 'study', 'pyq', 'break10', 'break20'
         const note = body.note || "";
         const webhookUrl = body.webhookUrl || state.webhookUrl || DEFAULT_NTFY_TOPIC;
 
@@ -267,7 +335,7 @@ export async function POST(request) {
 
           state.activeTimer.isRunning = false;
           state.activeTimer.secondsRemaining = remainingSecs;
-          state.activeTimer.durationSeconds = remainingSecs; // Store exact remaining duration
+          state.activeTimer.durationSeconds = remainingSecs;
           state.lastUpdated = new Date().toISOString();
         }
         break;
@@ -308,8 +376,13 @@ export async function POST(request) {
         const mode = body.mode || "study";
         const note = body.note || "";
 
-        state.todayStudySeconds = (state.todayStudySeconds || 0) + addedSeconds;
-        state.history[todayAnchor] = state.todayStudySeconds;
+        if (mode === "pyq") {
+          state.todayPyqSeconds = (state.todayPyqSeconds || 0) + addedSeconds;
+          state.historyPyq[todayAnchor] = state.todayPyqSeconds;
+        } else {
+          state.todayStudySeconds = (state.todayStudySeconds || 0) + addedSeconds;
+          state.history[todayAnchor] = state.todayStudySeconds;
+        }
         state.lastUpdated = new Date().toISOString();
 
         if (addedSeconds > 0) {
@@ -333,6 +406,14 @@ export async function POST(request) {
         break;
       }
 
+      case "set_pyq_seconds": {
+        const seconds = Math.max(0, parseInt(body.seconds || 0, 10));
+        state.todayPyqSeconds = seconds;
+        state.historyPyq[todayAnchor] = seconds;
+        state.lastUpdated = new Date().toISOString();
+        break;
+      }
+
       case "set_goal": {
         const goalSeconds = Math.max(60, parseInt(body.goalSeconds || DEFAULT_DAILY_GOAL, 10));
         state.dailyGoalSeconds = goalSeconds;
@@ -340,9 +421,18 @@ export async function POST(request) {
         break;
       }
 
+      case "set_pyq_goal": {
+        const pyqGoalSeconds = Math.max(60, parseInt(body.pyqGoalSeconds || DEFAULT_PYQ_GOAL, 10));
+        state.dailyPyqGoalSeconds = pyqGoalSeconds;
+        state.lastUpdated = new Date().toISOString();
+        break;
+      }
+
       case "reset_today": {
         state.todayStudySeconds = 0;
+        state.todayPyqSeconds = 0;
         state.history[todayAnchor] = 0;
+        state.historyPyq[todayAnchor] = 0;
         state.lastUpdated = new Date().toISOString();
         break;
       }
@@ -390,11 +480,18 @@ export async function POST(request) {
             state.todayStudySeconds = body.state.todayStudySeconds;
             state.history[todayAnchor] = state.todayStudySeconds;
           }
+          if (typeof body.state.todayPyqSeconds === "number") {
+            state.todayPyqSeconds = body.state.todayPyqSeconds;
+            state.historyPyq[todayAnchor] = state.todayPyqSeconds;
+          }
           if (Array.isArray(body.state.todos)) {
             state.todos = body.state.todos;
           }
           if (typeof body.state.dailyGoalSeconds === "number") {
             state.dailyGoalSeconds = body.state.dailyGoalSeconds;
+          }
+          if (typeof body.state.dailyPyqGoalSeconds === "number") {
+            state.dailyPyqGoalSeconds = body.state.dailyPyqGoalSeconds;
           }
           if (typeof body.state.webhookUrl === "string") {
             state.webhookUrl = body.state.webhookUrl;
@@ -412,9 +509,25 @@ export async function POST(request) {
     }
 
     state.streak = calculateStreak(state.history, todayAnchor, state.dailyGoalSeconds);
-    await docRef.set(state, { merge: true });
+    state.streakPyq = calculateStreak(state.historyPyq, todayAnchor, state.dailyPyqGoalSeconds);
 
-    return NextResponse.json({ success: true, action, state });
+    const weeklySummary = computeWeeklySummary(
+      state.history,
+      state.historyPyq,
+      todayAnchor,
+      state.todayStudySeconds,
+      state.todayPyqSeconds
+    );
+
+    const fullState = {
+      ...state,
+      todayStudyHours: parseFloat((state.todayStudySeconds / 3600).toFixed(2)),
+      todayPyqHours: parseFloat((state.todayPyqSeconds / 3600).toFixed(2)),
+      ...weeklySummary,
+    };
+
+    await docRef.set(fullState, { merge: true });
+    return NextResponse.json({ success: true, action, state: fullState });
   } catch (error) {
     console.error("Error in POST /api/studytime:", error);
     return NextResponse.json({ error: error.message || "Failed to execute action" }, { status: 500 });

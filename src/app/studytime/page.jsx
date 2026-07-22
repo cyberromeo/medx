@@ -31,10 +31,13 @@ import {
   XCircle,
   ExternalLink,
   Smartphone,
+  BookOpen,
+  CheckSquare,
 } from "lucide-react";
 
 const PASSWORD = "superstudiopro";
-const DAILY_GOAL_DEFAULT = 11 * 3600; // 11 hours
+const DEFAULT_STUDY_GOAL = 11 * 3600; // 11 hours
+const DEFAULT_PYQ_GOAL = 2 * 3600;    // 2 hours
 const DEFAULT_NTFY_TOPIC = "https://ntfy.sh/medx_study_siren_superstudiopro";
 
 export default function StudyTimePage() {
@@ -47,10 +50,17 @@ export default function StudyTimePage() {
   // App state
   const [loading, setLoading] = useState(true);
   const [todayStudySeconds, setTodayStudySeconds] = useState(0);
-  const [dailyGoalSeconds, setDailyGoalSeconds] = useState(DAILY_GOAL_DEFAULT);
+  const [todayPyqSeconds, setTodayPyqSeconds] = useState(0);
+  const [dailyGoalSeconds, setDailyGoalSeconds] = useState(DEFAULT_STUDY_GOAL);
+  const [dailyPyqGoalSeconds, setDailyPyqGoalSeconds] = useState(DEFAULT_PYQ_GOAL);
   const [currentStudyDay, setCurrentStudyDay] = useState("");
   const [history, setHistory] = useState({});
+  const [historyPyq, setHistoryPyq] = useState({});
+  const [weeklyHistory, setWeeklyHistory] = useState([]);
+  const [weeklyStudyTotalHours, setWeeklyStudyTotalHours] = useState(0);
+  const [weeklyPyqTotalHours, setWeeklyPyqTotalHours] = useState(0);
   const [streak, setStreak] = useState(0);
+  const [streakPyq, setStreakPyq] = useState(0);
   const [todos, setTodos] = useState([]);
   const [webhookUrl, setWebhookUrl] = useState(DEFAULT_NTFY_TOPIC);
   const [savingWebhook, setSavingWebhook] = useState(false);
@@ -58,7 +68,7 @@ export default function StudyTimePage() {
   const [webhookStatus, setWebhookStatus] = useState(null);
 
   // Timer state
-  const [timerMode, setTimerMode] = useState("study"); // 'study', 'break10', 'break20'
+  const [timerMode, setTimerMode] = useState("study"); // 'study', 'pyq', 'break10', 'break20'
   const [timerTotal, setTimerTotal] = useState(3600); // 1 hr default
   const [timerRemaining, setTimerRemaining] = useState(3600);
   const [timerState, setTimerState] = useState("idle"); // 'idle', 'running', 'paused'
@@ -110,10 +120,17 @@ export default function StudyTimePage() {
       const data = await res.json();
       if (data.success && data.state) {
         setTodayStudySeconds(data.state.todayStudySeconds || 0);
-        setDailyGoalSeconds(data.state.dailyGoalSeconds || DAILY_GOAL_DEFAULT);
+        setTodayPyqSeconds(data.state.todayPyqSeconds || 0);
+        setDailyGoalSeconds(data.state.dailyGoalSeconds || DEFAULT_STUDY_GOAL);
+        setDailyPyqGoalSeconds(data.state.dailyPyqGoalSeconds || DEFAULT_PYQ_GOAL);
         setCurrentStudyDay(data.state.currentStudyDay || "");
         setHistory(data.state.history || {});
+        setHistoryPyq(data.state.historyPyq || {});
+        setWeeklyHistory(data.state.weeklyHistory || []);
+        setWeeklyStudyTotalHours(data.state.weeklyStudyTotalHours || 0);
+        setWeeklyPyqTotalHours(data.state.weeklyPyqTotalHours || 0);
         setStreak(data.state.streak || 0);
+        setStreakPyq(data.state.streakPyq || 0);
         setTodos(data.state.todos || []);
         if (data.state.webhookUrl) {
           setWebhookUrl(data.state.webhookUrl);
@@ -152,7 +169,7 @@ export default function StudyTimePage() {
     }
   }, [authenticated, fetchState]);
 
-  // Log study time to API
+  // Log study or pyq time to API
   const logStudyTimeApi = useCallback(async (seconds, mode = "study", note = "") => {
     try {
       const res = await fetch("/api/studytime", {
@@ -169,9 +186,15 @@ export default function StudyTimePage() {
       });
       const data = await res.json();
       if (data.success && data.state) {
-        setTodayStudySeconds(data.state.todayStudySeconds);
+        setTodayStudySeconds(data.state.todayStudySeconds || 0);
+        setTodayPyqSeconds(data.state.todayPyqSeconds || 0);
         setHistory(data.state.history || {});
+        setHistoryPyq(data.state.historyPyq || {});
+        setWeeklyHistory(data.state.weeklyHistory || []);
+        setWeeklyStudyTotalHours(data.state.weeklyStudyTotalHours || 0);
+        setWeeklyPyqTotalHours(data.state.weeklyPyqTotalHours || 0);
         setStreak(data.state.streak || 0);
+        setStreakPyq(data.state.streakPyq || 0);
       }
     } catch (err) {
       console.error("Failed to log study time:", err);
@@ -188,7 +211,10 @@ export default function StudyTimePage() {
             setTimerState("idle");
             if (timerMode === "study") {
               setTodayStudySeconds((t) => t + timerTotal);
-              logStudyTimeApi(timerTotal, timerMode, "Completed timer session");
+              logStudyTimeApi(timerTotal, timerMode, "Completed Study session");
+            } else if (timerMode === "pyq") {
+              setTodayPyqSeconds((t) => t + timerTotal);
+              logStudyTimeApi(timerTotal, timerMode, "Completed PYQ session");
             }
             triggerAlarm();
             return 0;
@@ -220,7 +246,8 @@ export default function StudyTimePage() {
 
     if ("speechSynthesis" in window) {
       window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance("TIMER ENDED! GET BACK TO WORK IMMEDIATELY!");
+      const text = timerMode === "pyq" ? "PYQ SESSION COMPLETED! EXCELLENT WORK!" : "TIMER ENDED! GET BACK TO WORK IMMEDIATELY!";
+      const utterance = new SpeechSynthesisUtterance(text);
       utterance.rate = 1.0;
       utterance.pitch = 1.1;
       utterance.volume = alarmVolume;
@@ -270,12 +297,11 @@ export default function StudyTimePage() {
     }
   };
 
-  // Cloud Timer Start / Pause / Resume Controls (FIXED: NO RESET ON RESUME)
+  // Cloud Timer Controls
   const togglePlayPause = async () => {
     initAudio();
 
     if (timerState === "running") {
-      // PAUSE
       setTimerState("paused");
       fetch("/api/studytime", {
         method: "POST",
@@ -283,7 +309,6 @@ export default function StudyTimePage() {
         body: JSON.stringify({ password: PASSWORD, action: "pause_timer" }),
       });
     } else if (timerState === "paused") {
-      // RESUME FROM PAUSED TIME (DO NOT RESET!)
       setTimerState("running");
       fetch("/api/studytime", {
         method: "POST",
@@ -291,7 +316,6 @@ export default function StudyTimePage() {
         body: JSON.stringify({ password: PASSWORD, action: "resume_timer" }),
       });
     } else {
-      // START NEW TIMER
       setTimerState("running");
       fetch("/api/studytime", {
         method: "POST",
@@ -374,7 +398,7 @@ export default function StudyTimePage() {
         setWebhookMsg("Siren Fired! 🚨");
         setWebhookStatus({
           success: true,
-          message: "Siren alert dispatched successfully to Ntfy/Webhook!",
+          message: "Siren alert dispatched successfully!",
         });
       } else {
         setWebhookMsg("Failed");
@@ -483,32 +507,23 @@ export default function StudyTimePage() {
 
   const formatHoursDecimal = (secs) => (secs / 3600).toFixed(2);
 
-  // Smooth, non-erratic Goal Progress calculations
-  const goalPercent = Math.min(100, Math.round((todayStudySeconds / dailyGoalSeconds) * 100));
-  const remainingGoalSecs = Math.max(0, dailyGoalSeconds - todayStudySeconds);
+  // Goal calculations
+  const studyGoalPercent = Math.min(100, Math.round((todayStudySeconds / dailyGoalSeconds) * 100));
+  const remainingStudyGoalSecs = Math.max(0, dailyGoalSeconds - todayStudySeconds);
+
+  const pyqGoalPercent = Math.min(100, Math.round((todayPyqSeconds / dailyPyqGoalSeconds) * 100));
+  const remainingPyqGoalSecs = Math.max(0, dailyPyqGoalSeconds - todayPyqSeconds);
 
   // SVG Radial Ring Calculation
   const radius = 130;
   const circumference = 2 * Math.PI * radius;
   const strokeDashoffset = circumference - (timerRemaining / (timerTotal || 1)) * circumference;
 
-  // Past 7 days history
-  const getLast7Days = () => {
-    const result = [];
-    const now = new Date();
-    for (let i = 6; i >= 0; i--) {
-      const d = new Date(now);
-      d.setDate(d.getDate() - i);
-      const yyyy = d.getFullYear();
-      const mm = String(d.getMonth() + 1).padStart(2, "0");
-      const dd = String(d.getDate()).padStart(2, "0");
-      const dateKey = `${yyyy}-${mm}-${dd}`;
-      const dayLabel = d.toLocaleDateString("en-US", { weekday: "short" });
-      const seconds = history[dateKey] || (dateKey === currentStudyDay ? todayStudySeconds : 0);
-      result.push({ dateKey, dayLabel, hours: seconds / 3600 });
-    }
-    return result;
-  };
+  // Max hours for chart scaling
+  const maxChartHours = Math.max(
+    13,
+    ...weeklyHistory.map((d) => (d.studyHours || 0) + (d.pyqHours || 0))
+  );
 
   // --- PASSWORD GATE SCREEN ---
   if (!authenticated) {
@@ -592,9 +607,6 @@ export default function StudyTimePage() {
   }
 
   // --- MAIN DASHBOARD ---
-  const chartData = getLast7Days();
-  const maxChartHours = Math.max(12, ...chartData.map((d) => d.hours));
-
   return (
     <div className="min-h-screen bg-[#f0f0f0] pb-24 text-gray-900">
       {/* Header Bar */}
@@ -609,7 +621,7 @@ export default function StudyTimePage() {
                 Study Time Tracker
               </h1>
               <p className="text-xs text-gray-500">
-                AeroFocus Cloud Timer & Phone Siren Alerts
+                AeroFocus 11h Study & 2h PYQ Tracker
               </p>
             </div>
           </div>
@@ -645,16 +657,19 @@ export default function StudyTimePage() {
       {/* Main Grid */}
       <div className="mx-auto max-w-5xl px-4 pt-6 sm:px-6">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-          {/* ================= LEFT COLUMN: TARGET & ANALYTICS ================= */}
+          {/* ================= LEFT COLUMN: 11H STUDY & 2H PYQ TARGETS ================= */}
           <aside className="lg:col-span-4 space-y-6">
-            {/* Daily Target Card */}
+            {/* 11-Hour Study Target Card */}
             <div className="rounded-[2rem] border border-[rgba(30,50,90,0.05)] bg-white p-6 shadow-[0_4px_24px_rgba(0,0,0,0.04)]">
               <div className="mb-4 flex items-center justify-between">
                 <div className="flex items-center gap-2 text-gray-900 text-sm font-bold tracking-wide uppercase">
                   <Sparkles size={16} className="text-emerald-600" />
-                  <span>Daily Target</span>
+                  <span>11h Study Goal</span>
                 </div>
-                <span className="text-xs font-semibold text-gray-400">Goal: 11 hrs</span>
+                <div className="flex items-center gap-1 text-xs font-bold text-amber-600 bg-amber-50 border border-amber-200 px-2.5 py-0.5 rounded-full">
+                  <Flame size={12} className="text-amber-500" />
+                  <span>{streak}d</span>
+                </div>
               </div>
 
               <div className="mb-4 grid grid-cols-2 gap-3">
@@ -666,26 +681,74 @@ export default function StudyTimePage() {
                 </div>
 
                 <div className="rounded-2xl border border-gray-100 bg-gray-50 p-4">
-                  <span className="block text-2xl font-black text-indigo-600">
+                  <span className="block text-2xl font-black text-gray-900">
                     {(dailyGoalSeconds / 3600).toFixed(2)}
                   </span>
-                  <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Hour Goal</span>
+                  <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Study Goal</span>
                 </div>
               </div>
 
               {/* Progress Bar */}
               <div className="space-y-2">
                 <div className="flex justify-between text-xs text-gray-600 font-semibold">
-                  <span>{goalPercent}% Completed</span>
+                  <span>{studyGoalPercent}% Completed</span>
                   <span className="text-emerald-600 font-mono">
-                    {Math.floor(remainingGoalSecs / 3600)}h {Math.floor((remainingGoalSecs % 3600) / 60)}m left
+                    {Math.floor(remainingStudyGoalSecs / 3600)}h {Math.floor((remainingStudyGoalSecs % 3600) / 60)}m left
                   </span>
                 </div>
                 <div className="h-3 w-full rounded-full bg-gray-100 overflow-hidden relative">
                   <motion.div
-                    className="h-full bg-gradient-to-r from-emerald-500 to-indigo-600 rounded-full"
+                    className="h-full bg-gradient-to-r from-emerald-500 to-teal-600 rounded-full"
                     initial={{ width: 0 }}
-                    animate={{ width: `${goalPercent}%` }}
+                    animate={{ width: `${studyGoalPercent}%` }}
+                    transition={{ duration: 0.8, ease: "easeOut" }}
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* 2-Hour PYQ Goal Target Card */}
+            <div className="rounded-[2rem] border border-[rgba(30,50,90,0.05)] bg-white p-6 shadow-[0_4px_24px_rgba(0,0,0,0.04)]">
+              <div className="mb-4 flex items-center justify-between">
+                <div className="flex items-center gap-2 text-gray-900 text-sm font-bold tracking-wide uppercase">
+                  <BookOpen size={16} className="text-indigo-600" />
+                  <span>2h PYQ Goal</span>
+                </div>
+                <div className="flex items-center gap-1 text-xs font-bold text-indigo-600 bg-indigo-50 border border-indigo-200 px-2.5 py-0.5 rounded-full">
+                  <Flame size={12} className="text-indigo-500" />
+                  <span>{streakPyq}d</span>
+                </div>
+              </div>
+
+              <div className="mb-4 grid grid-cols-2 gap-3">
+                <div className="rounded-2xl border border-gray-100 bg-gray-50 p-4">
+                  <span className="block text-2xl font-black text-indigo-600">
+                    {formatHoursDecimal(todayPyqSeconds)}
+                  </span>
+                  <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">PYQ Hours</span>
+                </div>
+
+                <div className="rounded-2xl border border-gray-100 bg-gray-50 p-4">
+                  <span className="block text-2xl font-black text-gray-900">
+                    {(dailyPyqGoalSeconds / 3600).toFixed(2)}
+                  </span>
+                  <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">PYQ Goal</span>
+                </div>
+              </div>
+
+              {/* Progress Bar */}
+              <div className="space-y-2">
+                <div className="flex justify-between text-xs text-gray-600 font-semibold">
+                  <span>{pyqGoalPercent}% Completed</span>
+                  <span className="text-indigo-600 font-mono">
+                    {Math.floor(remainingPyqGoalSecs / 3600)}h {Math.floor((remainingPyqGoalSecs % 3600) / 60)}m left
+                  </span>
+                </div>
+                <div className="h-3 w-full rounded-full bg-gray-100 overflow-hidden relative">
+                  <motion.div
+                    className="h-full bg-gradient-to-r from-indigo-500 to-purple-600 rounded-full"
+                    initial={{ width: 0 }}
+                    animate={{ width: `${pyqGoalPercent}%` }}
                     transition={{ duration: 0.8, ease: "easeOut" }}
                   />
                 </div>
@@ -699,34 +762,49 @@ export default function StudyTimePage() {
                   <Award size={16} className="text-indigo-600" />
                   <span>Weekly History</span>
                 </div>
-                <div className="flex items-center gap-1.5 rounded-full bg-amber-50 px-3 py-1 text-xs font-bold text-amber-700 border border-amber-200">
-                  <Flame size={14} className="text-amber-500" />
-                  <span>{streak} Day Streak</span>
+                <div className="flex items-center gap-2 text-[10px] font-bold">
+                  <span className="flex items-center gap-1 text-emerald-700">
+                    <span className="h-2 w-2 rounded-full bg-emerald-500" /> {weeklyStudyTotalHours}h Study
+                  </span>
+                  <span className="flex items-center gap-1 text-indigo-700">
+                    <span className="h-2 w-2 rounded-full bg-indigo-500" /> {weeklyPyqTotalHours}h PYQ
+                  </span>
                 </div>
               </div>
 
-              {/* Bar Chart */}
-              <div className="mt-6 flex h-40 items-end justify-between gap-2 pt-4 px-2">
-                {chartData.map((d) => {
-                  const heightPercent = Math.min(100, Math.max(8, (d.hours / maxChartHours) * 100));
-                  const isToday = d.dateKey === currentStudyDay;
+              {/* Stacked Bar Chart */}
+              <div className="mt-6 flex h-40 items-end justify-between gap-2 pt-4 px-1">
+                {weeklyHistory.map((d) => {
+                  const studyH = d.studyHours || 0;
+                  const pyqH = d.pyqHours || 0;
+                  const totalH = studyH + pyqH;
+                  const studyPercent = Math.min(100, Math.max(4, (studyH / maxChartHours) * 100));
+                  const pyqPercent = Math.min(100, Math.max(4, (pyqH / maxChartHours) * 100));
+                  const isToday = d.date === currentStudyDay;
+
                   return (
-                    <div key={d.dateKey} className="flex flex-1 flex-col items-center gap-2 group">
-                      <div className="relative w-full flex items-end justify-center h-28">
+                    <div key={d.date} className="flex flex-1 flex-col items-center gap-2 group">
+                      <div className="relative w-full flex flex-col justify-end items-center h-28">
+                        {/* PYQ Stack */}
+                        {pyqH > 0 && (
+                          <div
+                            style={{ height: `${pyqPercent}%` }}
+                            className="w-full max-w-[24px] rounded-t-md bg-indigo-500"
+                          />
+                        )}
+                        {/* Study Stack */}
                         <div
-                          style={{ height: `${heightPercent}%` }}
-                          className={`w-full max-w-[28px] rounded-t-lg transition-all duration-500 ${
-                            isToday
-                              ? "bg-gray-900 shadow-md shadow-gray-900/20"
-                              : "bg-gray-200 group-hover:bg-gray-300"
-                          }`}
+                          style={{ height: `${studyPercent}%` }}
+                          className={`w-full max-w-[24px] ${
+                            pyqH > 0 ? "rounded-b-md" : "rounded-t-md"
+                          } ${isToday ? "bg-gray-900 shadow-md shadow-gray-900/20" : "bg-emerald-600"}`}
                         />
-                        <span className="opacity-0 group-hover:opacity-100 absolute -top-6 text-[10px] font-mono text-white bg-gray-900 px-1.5 py-0.5 rounded shadow transition-opacity">
-                          {d.hours.toFixed(1)}h
+                        <span className="opacity-0 group-hover:opacity-100 absolute -top-6 text-[10px] font-mono text-white bg-gray-900 px-1.5 py-0.5 rounded shadow transition-opacity whitespace-nowrap z-10">
+                          {studyH}h + {pyqH}h PYQ
                         </span>
                       </div>
                       <span className={`text-[10px] font-bold ${isToday ? "text-gray-900 font-extrabold" : "text-gray-400"}`}>
-                        {d.dayLabel}
+                        {d.day}
                       </span>
                     </div>
                   );
@@ -769,15 +847,18 @@ export default function StudyTimePage() {
               <div className="mb-8 flex items-center gap-2 rounded-2xl border border-[rgba(30,50,90,0.08)] bg-gray-50 p-1.5">
                 {[
                   { mode: "study", min: 60, label: "1 Hr Study" },
+                  { mode: "pyq", min: 30, label: "30m PYQ" },
                   { mode: "break10", min: 10, label: "10m Break" },
                   { mode: "break20", min: 20, label: "20m Break" },
                 ].map((item) => (
                   <button
                     key={item.mode}
                     onClick={() => handleSelectMode(item.mode, item.min)}
-                    className={`rounded-xl px-5 py-2.5 text-xs font-bold transition-all ${
+                    className={`rounded-xl px-4 py-2.5 text-xs font-bold transition-all ${
                       timerMode === item.mode
-                        ? "bg-gray-900 text-white shadow-sm"
+                        ? item.mode === "pyq"
+                          ? "bg-indigo-600 text-white shadow-sm"
+                          : "bg-gray-900 text-white shadow-sm"
                         : "text-gray-500 hover:text-gray-900"
                     }`}
                   >
@@ -801,7 +882,13 @@ export default function StudyTimePage() {
                     cx="150"
                     cy="150"
                     r={radius}
-                    className={timerMode === "study" ? "stroke-gray-900" : "stroke-indigo-600"}
+                    className={
+                      timerMode === "study"
+                        ? "stroke-emerald-600"
+                        : timerMode === "pyq"
+                        ? "stroke-indigo-600"
+                        : "stroke-gray-900"
+                    }
                     strokeWidth="12"
                     strokeDasharray={circumference}
                     strokeDashoffset={strokeDashoffset}
@@ -812,8 +899,14 @@ export default function StudyTimePage() {
                 </svg>
 
                 <div className="absolute flex flex-col items-center justify-center text-center">
-                  <span className="text-[11px] font-bold tracking-widest text-emerald-600 uppercase mb-1">
-                    {timerMode === "study" ? "FOCUS SESSION" : "REST BREAK"}
+                  <span className={`text-[11px] font-bold tracking-widest uppercase mb-1 ${
+                    timerMode === "pyq" ? "text-indigo-600" : "text-emerald-600"
+                  }`}>
+                    {timerMode === "study"
+                      ? "1 HOUR STUDY SESSION"
+                      : timerMode === "pyq"
+                      ? "30 MIN PYQ PRACTICE"
+                      : "REST BREAK"}
                   </span>
                   <span className="font-mono text-5xl font-black tracking-tight text-gray-900">
                     {formatTimeDigits(timerRemaining)}
@@ -840,7 +933,9 @@ export default function StudyTimePage() {
 
                 <button
                   onClick={togglePlayPause}
-                  className="flex h-16 w-16 items-center justify-center rounded-full bg-gray-900 text-white shadow-lg transition-all hover:bg-gray-800 hover:scale-105 active:scale-95"
+                  className={`flex h-16 w-16 items-center justify-center rounded-full text-white shadow-lg transition-all hover:scale-105 active:scale-95 ${
+                    timerMode === "pyq" ? "bg-indigo-600 hover:bg-indigo-700" : "bg-gray-900 hover:bg-gray-800"
+                  }`}
                   title={timerState === "running" ? "Pause" : "Play / Resume"}
                 >
                   {timerState === "running" ? <Pause size={28} /> : <Play size={28} className="ml-1" />}
@@ -925,7 +1020,7 @@ export default function StudyTimePage() {
               <div className="rounded-[2rem] border border-[rgba(30,50,90,0.05)] bg-white p-6 shadow-[0_4px_24px_rgba(0,0,0,0.04)]">
                 <div className="mb-4 flex items-center justify-between">
                   <div className="flex items-center gap-2 text-gray-900 text-sm font-bold tracking-wide uppercase">
-                    <Check size={16} className="text-indigo-600" />
+                    <CheckSquare size={16} className="text-indigo-600" />
                     <span>Focus Tasks</span>
                   </div>
                   <span className="text-[11px] font-semibold text-gray-400">{todos.length} tasks</span>
@@ -1002,7 +1097,7 @@ export default function StudyTimePage() {
               <div className="flex items-center justify-between border-b border-gray-100 pb-4">
                 <div className="flex items-center gap-2.5">
                   <Code size={20} className="text-gray-900" />
-                  <h2 className="text-lg font-bold text-gray-900">Cloud Timer & Webhook REST API</h2>
+                  <h2 className="text-lg font-bold text-gray-900">Study & PYQ REST API Documentation</h2>
                 </div>
                 <button
                   onClick={() => setShowApiModal(false)}
@@ -1014,40 +1109,46 @@ export default function StudyTimePage() {
 
               {/* Instructions */}
               <div className="rounded-2xl border border-gray-100 bg-gray-50 p-4 space-y-3">
-                <h3 className="text-sm font-bold text-gray-900">Simple REST API Actions</h3>
+                <h3 className="text-sm font-bold text-gray-900">GET State Response Summary Fields</h3>
                 <p className="text-xs text-gray-500">
-                  Pass <code className="text-indigo-600 font-mono font-bold">password=superstudiopro</code> in request body or query param.
+                  <code className="font-mono text-indigo-600 font-bold">GET /api/studytime?password=superstudiopro</code>
                 </p>
-
-                {/* Cloud Timer Start */}
-                <div className="space-y-1">
-                  <span className="text-[11px] font-bold text-gray-400 uppercase">1. Start Cloud Timer</span>
-                  <div className="rounded-xl bg-gray-900 p-3 font-mono text-xs text-emerald-400 border border-gray-800 space-y-1">
-                    <pre className="text-gray-200 text-[11px]">
-{`POST /api/studytime
-{
-  "password": "superstudiopro",
-  "action": "start_timer",
-  "durationSeconds": 3600,
-  "mode": "study",
-  "webhookUrl": "https://..."
-}`}
-                    </pre>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 font-mono text-xs">
+                  <div className="rounded-xl bg-gray-900 p-2.5 text-gray-200 border border-gray-800">
+                    <span className="text-emerald-400 font-bold block">todayStudyHours & todayStudySeconds</span>
+                    <span className="text-[10px] text-gray-400">Total study time completed today</span>
+                  </div>
+                  <div className="rounded-xl bg-gray-900 p-2.5 text-gray-200 border border-gray-800">
+                    <span className="text-indigo-400 font-bold block">todayPyqHours & todayPyqSeconds</span>
+                    <span className="text-[10px] text-gray-400">Total PYQ practice time completed today</span>
+                  </div>
+                  <div className="rounded-xl bg-gray-900 p-2.5 text-gray-200 border border-gray-800">
+                    <span className="text-amber-400 font-bold block">weeklyStudyTotalHours & weeklyPyqTotalHours</span>
+                    <span className="text-[10px] text-gray-400">Sum of past 7 days study & PYQ hours</span>
+                  </div>
+                  <div className="rounded-xl bg-gray-900 p-2.5 text-gray-200 border border-gray-800">
+                    <span className="text-cyan-400 font-bold block">weeklyHistory</span>
+                    <span className="text-[10px] text-gray-400">Array of past 7 days breakdown</span>
                   </div>
                 </div>
 
-                {/* Pause & Resume */}
-                <div className="space-y-1">
-                  <span className="text-[11px] font-bold text-gray-400 uppercase">2. Pause & Resume Cloud Timer</span>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 font-mono text-xs">
-                    <div className="rounded-xl bg-gray-900 p-2.5 border border-gray-800">
-                      <span className="text-amber-400 font-bold block">action: &quot;pause_timer&quot;</span>
-                      <span className="text-[10px] text-gray-400">{`{"password": "superstudiopro", "action": "pause_timer"}`}</span>
-                    </div>
-                    <div className="rounded-xl bg-gray-900 p-2.5 border border-gray-800">
-                      <span className="text-emerald-400 font-bold block">action: &quot;resume_timer&quot;</span>
-                      <span className="text-[10px] text-gray-400">{`{"password": "superstudiopro", "action": "resume_timer"}`}</span>
-                    </div>
+                <h3 className="text-sm font-bold text-gray-900 pt-2">POST Actions (`POST /api/studytime`)</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 font-mono text-xs">
+                  <div className="rounded-xl bg-gray-900 p-2.5 text-gray-200 border border-gray-800">
+                    <span className="text-emerald-400 font-bold block">action: &quot;log&quot;</span>
+                    <span className="text-[10px] text-gray-400">{`{"seconds": 1800, "mode": "pyq"}`}</span>
+                  </div>
+                  <div className="rounded-xl bg-gray-900 p-2.5 text-gray-200 border border-gray-800">
+                    <span className="text-indigo-400 font-bold block">action: &quot;set_pyq_seconds&quot;</span>
+                    <span className="text-[10px] text-gray-400">{`{"seconds": 3600}`}</span>
+                  </div>
+                  <div className="rounded-xl bg-gray-900 p-2.5 text-gray-200 border border-gray-800">
+                    <span className="text-amber-400 font-bold block">action: &quot;start_timer&quot;</span>
+                    <span className="text-[10px] text-gray-400">{`{"durationSeconds": 1800, "mode": "pyq"}`}</span>
+                  </div>
+                  <div className="rounded-xl bg-gray-900 p-2.5 text-gray-200 border border-gray-800">
+                    <span className="text-cyan-400 font-bold block">action: &quot;set_pyq_goal&quot;</span>
+                    <span className="text-[10px] text-gray-400">{`{"pyqGoalSeconds": 7200}`}</span>
                   </div>
                 </div>
               </div>
@@ -1076,7 +1177,9 @@ export default function StudyTimePage() {
                             <td className="p-2 text-gray-500">
                               {new Date(log.timestamp).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
                             </td>
-                            <td className="p-2 text-emerald-600 font-bold capitalize">{log.mode || "study"}</td>
+                            <td className={`p-2 font-bold capitalize ${
+                              log.mode === "pyq" ? "text-indigo-600" : "text-emerald-600"
+                            }`}>{log.mode || "study"}</td>
                             <td className="p-2 text-gray-900 font-bold">{Math.round(log.seconds / 60)} mins</td>
                             <td className="p-2 text-gray-400 text-[10px] uppercase">{log.source || "api"}</td>
                           </tr>
