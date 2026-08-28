@@ -5,6 +5,7 @@ import AppLayoutWrapper from "@/components/AppLayoutWrapper";
 import { ChatXProvider } from "@/components/ChatXProvider";
 import SessionGuard from "@/components/SessionGuard";
 import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 export const metadata = {
   title: "MedX 2.0 - Study Smarter. Achieve More.",
@@ -67,6 +68,7 @@ export default function RootLayout({ children }) {
 
           <MobileNav />
           <Analytics />
+          <SpeedInsights />
         </ChatXProvider>
       </body>
     </html>
